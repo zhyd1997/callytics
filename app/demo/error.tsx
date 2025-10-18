@@ -12,7 +12,7 @@ interface ErrorProps {
   readonly reset: () => void
 }
 
-export default function Error({ error, reset }: ErrorProps) {
+export default function DemoError({ error, reset }: ErrorProps) {
   useEffect(() => {
     console.error("Dashboard rendering failed", error)
   }, [error])
