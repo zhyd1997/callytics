@@ -66,7 +66,7 @@ export function Hero() {
               <TrendingUp className="h-4 w-4" />
               Join Waitlist
             </Button>
-            <Button size="lg" variant="outline">
+            <Button size="lg" variant="outline" asChild>
               <Link href="/demo">View Demo</Link>
             </Button>
           </motion.div>
