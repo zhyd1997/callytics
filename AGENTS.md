@@ -8,7 +8,7 @@
 
 ## Code Map
 - `app/layout.tsx`: root layout, font loading, metadata, and analytics wiring
-- `.agent/cal-com-openapi-v2.yaml`: Cal.com API v2 OpenAPI excerpt kept in sync with the official docs
+- `.agent/cal-com-openapi-spec.yaml`: Cal.com API v2 OpenAPI excerpt kept in sync with the official docs
 - `.agent/coding-style.md`: shared coding conventions for components, styling, async flows, and quality gates
 - `.agent/react-component-template.md`: starter client component snippet for quick copy/paste usage
 - `app/page.tsx`: primary UI; copy lives in the `DESCRIPTION` constant rendered twice to test wrapping
