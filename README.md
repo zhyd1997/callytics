@@ -1,3 +1,7 @@
+Callytics is a lightweight analytics dashboard for Cal.com users.
+Get instant insights into your meetings, event types, and booking trends — without setting up a complex backend.
+Built with Next.js 15, Tailwind CSS v4, and Supabase.
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
