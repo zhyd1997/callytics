@@ -1,4 +1,5 @@
-![Callytics Logo](./public/logo/callytics-logo-wordmark-dark.png)
+![Callytics Logo](./public/logo/callytics-logo-wordmark-dark.png#gh-dark-mode-only)
+![Callytics Logo](./public/logo/callytics-logo-wordmark-light.png#gh-light-mode-only)
 
 Callytics is a lightweight analytics dashboard for Cal.com users.
 Get instant insights into your meetings, event types, and booking trends — without setting up a complex backend.
