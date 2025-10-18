@@ -1,3 +1,5 @@
+![Callytics Logo](./public/logo/callytics-logo-wordmark-dark.png)
+
 Callytics is a lightweight analytics dashboard for Cal.com users.
 Get instant insights into your meetings, event types, and booking trends — without setting up a complex backend.
 Built with Next.js 15, Tailwind CSS v4, and Supabase.
