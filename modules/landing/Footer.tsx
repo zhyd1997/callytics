@@ -5,7 +5,7 @@ import Image from "next/image"
 import { useTheme } from "next-themes";
 
 export function Footer() {
-  const { theme } = useTheme()
+  const { resolvedTheme } = useTheme()
 
   return (
     <footer className="border-t border-border">
@@ -13,7 +13,7 @@ export function Footer() {
         <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
           <div className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg">
-              <Image src={theme === 'dark' ? "/logo/callytics-logo-dark.png" : "/logo/callytics-logo-light.png"} alt="Callytics Logo" width={20} height={20} />
+              <Image src={resolvedTheme === 'dark' ? "/logo/callytics-logo-dark.png" : "/logo/callytics-logo-light.png"} alt="Callytics Logo" width={20} height={20} />
             </div>
             <span className="text-xl font-bold text-foreground">Callytics</span>
           </div>
