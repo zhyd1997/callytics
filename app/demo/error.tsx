@@ -41,7 +41,7 @@ export default function DemoError({ error, reset }: ErrorProps) {
               Try again
             </Button>
             <Button asChild variant="outline">
-              <Link href="/public">Back to landing</Link>
+              <Link href="/">Back to landing</Link>
             </Button>
           </div>
         </div>
