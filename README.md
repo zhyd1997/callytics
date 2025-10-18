@@ -1,43 +1,80 @@
 ![Callytics Logo](./public/logo/callytics-logo-wordmark-dark.png#gh-dark-mode-only)
 ![Callytics Logo](./public/logo/callytics-logo-wordmark-light.png#gh-light-mode-only)
 
-Callytics is a lightweight analytics dashboard for Cal.com users.
-Get instant insights into your meetings, event types, and booking trends — without setting up a complex backend.
-Built with Next.js 15, Tailwind CSS v4, and Supabase.
+# Callytics ✨
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Lightweight analytics for Cal.com workspaces. Callytics gives teams instant visibility into meetings, event types, and booking trends without maintaining a bespoke reporting stack. 📊
 
-## Getting Started
+## Features 💡
+- OAuth 2.0 flow for Cal.com accounts with stateful callback handling 🔐
+- Postgres-backed waitlist capture powered by Prisma Accelerate 📨
+- Interactive landing page with dark mode, motion-driven hero, and email signup 🌓
+- Turbopack-enabled Next.js 16 app router with Tailwind CSS v4 styling ⚡️
 
-First, run the development server:
+## Tech Stack 🛠️
+- Next.js 16 (App Router, React 19, Turbopack)
+- Tailwind CSS v4 with custom design tokens
+- Prisma ORM + Accelerate extension targeting PostgreSQL
+- Vercel Analytics snippet for production telemetry 📈
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Prerequisites ✅
+- Node.js 18.18 or newer (Next.js 16 requirement)
+- pnpm 8.x or newer
+- PostgreSQL database for the waitlist table 🐘
+- Cal.com OAuth client credentials for the token exchange flow 🔑
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Quick Start 🚀
+1. Install dependencies: `pnpm install`
+2. Duplicate `.env.example` (or create `.env.local`) and set the required variables listed below
+3. Run database migrations: `pnpm prisma migrate dev`
+4. Start the dev server: `pnpm dev` and visit [http://localhost:3000](http://localhost:3000) 🎯
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The `preinstall` script runs `prisma generate` so the generated client is always in sync. Turbopack handles hot reloading during development.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Environment Variables 🌱
+| Variable | Required | Description | Default |
+| --- | --- | --- | --- |
+| `DATABASE_URL` | Yes | PostgreSQL connection string used by Prisma | – |
+| `CAL_OAUTH_CLIENT_ID` | Yes | OAuth client ID from your Cal.com developer app | – |
+| `CAL_OAUTH_CLIENT_SECRET` | Yes | OAuth client secret from Cal.com | – |
+| `CAL_OAUTH_REDIRECT_URI` | Optional | Explicit redirect URI to override the auto-detected callback | `http://localhost:3000/api/cal/oauth/callback` |
+| `CAL_OAUTH_TOKEN_ENDPOINT` | Optional | Alternate Cal.com token endpoint (sandbox/self-hosted) | `https://api.cal.com/v2/oauth/token` |
 
-## Learn More
+Optional variables only need to be set when you diverge from the default local flow.
 
-To learn more about Next.js, take a look at the following resources:
+### Cal.com OAuth Setup 🤝
+- Register a **Confidential OAuth App** inside the Cal.com developer portal.
+- Configure the redirect URI to `http://localhost:3000/api/cal/oauth/callback` (or your deployed domain).
+- Copy the client ID and secret into your `.env.local`.
+- During the auth redirect the callback verifies the `state` cookie and exchanges the code for access/refresh tokens at `CAL_OAUTH_TOKEN_ENDPOINT`. Tokens are returned to the caller and should be persisted securely (e.g., server-side store).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Database & Prisma 🗄️
+- Prisma schema lives in `prisma/schema.prisma` and generates the client under `app/generated/prisma`.
+- Migrations are stored in `prisma/migrations`. Apply them with `pnpm prisma migrate dev` for local development or `pnpm prisma migrate deploy` in CI/CD.
+- The waitlist module writes to the `waitlist_entries` table via `lib/dal/waitlist.ts`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Available Scripts 🧰
+- `pnpm dev` – start the Next.js dev server with Turbopack
+- `pnpm build` – run Prisma migrations (via `prebuild`) then build for production
+- `pnpm start` – serve the production build
+- `pnpm lint` – execute the repository ESLint configuration
+- `pnpm prisma <command>` – forward arbitrary Prisma CLI commands (generate, migrate, studio, etc.)
 
-## Deploy on Vercel
+## Project Structure 🧭
+- `app/` – Next.js route handlers, layouts, API routes, and generated Prisma client
+- `modules/` – UI modules
+- `components/` – shared UI primitives (buttons, cards, theming controls)
+- `lib/` – Prisma client factory, waitlist data access layer, and schemas
+- `prisma/` – schema and migrations for the Postgres database
+- `.agent/` – onboarding docs, Cal.com OpenAPI excerpt, and shared conventions
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Deployment ☁️
+- Optimized for Vercel; environment variables must be defined in the project settings
+- Ensure your production database and Cal.com OAuth redirect URIs match the deployed domain
+- Replace or configure `@vercel/analytics` if you use a different analytics provider
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Useful Links 🔗
+- [Cal.com OAuth 2.0 Docs](https://cal.com/docs/api-reference/v2/oauth-clients/)
+- [Next.js App Router Docs](https://nextjs.org/docs/app)
+- [Prisma Documentation](https://www.prisma.io/docs)
+- [AGENTS.md](./AGENTS.md) – living brief for contributor onboarding
