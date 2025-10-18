@@ -1,3 +1,5 @@
+# Template for React Client Component, ignore `components/ui` folder.
+
 ```tsx
 "use client";
 
