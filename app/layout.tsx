@@ -21,6 +21,9 @@ export const metadata: Metadata = {
   title: "Callytics - Analytics Dashboard for Cal.com",
   description:
     "Lightweight analytics dashboard providing visual insights into bookings, event types, and workspace performance for Cal.com",
+  appleWebApp: {
+    title: "Callytics",
+  }
 };
 
 export default function RootLayout({
@@ -33,8 +36,6 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <meta name="apple-mobile-web-app-title" content="Callytics" />
-
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
