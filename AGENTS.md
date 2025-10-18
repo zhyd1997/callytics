@@ -3,7 +3,7 @@
 ## Project Snapshot
 - Callytics is a lightweight analytics dashboard for Cal.com users.
 - Get instant insights into meetings, event types, and booking trends without a custom backend.
-- Built with Next.js 15, Tailwind CSS v4, and Supabase.
+- Built with Next.js 16, Tailwind CSS v4, and Prisma.
 - Cal.com OAuth 2.0 flow authenticates users via Next.js async cookies and exchanges tokens at `https://api.cal.com/v2/oauth/token`.
 
 ## Code Map
