@@ -1,3 +1,6 @@
+/**
+ * Mock Meetings Data for Demo
+ */
 export const MEETING_DATA = [
   {
     id: 123,
