@@ -1,29 +1,33 @@
 "use client"
 
-import type { FormEvent } from "react"
+import type { ChangeEvent } from "react"
 
-import { useState } from "react"
+import { useEffect, useState, useActionState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { CheckCircle2 } from "lucide-react"
 import { motion, AnimatePresence } from "motion/react"
+import { joinWaitlist } from "@/app/actions"
+import type { WaitlistState } from "@/lib/schemas/waitlist";
+
+const initialState: WaitlistState = { message: '' }
 
 export function WaitlistSection() {
   const [email, setEmail] = useState("")
   const [submitted, setSubmitted] = useState(false)
-  const [loading, setLoading] = useState(false)
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
+  const [state, formAction, isPending] = useActionState(joinWaitlist, initialState)
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+  useEffect(() => {
+    if (state.message === "Success") {
+      setSubmitted(true)
+      setEmail("")
+    }
+  }, [state.message])
 
-    setSubmitted(true)
-    setLoading(false)
-    setEmail("")
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value)
   }
 
   return (
@@ -79,23 +83,35 @@ export function WaitlistSection() {
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       transition={{ duration: 0.3 }}
-                      onSubmit={handleSubmit}
+                      action={formAction}
                       className="space-y-4"
                     >
                       <div className="flex flex-col gap-3 sm:flex-row">
                         <Input
                           type="email"
                           placeholder="Enter your email"
+                          name="email"
                           value={email}
-                          onChange={(e) => setEmail(e.target.value)}
+                          onChange={handleChange}
                           required
                           className="flex-1"
-                          disabled={loading}
+                          disabled={isPending}
                         />
-                        <Button type="submit" size="lg" disabled={loading} className="w-full sm:w-auto">
-                          {loading ? "Joining..." : "Join Waitlist"}
+                        <Button
+                          type="submit"
+                          size="lg"
+                          disabled={isPending}
+                          className="w-full sm:w-auto"
+                          aria-busy={isPending}
+                        >
+                          {isPending ? "Joining..." : "Join Waitlist"}
                         </Button>
                       </div>
+                      {state.message && state.message !== "Success" ? (
+                        <p aria-live="polite" className="text-sm text-destructive">
+                          {state.message}
+                        </p>
+                      ) : null}
                       <p className="text-center text-xs text-muted-foreground">
                         No spam, ever. Unsubscribe at any time.
                       </p>
