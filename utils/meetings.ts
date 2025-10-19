@@ -1,15 +1,4 @@
-interface Meeting {
-  id: number;
-  hosts: Array<{
-    email: string;
-    [key: string]: any;
-  }>;
-  attendees: Array<{
-    email: string;
-    [key: string]: any;
-  }>;
-  [key: string]: any;
-}
+import type { Meeting } from '@/lib/types/meeting';
 
 /**
  * Filters out meetings where the host and the only attendee are the same person.

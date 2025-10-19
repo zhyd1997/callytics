@@ -4,13 +4,7 @@ import { motion } from 'motion/react';
 import { Calendar, Clock, CheckCircle, XCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AnimatedNumber } from './AnimatedNumber';
-
-interface Meeting {
-  id: number;
-  status: string;
-  duration: number;
-  start: string;
-}
+import type { Meeting } from '@/lib/types/meeting';
 
 interface OverviewStatsProps {
   data: Meeting[];

@@ -5,13 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Users, Calendar, Clock } from 'lucide-react';
-
-interface Meeting {
-  id: number;
-  hosts: Array<{ name: string; email: string }>;
-  duration: number;
-  status: string;
-}
+import type { Meeting } from '@/lib/types/meeting';
 
 interface HostActivityProps {
   data: Meeting[];

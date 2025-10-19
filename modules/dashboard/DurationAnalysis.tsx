@@ -3,12 +3,7 @@
 import { motion } from 'motion/react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-
-interface Meeting {
-  id: number;
-  duration: number;
-  status: string;
-}
+import type { Meeting } from '@/lib/types/meeting';
 
 interface DurationAnalysisProps {
   data: Meeting[];
