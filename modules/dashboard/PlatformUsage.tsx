@@ -4,12 +4,7 @@ import { motion } from 'motion/react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Video, Monitor, Globe } from 'lucide-react';
-
-interface Meeting {
-  id: number;
-  meetingUrl: string;
-  location: string;
-}
+import type { Meeting } from '@/lib/types/meeting';
 
 interface PlatformUsageProps {
   data: Meeting[];

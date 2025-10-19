@@ -1,7 +1,9 @@
+import type { Meeting } from '@/lib/types/meeting';
+
 /**
  * Mock Meetings Data for Demo
  */
-export const MEETING_DATA = [
+export const MEETING_DATA: Meeting[] = [
   {
     id: 123,
     uid: 'booking_uid_123',

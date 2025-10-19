@@ -9,6 +9,7 @@
 - Prefer explicit types when inference is unclear; tighten types with `readonly` where possible.
 - Favor small, composable modules; keep data-fetching on the server when feasible.
 - Organize exports so server logic stays in `app/` and shared utilities live under `lib/` when introduced.
+- If a TS type is only used as a type, use `import type ... from ...` instead of `import ... from ...`
 
 ## Styling
 - Use Tailwind utility classes first; reserve custom CSS tokens for `app/globals.css`.

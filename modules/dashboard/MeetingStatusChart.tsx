@@ -3,11 +3,7 @@
 import { motion } from 'motion/react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-
-interface Meeting {
-  id: number;
-  status: string;
-}
+import type { Meeting } from '@/lib/types/meeting';
 
 interface MeetingStatusChartProps {
   data: Meeting[];

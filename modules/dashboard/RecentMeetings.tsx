@@ -8,34 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from '@/components/ui/drawer';
 import { MeetingDetails } from './MeetingDetails';
-
-interface Meeting {
-  id: number;
-  uid: string;
-  title: string;
-  description: string;
-  hosts: Array<{
-    id: number;
-    name: string;
-    email: string;
-    username: string;
-    timeZone: string;
-  }>;
-  status: string;
-  start: string;
-  end: string;
-  duration: number;
-  meetingUrl: string;
-  location: string;
-  attendees: Array<{
-    name: string;
-    email: string;
-    timeZone: string;
-    language: string;
-    absent: boolean;
-  }>;
-  cancellationReason?: string;
-}
+import type { Meeting } from '@/lib/types/meeting';
 
 interface RecentMeetingsProps {
   data: Meeting[];
