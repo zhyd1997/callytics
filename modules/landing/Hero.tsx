@@ -2,7 +2,6 @@
 
 import { Button } from "@/components/ui/button"
 import { BarChart3, TrendingUp, Calendar } from "lucide-react"
-import { ModeToggle } from "@/components/mode-toggle"
 import { motion } from "motion/react"
 import Link from "next/link";
 
@@ -16,10 +15,6 @@ export function Hero() {
 
   return (
     <section className="relative overflow-hidden border-b border-border">
-      <div className="fixed right-4 top-4 z-10 sm:right-6 sm:top-6 lg:right-8 lg:top-8">
-        <ModeToggle />
-      </div>
-
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-accent/20 via-background to-background" />
 
       <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8 lg:py-32">
