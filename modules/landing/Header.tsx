@@ -4,6 +4,9 @@ import Image from "next/image";
 
 import { ModeToggle } from "@/components/mode-toggle"
 import { useTheme } from "next-themes";
+import { Button } from "@/components/ui/button";
+import { Github } from "lucide-react";
+import { SITE_CONFIG } from "@/constants/site";
 
 export function Header() {
   const { resolvedTheme } = useTheme()
@@ -19,6 +22,17 @@ export function Header() {
         </div>
 
         <div className="flex items-center gap-2 md:gap-4">
+          <Button variant="ghost" size="icon" asChild className="h-9 w-9">
+            <a
+              href={SITE_CONFIG.githubUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="View on GitHub"
+            >
+              <Github className="h-4 w-4" />
+            </a>
+          </Button>
+
           <ModeToggle />
         </div>
       </div>
