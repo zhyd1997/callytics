@@ -1,10 +1,10 @@
 import { Calendar, Clock, Users, Video, MapPin, CheckCircle, XCircle, Info } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import type { Meeting } from '@/lib/types/meeting';
+import type { MeetingRecord } from '@/lib/types/meeting';
 
 interface MeetingDetailsProps {
-  meeting: Meeting;
+  readonly meeting: MeetingRecord;
 }
 
 export function MeetingDetails({ meeting }: MeetingDetailsProps) {
