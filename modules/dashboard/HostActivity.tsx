@@ -5,10 +5,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Users, Calendar, Clock } from 'lucide-react';
-import type { Meeting } from '@/lib/types/meeting';
+import type { MeetingRecord } from '@/lib/types/meeting';
 
 interface HostActivityProps {
-  data: Meeting[];
+  readonly data: readonly MeetingRecord[];
 }
 
 export function HostActivity({ data }: HostActivityProps) {

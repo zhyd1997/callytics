@@ -1,5 +1,6 @@
 'use client';
 
+import type { FC } from 'react';
 import { useState, useMemo } from 'react';
 import { motion } from 'motion/react';
 import { Calendar, Clock, Users, Video, BarChart3, TrendingUp, Moon, Sun, LogOut } from 'lucide-react';
@@ -14,16 +15,22 @@ import { RecentMeetings } from './RecentMeetings';
 import { removeSelfMeetings } from '@/utils/meetings';
 import { ModeToggle } from '@/components/mode-toggle';
 import { MEETING_DATA } from '@/constants/meetings';
+import type { MeetingCollection, MeetingRecord } from '@/lib/types/meeting';
 
-const meetingData = MEETING_DATA;
+interface DashboardAppProps {
+  readonly initialMeetings?: MeetingCollection;
+}
 
-export const App = () => {
+export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
   const [isAuthorized, setIsAuthorized] = useState(false);
 
-  // Filter out self-meetings (where host and only attendee are the same person)
-  const filteredMeetings = useMemo(() => {
+  const meetingData = useMemo<MeetingCollection>(() => {
+    return initialMeetings ?? MEETING_DATA.data;
+  }, [initialMeetings]);
+
+  const filteredMeetings = useMemo<MeetingRecord[]>(() => {
     return removeSelfMeetings(meetingData);
-  }, []);
+  }, [meetingData]);
 
   const handleLogin = () => {
     setIsAuthorized(true);

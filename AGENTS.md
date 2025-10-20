@@ -12,10 +12,19 @@
 - `.agent/coding-style.md`: shared coding conventions for components, styling, async flows, and quality gates
 - `.agent/react-component-template.md`: starter client component snippet for quick copy/paste usage
 - `app/page.tsx`: primary UI; copy lives in the `DESCRIPTION` constant rendered twice to test wrapping
+- `app/dashboard/page.tsx`: server component entry point that renders the dashboard `App`
+- `app/dashboard/loading.tsx`: route-level loading fallback for the dashboard
+- `app/dashboard/error.tsx`: client-side error boundary for the dashboard route
+- `app/api/cal/bookings/route.ts`: proxy to Cal.com bookings endpoint enforcing DTO validation and auth pre-checks
 - `app/globals.css`: global styles, Tailwind resets, and custom tokens
 - `public/`: static assets (favicon, etc.) served as-is by Next.js
 - `eslint.config.mjs`: workspace lint rules; lint runs with `pnpm lint`
 - `app/api/cal/oauth/callback/route.ts`: Cal.com OAuth 2.0 redirect handler exchanging auth codes for tokens ([docs](https://cal.com/docs/api-reference/v2/oauth-clients/))
+- `lib/schemas/calBookings.ts`: Zod schemas for Cal.com bookings payloads plus server-action input validation
+- `lib/dto/calBookings.ts`: Normalization helpers and higher-level getters (summary, top bookings) built atop the DAL
+- `lib/dal/calBookings.ts`: Low-level fetchers returning raw Cal.com API responses with typed error handling
+- `app/(marketing)/waitlist/actions.ts`: server action for waitlist joins used by landing UI
+- `app/(dashboard)/bookings/actions.ts`: server action wrapper around Cal bookings DAL for dashboard flows
 
 ## Local Development
 - Install deps with `pnpm install` (Node 18.18+ recommended for Next 16)
@@ -39,5 +48,12 @@
 ## Open Questions
 - Production analytics strategy beyond the default Vercel snippet
 - Additional routes, data sources, or APIs needed to move beyond the placeholder copy
+
+## Integration Notes
+- Replace mock meeting data by invoking `fetchCalBookingsAction` in server components or delegating via `/api/cal/bookings` for client-side usage.
+- Map `NormalizedCalBookingsResponse.items` into `Meeting` domain objects to keep dashboard modules typed until Cal data replaces mocks.
+- Thread authenticated Cal.com access tokens through cookies or secure storage so both the server action and API route can read them without exposing secrets client-side.
+- Call `fetchCalBookingSummaryByStatus` when you only need aggregate counts per status; it fetches a single booking slice and returns `{ status, totalItems }`.
+- Use `fetchTopUpdatedBookings` to retrieve the three most recently updated bookings with `{ data, error, totalItems }`, where `totalItems` honors the API's pagination counts.
 
 Keep this file current so future agents can onboard quickly.

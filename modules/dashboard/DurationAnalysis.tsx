@@ -3,10 +3,10 @@
 import { motion } from 'motion/react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import type { Meeting } from '@/lib/types/meeting';
+import type { MeetingRecord } from '@/lib/types/meeting';
 
 interface DurationAnalysisProps {
-  data: Meeting[];
+  readonly data: readonly MeetingRecord[];
 }
 
 export function DurationAnalysis({ data }: DurationAnalysisProps) {

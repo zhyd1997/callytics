@@ -4,10 +4,10 @@ import { motion } from 'motion/react';
 import { Calendar, Clock, CheckCircle, XCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AnimatedNumber } from './AnimatedNumber';
-import type { Meeting } from '@/lib/types/meeting';
+import type { MeetingRecord } from '@/lib/types/meeting';
 
 interface OverviewStatsProps {
-  data: Meeting[];
+  readonly data: readonly MeetingRecord[];
 }
 
 export function OverviewStats({ data }: OverviewStatsProps) {

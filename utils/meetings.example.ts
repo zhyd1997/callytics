@@ -9,7 +9,7 @@ import { removeSelfMeetings, countSelfMeetings, isSelfMeeting } from './meetings
 import { MEETING_DATA } from "@/constants/meetings";
 
 // Example meeting data
-const exampleMeetings = MEETING_DATA;
+const exampleMeetings = MEETING_DATA.data;
 
 // Usage Example 1: Remove all self-meetings
 const filteredMeetings = removeSelfMeetings(exampleMeetings);

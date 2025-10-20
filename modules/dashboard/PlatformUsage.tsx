@@ -4,10 +4,10 @@ import { motion } from 'motion/react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Video, Monitor, Globe } from 'lucide-react';
-import type { Meeting } from '@/lib/types/meeting';
+import type { MeetingRecord } from '@/lib/types/meeting';
 
 interface PlatformUsageProps {
-  data: Meeting[];
+  readonly data: readonly MeetingRecord[];
 }
 
 export function PlatformUsage({ data }: PlatformUsageProps) {

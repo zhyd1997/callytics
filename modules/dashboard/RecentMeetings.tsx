@@ -8,14 +8,14 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from '@/components/ui/drawer';
 import { MeetingDetails } from './MeetingDetails';
-import type { Meeting } from '@/lib/types/meeting';
+import type { MeetingRecord } from '@/lib/types/meeting';
 
 interface RecentMeetingsProps {
-  data: Meeting[];
+  readonly data: readonly MeetingRecord[];
 }
 
 export function RecentMeetings({ data }: RecentMeetingsProps) {
-  const [selectedMeeting, setSelectedMeeting] = useState<Meeting | null>(null);
+  const [selectedMeeting, setSelectedMeeting] = useState<MeetingRecord | null>(null);
   const [isMobile, setIsMobile] = useState(false);
 
   // Check if mobile on mount and on resize
