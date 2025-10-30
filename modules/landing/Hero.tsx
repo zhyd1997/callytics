@@ -84,7 +84,12 @@ export function Hero() {
                 </Button>
               </>
             ) : (
-              <Button size="lg" variant="outline" className="min-w-[200px] text-base bg-transparent" asChild>
+              <Button
+                size="lg"
+                variant="outline"
+                className="min-w-[200px] text-base border-primary/50 bg-primary/5 text-primary transition-transform hover:-translate-y-0.5 hover:border-primary/70 hover:bg-primary/25 hover:text-foreground"
+                asChild
+              >
                 <Link href="/dashboard">Go to Dashboard</Link>
               </Button>
             )}
