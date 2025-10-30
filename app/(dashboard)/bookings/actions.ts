@@ -10,7 +10,6 @@ import {
   fetchTopUpdatedBookings,
   mapNormalizedCalBookingsToMeeting,
 } from "@/lib/dto/calBookings";
-import prisma from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { PROVIDER_ID } from "@/constants/oauth";
@@ -38,17 +37,17 @@ const resolveActionContext = async (input: InputParams): Promise<ActionContext> 
     throw new Error("Not Authorized!");
   }
 
-  const account = await prisma.account.findFirst({
-    select: { accessToken: true },
-    where: { userId, providerId: PROVIDER_ID },
-  });
+  const { accessToken } = await auth.api.getAccessToken({
+    headers: requestHeaders,
+    body: { providerId: PROVIDER_ID, userId },
+  })
 
-  if (!account?.accessToken) {
+  if (!accessToken) {
     throw new Error("No accessToken found!");
   }
 
   return {
-    accessToken: account.accessToken,
+    accessToken,
     query,
     baseUrl,
     apiVersion,
