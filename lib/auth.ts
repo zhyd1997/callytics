@@ -16,8 +16,8 @@ const DEFAULT_REDIRECT_URI =
   "http://localhost:3000/api/cal/oauth/callback";
 const CAL_PROFILE_ENDPOINT = `${CAL_API_BASE_URL}/me`;
 
-const CLIENT_ID = process.env.CAL_OAUTH_CLIENT_ID;
-const CLIENT_SECRET = process.env.CAL_OAUTH_CLIENT_SECRET;
+const CLIENT_ID = process.env.CAL_COM_CLIENT_ID;
+const CLIENT_SECRET = process.env.CAL_COM_CLIENT_SECRET;
 const TOKEN_URL = process.env.CAL_OAUTH_TOKEN_ENDPOINT ?? DEFAULT_TOKEN_URL;
 const REDIRECT_URI =
   process.env.CAL_OAUTH_REDIRECT_URI ?? DEFAULT_REDIRECT_URI;
