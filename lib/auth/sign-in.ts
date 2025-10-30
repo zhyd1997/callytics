@@ -4,12 +4,12 @@ import { authClient } from "../auth-client";
 export const signIn = async () => {
   const { data, error } = await authClient.signIn.oauth2({
     providerId: PROVIDER_ID, // required
-    // callbackURL: "/dashboard",
+    callbackURL: "/dashboard",
     // errorCallbackURL: "/error-page",
     // newUserCallbackURL: "/welcome",
     // disableRedirect: false,
     // scopes: ["my-scope"],
-    // requestSignUp: false,
+    requestSignUp: false,
   });
 
   return { data, error }
