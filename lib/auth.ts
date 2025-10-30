@@ -4,6 +4,7 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { PrismaClient } from "@/app/generated/prisma/client";
 import { genericOAuth } from "better-auth/plugins"
 import { nextCookies } from "better-auth/next-js";
+import { PROVIDER_ID } from "@/constants/oauth";
 
 const prisma = new PrismaClient();
 export const auth = betterAuth({
@@ -14,9 +15,11 @@ export const auth = betterAuth({
     genericOAuth({ 
       config: [ 
         { 
-          providerId: "cal", 
-          clientId: process.env.CAL_COM_CLIENT_ID!, 
-          clientSecret: process.env.CAL_COM_CLIENT_SECRET!, 
+          providerId: PROVIDER_ID,
+          clientId: process.env.CAL_COM_CLIENT_ID!,
+          clientSecret: process.env.CAL_COM_CLIENT_SECRET!,
+          authorizationUrl: "https://app.cal.com/auth/oauth2/authorize",
+          redirectURI: "http://localhost:3000/api/cal/oauth/callback"
           // discoveryUrl: "https://auth.example.com/.well-known/openid-configuration", 
           // ... other config options
         }, 
