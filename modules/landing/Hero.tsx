@@ -37,20 +37,7 @@ export function Hero() {
 
       <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8 lg:py-32">
         <div className="mx-auto max-w-3xl text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-xs sm:mb-8 sm:px-4 sm:py-2 sm:text-sm"
-          >
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75"></span>
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-accent"></span>
-            </span>
-            <span className="text-muted-foreground">Now accepting early access signups</span>
-          </motion.div>
-
-          <motion.h1
+         <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
