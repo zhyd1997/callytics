@@ -16,12 +16,17 @@ import { removeSelfMeetings } from '@/utils/meetings';
 import { ModeToggle } from '@/components/mode-toggle';
 import { MEETING_DATA } from '@/constants/meetings';
 import type { MeetingCollection, MeetingRecord } from '@/lib/types/meeting';
+import { toast } from 'sonner';
+import { signOut } from '@/lib/auth/sign-out';
+import { useRouter } from 'next/navigation';
 
 interface DashboardAppProps {
   readonly initialMeetings?: MeetingCollection;
 }
 
 export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
+  const router = useRouter()
+
   const [isAuthorized, setIsAuthorized] = useState(false);
 
   const meetingData = useMemo<MeetingCollection>(() => {
@@ -36,8 +41,14 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
     setIsAuthorized(true);
   };
 
-  const handleLogout = () => {
-    setIsAuthorized(false);
+  const handleLogout = async () => {
+    try {
+      await signOut(() => router.push("/")); // redirect to login page
+      setIsAuthorized(false);
+    } catch (err) {
+      console.error(err)
+      toast.error("Something went wrong!")
+    }
   };
 
   // Show landing page if not authorized
@@ -67,14 +78,11 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
           </div>
           <div className="flex items-center gap-2 shrink-0 absolute top-0 right-0 sm:relative sm:top-auto sm:right-auto">
             <ModeToggle />
-            {/*<Button*/}
-            {/*  onClick={handleLogout}*/}
-            {/*  variant="outline"*/}
-            {/*  className="gap-2 shrink-0"*/}
-            {/*>*/}
-            {/*  <LogOut className="h-4 w-4" />*/}
-            {/*  Logout*/}
-            {/*</Button>*/}
+
+            <Button onClick={handleLogout} variant="outline" className="gap-2 shrink-0">
+              <LogOut className="h-4 w-4" />
+              Logout
+            </Button>
           </div>
         </motion.div>
 
