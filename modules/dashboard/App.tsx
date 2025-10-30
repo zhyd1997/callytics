@@ -1,7 +1,7 @@
 'use client';
 
 import type { FC } from 'react';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { Calendar, Clock, Users, Video, BarChart3, TrendingUp, Moon, Sun, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -19,6 +19,7 @@ import type { MeetingCollection, MeetingRecord } from '@/lib/types/meeting';
 import { toast } from 'sonner';
 import { signOut } from '@/lib/auth/sign-out';
 import { useRouter } from 'next/navigation';
+import { authClient } from '@/lib/auth-client';
 
 interface DashboardAppProps {
   readonly initialMeetings?: MeetingCollection;
@@ -27,7 +28,17 @@ interface DashboardAppProps {
 export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
   const router = useRouter()
 
+  const { data: session, isPending, error } = authClient.useSession();
+
   const [isAuthorized, setIsAuthorized] = useState(false);
+
+  useEffect(() => {
+    if (isPending || error || !session) {
+      setIsAuthorized(false)
+    } else {
+      setIsAuthorized(true)
+    }
+  }, [session, isPending, error])
 
   const meetingData = useMemo<MeetingCollection>(() => {
     return initialMeetings ?? MEETING_DATA.data;
@@ -79,10 +90,12 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
           <div className="flex items-center gap-2 shrink-0 absolute top-0 right-0 sm:relative sm:top-auto sm:right-auto">
             <ModeToggle />
 
-            <Button onClick={handleLogout} variant="outline" className="gap-2 shrink-0">
-              <LogOut className="h-4 w-4" />
-              Logout
-            </Button>
+            {isAuthorized && (
+              <Button onClick={handleLogout} variant="outline" className="gap-2 shrink-0">
+                <LogOut className="h-4 w-4" />
+                Logout
+              </Button>
+            )}
           </div>
         </motion.div>
 
