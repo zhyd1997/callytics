@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import type { FC } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { Calendar, Clock, Users, Video, BarChart3, TrendingUp, Moon, Sun, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -14,23 +15,51 @@ import { RecentMeetings } from './RecentMeetings';
 import { removeSelfMeetings } from '@/utils/meetings';
 import { ModeToggle } from '@/components/mode-toggle';
 import { MEETING_DATA } from '@/constants/meetings';
+import type { MeetingCollection, MeetingRecord } from '@/lib/types/meeting';
+import { toast } from 'sonner';
+import { signOut } from '@/lib/auth/sign-out';
+import { useRouter } from 'next/navigation';
+import { authClient } from '@/lib/auth-client';
 
-const meetingData = MEETING_DATA;
+interface DashboardAppProps {
+  readonly initialMeetings?: MeetingCollection;
+}
 
-export const App = () => {
+export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
+  const router = useRouter()
+
+  const { data: session, isPending, error } = authClient.useSession();
+
   const [isAuthorized, setIsAuthorized] = useState(false);
 
-  // Filter out self-meetings (where host and only attendee are the same person)
-  const filteredMeetings = useMemo(() => {
+  useEffect(() => {
+    if (isPending || error || !session) {
+      setIsAuthorized(false)
+    } else {
+      setIsAuthorized(true)
+    }
+  }, [session, isPending, error])
+
+  const meetingData = useMemo<MeetingCollection>(() => {
+    return initialMeetings ?? MEETING_DATA.data;
+  }, [initialMeetings]);
+
+  const filteredMeetings = useMemo<MeetingRecord[]>(() => {
     return removeSelfMeetings(meetingData);
-  }, []);
+  }, [meetingData]);
 
   const handleLogin = () => {
     setIsAuthorized(true);
   };
 
-  const handleLogout = () => {
-    setIsAuthorized(false);
+  const handleLogout = async () => {
+    try {
+      await signOut(() => router.push("/")); // redirect to login page
+      setIsAuthorized(false);
+    } catch (err) {
+      console.error(err)
+      toast.error("Something went wrong!")
+    }
   };
 
   // Show landing page if not authorized
@@ -60,14 +89,13 @@ export const App = () => {
           </div>
           <div className="flex items-center gap-2 shrink-0 absolute top-0 right-0 sm:relative sm:top-auto sm:right-auto">
             <ModeToggle />
-            {/*<Button*/}
-            {/*  onClick={handleLogout}*/}
-            {/*  variant="outline"*/}
-            {/*  className="gap-2 shrink-0"*/}
-            {/*>*/}
-            {/*  <LogOut className="h-4 w-4" />*/}
-            {/*  Logout*/}
-            {/*</Button>*/}
+
+            {isAuthorized && (
+              <Button onClick={handleLogout} variant="outline" className="gap-2 shrink-0">
+                <LogOut className="h-4 w-4" />
+                Logout
+              </Button>
+            )}
           </div>
         </motion.div>
 

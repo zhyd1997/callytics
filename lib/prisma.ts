@@ -1,3 +1,4 @@
+// If your Prisma file is located elsewhere, you can change the path
 import { PrismaClient } from '@/app/generated/prisma'
 import { withAccelerate } from '@prisma/extension-accelerate'
 

@@ -4,10 +4,10 @@ import { motion } from 'motion/react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp } from 'lucide-react';
-import type { Meeting } from '@/lib/types/meeting';
+import type { MeetingRecord } from '@/lib/types/meeting';
 
 interface MeetingTimelineProps {
-  data: Meeting[];
+  readonly data: readonly MeetingRecord[];
 }
 
 export function MeetingTimeline({ data }: MeetingTimelineProps) {

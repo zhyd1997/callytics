@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { CheckCircle2 } from "lucide-react"
 import { motion, AnimatePresence } from "motion/react"
-import { joinWaitlist } from "@/app/actions"
+import { joinWaitlist } from "@/app/(marketing)/waitlist/actions"
 import type { WaitlistState } from "@/lib/schemas/waitlist";
 
 const initialState: WaitlistState = { message: '' }

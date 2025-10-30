@@ -3,10 +3,10 @@
 import { motion } from 'motion/react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import type { Meeting } from '@/lib/types/meeting';
+import type { MeetingRecord } from '@/lib/types/meeting';
 
 interface MeetingStatusChartProps {
-  data: Meeting[];
+  readonly data: readonly MeetingRecord[];
 }
 
 export function MeetingStatusChart({ data }: MeetingStatusChartProps) {

@@ -1,4 +1,4 @@
-import type { Meeting } from '@/lib/types/meeting';
+import type { MeetingRecord } from '@/lib/types/meeting';
 
 /**
  * Filters out meetings where the host and the only attendee are the same person.
@@ -12,7 +12,7 @@ import type { Meeting } from '@/lib/types/meeting';
  * @example
  * const filteredMeetings = removeSelfMeetings(meetingData.data);
  */
-export function removeSelfMeetings(meetings: Meeting[]): Meeting[] {
+export function removeSelfMeetings(meetings: readonly MeetingRecord[]): MeetingRecord[] {
   return meetings.filter((meeting) => {
     // If there are no attendees or more than one attendee, keep the meeting
     if (!meeting.attendees || meeting.attendees.length !== 1) {
@@ -42,7 +42,7 @@ export function removeSelfMeetings(meetings: Meeting[]): Meeting[] {
  * @param meetings - Array of meeting objects
  * @returns Number of self-meetings
  */
-export function countSelfMeetings(meetings: Meeting[]): number {
+export function countSelfMeetings(meetings: readonly MeetingRecord[]): number {
   return meetings.length - removeSelfMeetings(meetings).length;
 }
 
@@ -52,7 +52,7 @@ export function countSelfMeetings(meetings: Meeting[]): number {
  * @param meeting - A meeting object
  * @returns True if the meeting is a self-meeting, false otherwise
  */
-export function isSelfMeeting(meeting: Meeting): boolean {
+export function isSelfMeeting(meeting: MeetingRecord): boolean {
   if (!meeting.attendees || meeting.attendees.length !== 1) {
     return false;
   }

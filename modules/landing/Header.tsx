@@ -22,6 +22,8 @@ export function Header() {
         </div>
 
         <div className="flex items-center gap-2 md:gap-4">
+          <ModeToggle />
+
           <Button variant="ghost" size="icon" asChild className="h-9 w-9">
             <a
               href={SITE_CONFIG.githubUrl}
@@ -32,8 +34,6 @@ export function Header() {
               <Github className="h-4 w-4" />
             </a>
           </Button>
-
-          <ModeToggle />
         </div>
       </div>
     </header>

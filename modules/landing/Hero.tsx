@@ -1,15 +1,33 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
+import { authClient } from "@/lib/auth-client";
+import { signIn } from "@/lib/auth/sign-in";
 import { BarChart3, TrendingUp, Calendar } from "lucide-react"
 import { motion } from "motion/react"
 import Link from "next/link";
+import { useState } from "react";
+import { toast } from "sonner";
 
 export function Hero() {
-  const scrollToWaitlist = () => {
-    const waitlistSection = document.getElementById("waitlist")
-    if (waitlistSection) {
-      waitlistSection.scrollIntoView({ behavior: "smooth", block: "start" })
+  const [isConnecting, setIsConnecting] = useState<boolean>(false)
+
+  const { data: session, isPending, error } = authClient.useSession();
+
+  const handleCalOAuth = async () => {
+    try {
+      setIsConnecting(true)
+
+      const { data, error } = await signIn()
+      
+      if (error) {
+        throw error
+      }
+    } catch (err) {
+      console.error(err)
+      toast.error("Something went wrong!")
+    } finally {
+      setIsConnecting(false)
     }
   }
 
@@ -19,20 +37,7 @@ export function Hero() {
 
       <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8 lg:py-32">
         <div className="mx-auto max-w-3xl text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-xs sm:mb-8 sm:px-4 sm:py-2 sm:text-sm"
-          >
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75"></span>
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-accent"></span>
-            </span>
-            <span className="text-muted-foreground">Now accepting early access signups</span>
-          </motion.div>
-
-          <motion.h1
+         <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
@@ -57,13 +62,23 @@ export function Hero() {
             transition={{ duration: 0.5, delay: 0.3 }}
             className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:mt-10 sm:flex-row sm:items-center sm:gap-4"
           >
-            <Button size="lg" className="gap-2 bg-accent hover:bg-accent/90 text-accent-foreground" onClick={scrollToWaitlist}>
-              <TrendingUp className="h-4 w-4" />
-              Join Waitlist
-            </Button>
-            <Button size="lg" variant="outline" asChild>
-              <Link href="/demo">View Demo</Link>
-            </Button>
+            {!session || isPending || error ? (
+              <>
+                <Button disabled={isConnecting} size="lg" className="gap-2 bg-accent hover:bg-accent/90 text-accent-foreground" onClick={handleCalOAuth}>
+                  <Calendar className="w-4 h-4" />
+                  <span className="hidden sm:inline">Connect with Cal.com</span>
+                  <span className="sm:hidden">Cal.com</span>
+                </Button>
+
+                <Button size="lg" variant="outline" asChild>
+                  <Link href="/demo">View Demo</Link>
+                </Button>
+              </>
+            ) : (
+              <Button size="lg" variant="outline" asChild>
+                <Link href="/dashboard">Go to Dashboard</Link>
+              </Button>
+            )}
           </motion.div>
 
           <motion.div

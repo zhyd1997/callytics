@@ -1,7 +1,6 @@
 import { Hero } from "@/modules/landing/Hero";
 import { Stats } from "@/modules/landing/Stats";
 import { Features } from "@/modules/landing/Features";
-import { WaitlistSection } from "@/modules/landing/WaitlistSection";
 import { Footer } from "@/modules/landing/Footer";
 import { Header } from "./Header";
 import { ReferralSection } from "./ReferralSection";
@@ -13,7 +12,6 @@ export const App = () => {
       <Hero />
       <Stats />
       <Features />
-      <WaitlistSection />
       <ReferralSection />
       <Footer />
     </main>
