@@ -1,15 +1,33 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
+import { authClient } from "@/lib/auth-client";
+import { signIn } from "@/lib/auth/sign-in";
 import { BarChart3, TrendingUp, Calendar } from "lucide-react"
 import { motion } from "motion/react"
 import Link from "next/link";
+import { useState } from "react";
+import { toast } from "sonner";
 
 export function Hero() {
-  const scrollToWaitlist = () => {
-    const waitlistSection = document.getElementById("waitlist")
-    if (waitlistSection) {
-      waitlistSection.scrollIntoView({ behavior: "smooth", block: "start" })
+  const [isConnecting, setIsConnecting] = useState<boolean>(false)
+
+  const { data: session, isPending, error } = authClient.useSession();
+
+  const handleCalOAuth = async () => {
+    try {
+      setIsConnecting(true)
+
+      const { data, error } = await signIn()
+      
+      if (error) {
+        throw error
+      }
+    } catch (err) {
+      console.error(err)
+      toast.error("Something went wrong!")
+    } finally {
+      setIsConnecting(false)
     }
   }
 
@@ -57,13 +75,23 @@ export function Hero() {
             transition={{ duration: 0.5, delay: 0.3 }}
             className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:mt-10 sm:flex-row sm:items-center sm:gap-4"
           >
-            <Button size="lg" className="gap-2 bg-accent hover:bg-accent/90 text-accent-foreground" onClick={scrollToWaitlist}>
-              <TrendingUp className="h-4 w-4" />
-              Join Waitlist
-            </Button>
-            <Button size="lg" variant="outline" asChild>
-              <Link href="/demo">View Demo</Link>
-            </Button>
+            {!session || isPending || error ? (
+              <>
+                <Button disabled={isConnecting} size="lg" className="gap-2 bg-accent hover:bg-accent/90 text-accent-foreground" onClick={handleCalOAuth}>
+                  <Calendar className="w-4 h-4" />
+                  <span className="hidden sm:inline">Connect with Cal.com</span>
+                  <span className="sm:hidden">Cal.com</span>
+                </Button>
+
+                <Button size="lg" variant="outline" asChild>
+                  <Link href="/demo">View Demo</Link>
+                </Button>
+              </>
+            ) : (
+              <Button size="lg" variant="outline" asChild>
+                <Link href="/dashboard">Go to Dashboard</Link>
+              </Button>
+            )}
           </motion.div>
 
           <motion.div
