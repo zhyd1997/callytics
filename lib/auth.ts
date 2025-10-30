@@ -9,11 +9,11 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
 import { genericOAuth } from "better-auth/plugins";
 import type { CalProfilePayload } from "@/lib/types/cal";
+import { buildAppUrl } from "@/lib/env";
 
 const DEFAULT_AUTHORIZATION_URL = CAL_AUTHORIZATION_URL;
 const DEFAULT_TOKEN_URL = `https://app.cal.com/api/auth/oauth/token`;
-const DEFAULT_REDIRECT_URI =
-  "http://localhost:3000/api/cal/oauth/callback";
+const DEFAULT_REDIRECT_URI = buildAppUrl("/api/cal/oauth/callback");
 const CAL_PROFILE_ENDPOINT = `${CAL_API_BASE_URL}/me`;
 
 const CLIENT_ID = process.env.CAL_COM_CLIENT_ID;
