@@ -22,15 +22,15 @@ export function MeetingStatusChart({ data }: MeetingStatusChartProps) {
   }));
 
   const COLORS = {
-    Accepted: '#10B981',
-    Cancelled: '#EF4444',
+    Accepted: 'var(--color-chart-1)',
+    Cancelled: '#f87171',
   };
 
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="bg-card border rounded-lg p-3 shadow-lg">
+        <div className="rounded-lg border border-primary/20 bg-card/90 p-3 shadow-[0_8px_30px_rgba(249,115,22,0.15)] backdrop-blur">
           <p className="font-medium">{data.name}</p>
           <p className="text-sm text-muted-foreground">
             {data.value} meetings ({data.percentage}%)
@@ -42,8 +42,9 @@ export function MeetingStatusChart({ data }: MeetingStatusChartProps) {
   };
 
   return (
-    <Card>
-      <CardHeader>
+    <Card className="border border-primary/10 bg-card/80 backdrop-blur">
+      <CardHeader className="relative">
+        <span className="pointer-events-none absolute -left-12 top-6 hidden h-24 w-24 rounded-full bg-[radial-gradient(circle_at_center,_rgba(249,115,22,0.1),_transparent_70%)] sm:block" />
         <CardTitle>Meeting Status Distribution</CardTitle>
         <CardDescription>
           Breakdown of accepted vs cancelled meetings
@@ -80,14 +81,14 @@ export function MeetingStatusChart({ data }: MeetingStatusChartProps) {
           </ResponsiveContainer>
         </motion.div>
         
-        <div className="grid grid-cols-2 gap-4 mt-4">
+        <div className="mt-4 grid grid-cols-2 gap-4">
           {chartData.map((item, index) => (
             <motion.div
               key={item.name}
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.3, delay: index * 0.1 }}
-              className="flex items-center gap-2 p-2 rounded-lg bg-muted/50"
+              className="flex items-center gap-2 rounded-lg border border-primary/20 bg-primary/5 p-3 text-sm backdrop-blur"
             >
               <div 
                 className="w-3 h-3 rounded-full"

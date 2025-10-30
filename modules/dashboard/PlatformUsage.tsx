@@ -49,11 +49,11 @@ export function PlatformUsage({ data }: PlatformUsageProps) {
 
   const getPlatformColor = (platform: string) => {
     const colors = {
-      'Google Meet': '#4285F4',
-      'Zoom': '#2D8CFF',
-      'Cal.com Video': '#7C3AED',
-      'DingTalk': '#1890FF',
-      'Other': '#6B7280',
+      'Google Meet': 'var(--color-chart-1)',
+      'Zoom': '#a855f7',
+      'Cal.com Video': '#facc15',
+      'DingTalk': '#fb923c',
+      'Other': '#f87171',
     };
     return colors[platform as keyof typeof colors] || '#6B7280';
   };
@@ -62,8 +62,8 @@ export function PlatformUsage({ data }: PlatformUsageProps) {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="bg-card border rounded-lg p-3 shadow-lg">
-          <p className="font-medium">{label}</p>
+        <div className="rounded-lg border border-primary/20 bg-card/90 p-3 shadow-[0_8px_30px_rgba(249,115,22,0.15)] backdrop-blur">
+          <p className="font-medium text-sm">{label}</p>
           <p className="text-sm text-muted-foreground">
             {data.count} meetings ({data.percentage}%)
           </p>
@@ -76,7 +76,7 @@ export function PlatformUsage({ data }: PlatformUsageProps) {
   const mostUsedPlatform = chartData[0];
 
   return (
-    <Card>
+    <Card className="border border-primary/10 bg-card/80 backdrop-blur">
       <CardHeader>
         <CardTitle>Platform Usage</CardTitle>
         <CardDescription>
@@ -105,7 +105,7 @@ export function PlatformUsage({ data }: PlatformUsageProps) {
               <Bar 
                 dataKey="count" 
                 radius={[4, 4, 0, 0]}
-                fill="#3B82F6"
+                fill="var(--color-chart-1)"
               />
             </BarChart>
           </ResponsiveContainer>
@@ -120,12 +120,12 @@ export function PlatformUsage({ data }: PlatformUsageProps) {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.1 }}
-                className="flex items-center justify-between p-3 rounded-lg bg-muted/50"
+                className="flex items-center justify-between rounded-lg border border-primary/20 bg-primary/5 p-3 backdrop-blur"
               >
                 <div className="flex items-center gap-3">
                   <div 
-                    className="p-2 rounded-lg"
-                    style={{ backgroundColor: `${getPlatformColor(item.platform)}20` }}
+                    className="rounded-lg border border-transparent p-2 shadow-[0_0_25px_rgba(249,115,22,0.18)]"
+                    style={{ backgroundColor: `${getPlatformColor(item.platform)}33` }}
                   >
                     <Icon 
                       className="h-4 w-4" 
@@ -160,7 +160,7 @@ export function PlatformUsage({ data }: PlatformUsageProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.5 }}
-          className="mt-4 p-3 rounded-lg bg-primary/5 border border-primary/20"
+          className="mt-4 rounded-lg border border-primary/20 bg-primary/5 p-3 backdrop-blur"
         >
           <p className="text-sm text-muted-foreground mb-1">Most Used Platform</p>
           <p className="font-semibold">

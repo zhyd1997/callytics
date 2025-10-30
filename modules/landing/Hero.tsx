@@ -1,25 +1,23 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { authClient } from "@/lib/auth-client";
-import { signIn } from "@/lib/auth/sign-in";
-import { BarChart3, TrendingUp, Calendar } from "lucide-react"
-import { motion } from "motion/react"
-import Link from "next/link";
-import { useState } from "react";
-import { toast } from "sonner";
+import { authClient } from "@/lib/auth-client"
+import { signIn } from "@/lib/auth/sign-in"
+import Link from "next/link"
+import { useState } from "react"
+import { toast } from "sonner"
 
 export function Hero() {
   const [isConnecting, setIsConnecting] = useState<boolean>(false)
 
-  const { data: session, isPending, error } = authClient.useSession();
+  const { data: session, isPending, error } = authClient.useSession()
 
   const handleCalOAuth = async () => {
     try {
       setIsConnecting(true)
 
-      const { data, error } = await signIn()
-      
+      const { error } = await signIn()
+
       if (error) {
         throw error
       }
@@ -31,90 +29,86 @@ export function Hero() {
     }
   }
 
+  const showConnectCta = !session || isPending || !!error
+
   return (
     <section className="relative overflow-hidden border-b border-border">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-accent/20 via-background to-background" />
+      <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
 
-      <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8 lg:py-32">
-        <div className="mx-auto max-w-3xl text-center">
-         <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-balance text-4xl font-bold tracking-tight text-accent sm:text-5xl lg:text-7xl"
-          >
-            Analytics for Cal.com, simplified
-          </motion.h1>
+      <div className="container relative mx-auto px-4 py-24 md:py-32">
+        <div className="mx-auto max-w-4xl text-center">
+          <div className="mb-8 flex items-center justify-center">
+            <h2 className="relative font-serif text-6xl font-bold tracking-wider md:text-8xl">
+              <span className="bg-gradient-to-r from-primary via-orange-600 to-primary bg-clip-text text-transparent [text-shadow:0_0_30px_rgba(249,115,22,0.5)]">
+                Cal
+              </span>
+              <span className="text-foreground">lytics</span>
+              <span className="absolute -right-8 -top-4 text-4xl md:-right-12 md:-top-6 md:text-6xl animate-[candle-flicker_3s_ease-in-out_infinite]">
+                🎃
+              </span>
+              <span className="absolute -left-6 top-0 text-2xl md:-left-10 md:text-4xl animate-bounce [animation-duration:2s]">
+                🦇
+              </span>
+            </h2>
+          </div>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="mt-4 text-pretty text-base leading-relaxed text-muted-foreground sm:mt-6 sm:text-lg lg:text-xl"
-          >
-            Lightweight analytics dashboard providing visual insights into bookings, event types, and workspace
-            performance. Make data-driven decisions with beautiful, actionable reports.
-          </motion.p>
+          <div className="mb-6 inline-block rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary shadow-[0_0_20px_rgba(249,115,22,0.3)] animate-[gradient-flow_4s_ease_infinite]">
+            <span className="flex items-center gap-2">
+              <span className="text-base animate-[float_3s_ease-in-out_infinite]">👻</span>
+              Now Live on Halloween
+            </span>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:mt-10 sm:flex-row sm:items-center sm:gap-4"
-          >
-            {!session || isPending || error ? (
+          <h1 className="mb-6 text-balance font-sans text-5xl font-bold leading-tight tracking-tight text-foreground md:text-7xl">
+            Analytics for Cal.com Users
+          </h1>
+
+          <p className="mb-10 text-pretty text-lg leading-relaxed text-muted-foreground md:text-xl">
+            Launching this Halloween with powerful insights for your Cal.com bookings. Track meetings, analyze
+            conversion rates, and optimize your scheduling workflow with spooky precision.
+          </p>
+
+          <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
+            {showConnectCta ? (
               <>
-                <Button disabled={isConnecting} size="lg" className="gap-2 bg-accent hover:bg-accent/90 text-accent-foreground" onClick={handleCalOAuth}>
-                  <Calendar className="w-4 h-4" />
-                  <span className="hidden sm:inline">Connect with Cal.com</span>
-                  <span className="sm:hidden">Cal.com</span>
+                <Button
+                  size="lg"
+                  className="min-w-[200px] text-base font-semibold"
+                  disabled={isConnecting}
+                  onClick={handleCalOAuth}
+                >
+                  {isConnecting ? "Connecting..." : "Connect with Cal.com"}
                 </Button>
-
-                <Button size="lg" variant="outline" asChild>
+                <Button size="lg" variant="outline" className="min-w-[200px] text-base bg-transparent" asChild>
                   <Link href="/demo">View Demo</Link>
                 </Button>
               </>
             ) : (
-              <Button size="lg" variant="outline" asChild>
+              <Button size="lg" variant="outline" className="min-w-[200px] text-base bg-transparent" asChild>
                 <Link href="/dashboard">Go to Dashboard</Link>
               </Button>
             )}
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="mt-12 flex flex-col items-center justify-center gap-4 text-sm text-muted-foreground sm:mt-16 sm:flex-row sm:gap-8"
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.3, delay: 0.5 }}
-              className="flex items-center gap-2"
-            >
-              <BarChart3 className="h-4 w-4 text-accent" />
-              <span>Real-time insights</span>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.3, delay: 0.6 }}
-              className="flex items-center gap-2"
-            >
-              <Calendar className="h-4 w-4 text-accent" />
-              <span>Event tracking</span>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.3, delay: 0.7 }}
-              className="flex items-center gap-2"
-            >
-              <TrendingUp className="h-4 w-4 text-accent" />
-              <span>Performance metrics</span>
-            </motion.div>
-          </motion.div>
+          <div className="mt-12 flex items-center justify-center gap-8 text-sm text-muted-foreground">
+            <div className="flex items-center gap-2">
+              <svg className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              <span>No credit card required</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <svg className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <span>Launching Oct 31st</span>
+            </div>
+          </div>
         </div>
       </div>
     </section>

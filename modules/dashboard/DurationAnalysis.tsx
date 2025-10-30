@@ -43,17 +43,17 @@ export function DurationAnalysis({ data }: DurationAnalysisProps) {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="bg-card border rounded-lg p-3 shadow-lg">
+        <div className="rounded-lg border border-primary/20 bg-card/90 p-3 shadow-[0_8px_30px_rgba(249,115,22,0.15)] backdrop-blur">
           <p className="font-medium mb-2">{label}</p>
           <div className="space-y-1">
             <p className="text-sm">
-              <span className="text-blue-600 dark:text-blue-400">●</span> Total: {data.total}
+              <span style={{ color: 'var(--color-chart-1)' }}>●</span> Total: {data.total}
             </p>
             <p className="text-sm">
-              <span className="text-green-600 dark:text-green-400">●</span> Accepted: {data.accepted}
+              <span style={{ color: 'var(--color-chart-1)' }}>●</span> Accepted: {data.accepted}
             </p>
             <p className="text-sm">
-              <span className="text-red-600 dark:text-red-400">●</span> Cancelled: {data.cancelled}
+              <span style={{ color: '#f87171' }}>●</span> Cancelled: {data.cancelled}
             </p>
           </div>
         </div>
@@ -62,12 +62,16 @@ export function DurationAnalysis({ data }: DurationAnalysisProps) {
     return null;
   };
 
-  const averageDuration = data.reduce((acc, meeting) => acc + meeting.duration, 0) / data.length;
-  const mostCommonDuration = Object.entries(durationGroups)
-    .sort(([,a], [,b]) => b.total - a.total)[0];
+  const averageDuration = data.length
+    ? data.reduce((acc, meeting) => acc + meeting.duration, 0) / data.length
+    : 0;
+  const mostCommonDurationEntry = Object.entries(durationGroups)
+    .sort(([, a], [, b]) => b.total - a.total)[0];
+  const mostCommonDurationLabel = mostCommonDurationEntry?.[0] ?? 'N/A';
+  const mostCommonDurationStats = mostCommonDurationEntry?.[1];
 
   return (
-    <Card>
+    <Card className="border border-primary/10 bg-card/80 backdrop-blur">
       <CardHeader>
         <CardTitle>Meeting Duration Analysis</CardTitle>
         <CardDescription>
@@ -93,8 +97,8 @@ export function DurationAnalysis({ data }: DurationAnalysisProps) {
               />
               <YAxis tick={{ fontSize: 12 }} />
               <Tooltip content={<CustomTooltip />} />
-              <Bar dataKey="accepted" stackId="a" fill="#10B981" radius={[0, 0, 0, 0]} />
-              <Bar dataKey="cancelled" stackId="a" fill="#EF4444" radius={[2, 2, 0, 0]} />
+              <Bar dataKey="accepted" stackId="a" fill="var(--color-chart-1)" radius={[0, 0, 0, 0]} />
+              <Bar dataKey="cancelled" stackId="a" fill="#f87171" radius={[2, 2, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </motion.div>
@@ -104,7 +108,7 @@ export function DurationAnalysis({ data }: DurationAnalysisProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.1 }}
-            className="p-3 rounded-lg bg-muted/50"
+            className="rounded-lg border border-primary/20 bg-primary/5 p-3 backdrop-blur"
           >
             <p className="text-sm text-muted-foreground">Average Duration</p>
             <p className="text-lg font-semibold">{averageDuration.toFixed(0)} minutes</p>
@@ -114,11 +118,11 @@ export function DurationAnalysis({ data }: DurationAnalysisProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.2 }}
-            className="p-3 rounded-lg bg-muted/50"
+            className="rounded-lg border border-primary/20 bg-primary/5 p-3 backdrop-blur"
           >
             <p className="text-sm text-muted-foreground">Most Common</p>
             <p className="text-lg font-semibold">
-              {mostCommonDuration[1].duration} min ({mostCommonDuration[1].total} meetings)
+              {mostCommonDurationStats ? `${mostCommonDurationStats.duration} min (${mostCommonDurationStats.total} meetings)` : mostCommonDurationLabel}
             </p>
           </motion.div>
         </div>
