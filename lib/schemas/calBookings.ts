@@ -183,7 +183,7 @@ export type CalBooking = z.infer<typeof calBookingSchema>;
 export type CalBookingsQuery = z.infer<typeof calBookingsQuerySchema>;
 
 export const fetchCalBookingsActionSchema = z.object({
-  accessToken: z.string().min(1, "Cal.com access token is required."),
+  userId: z.string(),
   query: calBookingsQuerySchema.optional(),
   baseUrl: z.string().url().optional(),
   apiVersion: z.string().min(1).optional(),

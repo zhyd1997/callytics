@@ -7,12 +7,16 @@ import {
   fetchCalBookingsAction,
   fetchTopUpdatedBookingsAction,
 } from "@/app/(dashboard)/bookings/actions";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 export default async function DashboardPage() {
-  const accessToken = process.env.NODE_ENV === "development" ? process.env.CAL_API_KEY?.trim() ?? "" : undefined;
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
 
-  if (!accessToken) {
-    redirect("/demo");
+  if (!session) {
+    redirect("/");
   }
 
   const [bookingsResponse, topUpdatedResponse] = await Promise.all([
@@ -21,12 +25,14 @@ export default async function DashboardPage() {
         sortUpdatedAt: "desc",
         take: 100,
       },
+      userId: session.session.userId,
     }),
     fetchTopUpdatedBookingsAction({
       query: {
         sortUpdatedAt: "desc",
         take: 100,
-      }
+      },
+      userId: session.session.userId,
     }),
   ]);
 

@@ -11,7 +11,7 @@ import { genericOAuth } from "better-auth/plugins";
 import type { CalProfilePayload } from "@/lib/types/cal";
 
 const DEFAULT_AUTHORIZATION_URL = CAL_AUTHORIZATION_URL;
-const DEFAULT_TOKEN_URL = `${CAL_API_BASE_URL}/oauth/token`;
+const DEFAULT_TOKEN_URL = `https://app.cal.com/api/auth/oauth/token`;
 const DEFAULT_REDIRECT_URI =
   "http://localhost:3000/api/cal/oauth/callback";
 const CAL_PROFILE_ENDPOINT = `${CAL_API_BASE_URL}/me`;
