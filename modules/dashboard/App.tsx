@@ -100,7 +100,11 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
             <ModeToggle />
 
             {isAuthorized && (
-              <Button onClick={handleLogout} variant="outline" className="gap-2 shrink-0 border-primary/40 bg-primary/10 text-primary hover:bg-primary/20">
+              <Button
+                onClick={handleLogout}
+                variant="outline"
+                className="gap-2 shrink-0 border-primary/50 bg-primary/10 text-primary hover:-translate-y-0.5 hover:border-primary/70 hover:bg-primary/25 hover:text-foreground"
+              >
                 <LogOut className="h-4 w-4" />
                 Logout
               </Button>

@@ -13,6 +13,7 @@
 
 ## Styling
 - Use Tailwind utility classes first; reserve custom CSS tokens for `app/globals.css`.
+- The seasonal Halloween palette lives in `app/globals.css`; reuse existing tokens/animations (e.g., `gradient-flow`, `candle-flicker`) instead of re-declaring colors inline.
 - Avoid inline styles unless values are truly dynamic; extract repeated patterns into Tailwind components.
 
 ## Async and data
