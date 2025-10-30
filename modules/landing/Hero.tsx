@@ -60,7 +60,7 @@ export function Hero() {
           </div>
 
           <h1 className="mb-6 text-balance font-sans text-5xl font-bold leading-tight tracking-tight text-foreground md:text-7xl">
-            Analytics for Cal.com Users
+            Analytics for Cal.com, simplified
           </h1>
 
           <p className="mb-10 text-pretty text-lg leading-relaxed text-muted-foreground md:text-xl">
