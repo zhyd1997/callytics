@@ -24,7 +24,7 @@ const REDIRECT_URI =
 
 if (!CLIENT_ID || !CLIENT_SECRET) {
   throw new Error(
-    "`CAL_OAUTH_CLIENT_ID` and `CAL_OAUTH_CLIENT_SECRET` must be configured.",
+    "`CAL_COM_CLIENT_ID` and `CAL_COM_CLIENT_SECRET` must be configured.",
   );
 }
 
