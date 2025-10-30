@@ -43,8 +43,8 @@ export function MeetingTimeline({ data }: MeetingTimelineProps) {
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-card border rounded-lg p-3 shadow-lg">
-          <p className="font-medium mb-2">{label}</p>
+        <div className="rounded-lg border border-primary/20 bg-card/90 p-3 shadow-[0_8px_30px_rgba(249,115,22,0.15)] backdrop-blur">
+          <p className="mb-2 font-medium">{label}</p>
           <div className="space-y-1">
             {payload.map((entry: any, index: number) => (
               <p key={index} className="text-sm">
@@ -59,13 +59,16 @@ export function MeetingTimeline({ data }: MeetingTimelineProps) {
   };
 
   const totalMeetings = timelineData.reduce((sum, month) => sum + month.total, 0);
-  const avgPerMonth = totalMeetings / timelineData.length;
+  const avgPerMonth = timelineData.length ? totalMeetings / timelineData.length : 0;
   const trend = timelineData.length > 1 
     ? timelineData[timelineData.length - 1].total - timelineData[0].total
     : 0;
+  const peakMonth = timelineData.length
+    ? timelineData.reduce((max, month) => (month.total > max.total ? month : max), timelineData[0])
+    : undefined;
 
   return (
-    <Card>
+    <Card className="border border-primary/10 bg-card/80 backdrop-blur">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
@@ -75,8 +78,8 @@ export function MeetingTimeline({ data }: MeetingTimelineProps) {
             </CardDescription>
           </div>
           <div className="flex items-center gap-2">
-            <TrendingUp className={`h-4 w-4 ${trend >= 0 ? 'text-green-500' : 'text-red-500'}`} />
-            <span className={`text-sm font-medium ${trend >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+            <TrendingUp className={`h-4 w-4 ${trend >= 0 ? 'text-primary' : 'text-[#f87171]'}`} />
+            <span className={`text-sm font-medium ${trend >= 0 ? 'text-primary' : 'text-[#f87171]'}`}>
               {trend >= 0 ? '+' : ''}{trend} trend
             </span>
           </div>
@@ -104,25 +107,25 @@ export function MeetingTimeline({ data }: MeetingTimelineProps) {
               <Line 
                 type="monotone" 
                 dataKey="total" 
-                stroke="#3B82F6" 
+                stroke="var(--color-chart-1)" 
                 strokeWidth={2}
-                dot={{ fill: '#3B82F6', strokeWidth: 2, r: 4 }}
+                dot={{ fill: 'var(--color-chart-1)', strokeWidth: 2, r: 4 }}
                 name="Total Meetings"
               />
               <Line 
                 type="monotone" 
                 dataKey="accepted" 
-                stroke="#10B981" 
+                stroke="#facc15" 
                 strokeWidth={2}
-                dot={{ fill: '#10B981', strokeWidth: 2, r: 4 }}
+                dot={{ fill: '#facc15', strokeWidth: 2, r: 4 }}
                 name="Accepted"
               />
               <Line 
                 type="monotone" 
                 dataKey="cancelled" 
-                stroke="#EF4444" 
+                stroke="#f87171" 
                 strokeWidth={2}
-                dot={{ fill: '#EF4444', strokeWidth: 2, r: 4 }}
+                dot={{ fill: '#f87171', strokeWidth: 2, r: 4 }}
                 name="Cancelled"
               />
             </LineChart>
@@ -134,7 +137,7 @@ export function MeetingTimeline({ data }: MeetingTimelineProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.1 }}
-            className="p-3 rounded-lg bg-muted/50"
+            className="rounded-lg border border-primary/20 bg-primary/5 p-3 backdrop-blur"
           >
             <p className="text-sm text-muted-foreground">Total Months</p>
             <p className="text-lg font-semibold">{timelineData.length}</p>
@@ -144,7 +147,7 @@ export function MeetingTimeline({ data }: MeetingTimelineProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.2 }}
-            className="p-3 rounded-lg bg-muted/50"
+            className="rounded-lg border border-primary/20 bg-primary/5 p-3 backdrop-blur"
           >
             <p className="text-sm text-muted-foreground">Avg per Month</p>
             <p className="text-lg font-semibold">{avgPerMonth.toFixed(1)}</p>
@@ -154,11 +157,11 @@ export function MeetingTimeline({ data }: MeetingTimelineProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.3 }}
-            className="p-3 rounded-lg bg-muted/50"
+            className="rounded-lg border border-primary/20 bg-primary/5 p-3 backdrop-blur"
           >
             <p className="text-sm text-muted-foreground">Peak Month</p>
             <p className="text-lg font-semibold">
-              {timelineData.reduce((max, month) => month.total > max.total ? month : max, timelineData[0])?.month || 'N/A'}
+              {peakMonth?.month ?? 'N/A'}
             </p>
           </motion.div>
         </div>

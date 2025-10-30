@@ -68,7 +68,7 @@ export function HostActivity({ data }: HostActivityProps) {
   const totalHostHours = Object.values(hostStats).reduce((sum, host) => sum + host.totalDuration, 0) / 60;
 
   return (
-    <Card>
+    <Card className="border border-primary/10 bg-card/80 backdrop-blur">
       <CardHeader>
         <CardTitle>Host Activity</CardTitle>
         <CardDescription>
@@ -83,7 +83,7 @@ export function HostActivity({ data }: HostActivityProps) {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.3, delay: index * 0.1 }}
-              className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted/70 transition-colors"
+              className="flex items-center justify-between rounded-lg border border-primary/20 bg-primary/5 p-3 transition-colors hover:border-primary/40 hover:bg-primary/10"
             >
               <div className="flex items-center gap-3">
                 <Avatar className="h-10 w-10">
@@ -128,10 +128,10 @@ export function HostActivity({ data }: HostActivityProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.6 }}
-            className="flex items-center gap-3 p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20 flex-shrink-0 min-w-[200px] w-full sm:w-auto sm:max-w-[200px]"
+            className="flex min-w-[200px] w-full flex-shrink-0 items-center gap-3 rounded-lg border border-primary/30 bg-primary/10 p-3 text-primary shadow-[0_0_25px_rgba(249,115,22,0.18)] backdrop-blur sm:w-auto sm:max-w-[200px]"
           >
-            <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/40 flex-shrink-0">
-              <Users className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+            <div className="flex-shrink-0 rounded-lg border border-primary/20 bg-primary/15 p-2">
+              <Users className="h-4 w-4 text-primary" />
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-sm text-muted-foreground">Total Hosts</p>
@@ -143,10 +143,10 @@ export function HostActivity({ data }: HostActivityProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.7 }}
-            className="flex items-center gap-3 p-3 rounded-lg bg-green-50 dark:bg-green-900/20 flex-1 min-w-[200px]"
+            className="flex min-w-[200px] flex-1 items-center gap-3 rounded-lg border border-[#facc15]/40 bg-[#facc15]/15 p-3 text-[#f59e0b] shadow-[0_0_25px_rgba(250,204,21,0.22)] backdrop-blur"
           >
-            <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900/40 flex-shrink-0">
-              <Calendar className="h-4 w-4 text-green-600 dark:text-green-400" />
+            <div className="flex-shrink-0 rounded-lg border border-[#facc15]/30 bg-[#facc15]/25 p-2">
+              <Calendar className="h-4 w-4 text-[#f59e0b]" />
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-sm text-muted-foreground">Most Active</p>
@@ -160,10 +160,10 @@ export function HostActivity({ data }: HostActivityProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.8 }}
-            className="flex items-center gap-3 p-3 rounded-lg bg-purple-50 dark:bg-purple-900/20 w-full min-w-[200px]"
+            className="flex min-w-[200px] w-full items-center gap-3 rounded-lg border border-[#a855f7]/40 bg-[#a855f7]/20 p-3 text-[#c084fc] shadow-[0_0_25px_rgba(168,85,247,0.25)] backdrop-blur"
           >
-            <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/40 flex-shrink-0">
-              <Clock className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+            <div className="flex-shrink-0 rounded-lg border border-[#a855f7]/30 bg-[#a855f7]/25 p-2">
+              <Clock className="h-4 w-4 text-[#c084fc]" />
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-sm text-muted-foreground">Total Hours</p>

@@ -24,8 +24,8 @@ export function OverviewStats({ data }: OverviewStatsProps) {
       suffix: '',
       decimals: 0,
       icon: Calendar,
-      color: 'text-blue-600 dark:text-blue-400',
-      bgColor: 'bg-blue-50 dark:bg-blue-900/20',
+      iconColor: 'text-primary',
+      iconBg: 'bg-primary/15 border border-primary/20 shadow-[0_0_25px_rgba(249,115,22,0.35)]',
     },
     {
       title: 'Accepted',
@@ -33,8 +33,8 @@ export function OverviewStats({ data }: OverviewStatsProps) {
       suffix: '',
       decimals: 0,
       icon: CheckCircle,
-      color: 'text-green-600 dark:text-green-400',
-      bgColor: 'bg-green-50 dark:bg-green-900/20',
+      iconColor: 'text-[#facc15]',
+      iconBg: 'bg-[#facc15]/15 border border-[#facc15]/30 shadow-[0_0_20px_rgba(250,204,21,0.35)]',
       extraInfo: acceptanceRate,
     },
     {
@@ -43,8 +43,8 @@ export function OverviewStats({ data }: OverviewStatsProps) {
       suffix: '',
       decimals: 0,
       icon: XCircle,
-      color: 'text-red-600 dark:text-red-400',
-      bgColor: 'bg-red-50 dark:bg-red-900/20',
+      iconColor: 'text-[#f87171]',
+      iconBg: 'bg-[#f87171]/15 border border-[#f87171]/30 shadow-[0_0_18px_rgba(248,113,113,0.35)]',
     },
     {
       title: 'Total Hours',
@@ -52,8 +52,8 @@ export function OverviewStats({ data }: OverviewStatsProps) {
       suffix: 'h',
       decimals: 1,
       icon: Clock,
-      color: 'text-purple-600 dark:text-purple-400',
-      bgColor: 'bg-purple-50 dark:bg-purple-900/20',
+      iconColor: 'text-[#a855f7]',
+      iconBg: 'bg-[#a855f7]/15 border border-[#a855f7]/30 shadow-[0_0_20px_rgba(168,85,247,0.4)]',
     },
   ];
 
@@ -66,16 +66,17 @@ export function OverviewStats({ data }: OverviewStatsProps) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: index * 0.1 }}
         >
-          <Card className="relative overflow-hidden">
-            <CardContent className="p-4 sm:p-6">
+          <Card className="relative overflow-hidden border border-primary/10 bg-card/80 backdrop-blur">
+            <span className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(249,115,22,0.08),_transparent_70%)] opacity-60" />
+            <CardContent className="relative z-[1] p-4 sm:p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs sm:text-sm text-muted-foreground mb-1">
                     {stat.title}
                   </p>
                   <p className="text-lg sm:text-2xl">
-                    <AnimatedNumber 
-                      value={stat.numericValue} 
+                    <AnimatedNumber
+                      value={stat.numericValue}
                       decimals={stat.decimals}
                       duration={1.5}
                     />
@@ -87,8 +88,8 @@ export function OverviewStats({ data }: OverviewStatsProps) {
                     </p>
                   )}
                 </div>
-                <div className={`p-2 sm:p-3 rounded-lg ${stat.bgColor}`}>
-                  <stat.icon className={`h-4 w-4 sm:h-6 sm:w-6 ${stat.color}`} />
+                <div className={`p-2 sm:p-3 rounded-lg ${stat.iconBg}`}>
+                  <stat.icon className={`h-4 w-4 sm:h-6 sm:w-6 ${stat.iconColor}`} />
                 </div>
               </div>
             </CardContent>

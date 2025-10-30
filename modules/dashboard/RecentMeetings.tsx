@@ -52,7 +52,7 @@ export function RecentMeetings({ data }: RecentMeetingsProps) {
 
   return (
     <>
-      <Card>
+      <Card className="border border-primary/10 bg-card/80 backdrop-blur">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Calendar className="w-5 h-5" />
@@ -69,7 +69,7 @@ export function RecentMeetings({ data }: RecentMeetingsProps) {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.1 }}
                 onClick={() => setSelectedMeeting(meeting)}
-                className="flex items-center gap-4 p-4 rounded-lg border bg-card hover:bg-accent/50 cursor-pointer transition-colors group"
+                className="group flex cursor-pointer items-center gap-4 rounded-lg border border-primary/20 bg-primary/5 p-4 transition-colors hover:border-primary/40 hover:bg-primary/10"
               >
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2 mb-2">
@@ -98,7 +98,7 @@ export function RecentMeetings({ data }: RecentMeetingsProps) {
                   </div>
                 </div>
                 
-                <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors shrink-0" />
+                <ChevronRight className="h-5 w-5 shrink-0 text-primary/70 transition-colors group-hover:text-primary" />
               </motion.div>
             ))}
           </div>
