@@ -13,6 +13,7 @@ import {
 import prisma from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import { PROVIDER_ID } from "@/constants/oauth";
 
 type InputParams = FetchCalBookingsActionInput;
 
@@ -39,7 +40,7 @@ const resolveActionContext = async (input: InputParams): Promise<ActionContext> 
 
   const account = await prisma.account.findFirst({
     select: { accessToken: true },
-    where: { userId },
+    where: { userId, providerId: PROVIDER_ID },
   });
 
   if (!account?.accessToken) {
