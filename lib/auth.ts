@@ -8,14 +8,17 @@ import { PROVIDER_ID } from "@/constants/oauth";
 
 const prisma = new PrismaClient();
 
+/**
+ * @see https://www.better-auth.com/docs/concepts/oauth
+ * @see https://cal.com/help/apps-and-integrations/oauth
+ */
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
   plugins: [
-    // @see more: https://www.better-auth.com/docs/concepts/oauth
     genericOAuth({ 
-      config: [ 
+      config: [
         { 
           providerId: PROVIDER_ID,
           clientId: process.env.CAL_COM_CLIENT_ID!,
