@@ -1,7 +1,10 @@
 import type { CalProfilePayload } from "@/lib/types/cal";
 import {
-  CAL_API_BASE_URL,
   CAL_AUTHORIZATION_URL,
+  CAL_TOKEN_URL,
+  CAL_PROFILE_ENDPOINT,
+  OAUTH_CALLBACK_PATH,
+  DEFAULT_OAUTH_SCOPES,
   PROVIDER_ID,
 } from "@/constants/oauth";
 import prisma from "@/lib/prisma";
@@ -11,20 +14,13 @@ import { nextCookies } from "better-auth/next-js";
 import { genericOAuth } from "better-auth/plugins";
 import { buildAppUrl } from "@/lib/env";
 
-// OAuth endpoints and configuration
-const DEFAULT_AUTHORIZATION_URL = CAL_AUTHORIZATION_URL;
-const DEFAULT_TOKEN_URL = "https://app.cal.com/api/auth/oauth/token";
-const OAUTH_CALLBACK_PATH = "/api/cal/oauth/callback";
+// OAuth configuration with environment variable overrides
 const DEFAULT_REDIRECT_URI = buildAppUrl(OAUTH_CALLBACK_PATH);
-const CAL_PROFILE_ENDPOINT = `${CAL_API_BASE_URL}/me`;
-
-// OAuth scopes
-const DEFAULT_OAUTH_SCOPES = ["READ_BOOKING"];
 
 // Environment variables
 const CLIENT_ID = process.env.CAL_COM_CLIENT_ID;
 const CLIENT_SECRET = process.env.CAL_COM_CLIENT_SECRET;
-const TOKEN_URL = process.env.CAL_OAUTH_TOKEN_ENDPOINT ?? DEFAULT_TOKEN_URL;
+const TOKEN_URL = process.env.CAL_OAUTH_TOKEN_ENDPOINT ?? CAL_TOKEN_URL;
 const REDIRECT_URI =
   process.env.CAL_OAUTH_REDIRECT_URI ?? DEFAULT_REDIRECT_URI;
 
@@ -76,7 +72,7 @@ export const auth = betterAuth({
           providerId: PROVIDER_ID,
           clientId: CLIENT_ID,
           clientSecret: CLIENT_SECRET,
-          authorizationUrl: DEFAULT_AUTHORIZATION_URL,
+          authorizationUrl: CAL_AUTHORIZATION_URL,
           tokenUrl: TOKEN_URL,
           redirectURI: REDIRECT_URI,
           scopes: DEFAULT_OAUTH_SCOPES,
