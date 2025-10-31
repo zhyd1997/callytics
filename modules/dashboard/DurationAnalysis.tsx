@@ -5,6 +5,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import type { TooltipProps } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import type { MeetingRecord } from '@/lib/types/meeting';
+import { scaleIn, fadeInFromBottom, createTransition } from '@/lib/constants/animations';
 
 interface DurationAnalysisProps {
   readonly data: readonly MeetingRecord[];
@@ -89,9 +90,10 @@ export function DurationAnalysis({ data }: DurationAnalysisProps) {
       </CardHeader>
       <CardContent>
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
+          variants={scaleIn}
+          initial="initial"
+          animate="animate"
+          transition={createTransition()}
           className="h-[300px] w-full mb-4"
         >
           <ResponsiveContainer width="100%" height="100%">
@@ -114,9 +116,10 @@ export function DurationAnalysis({ data }: DurationAnalysisProps) {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.1 }}
+            variants={fadeInFromBottom}
+            initial="initial"
+            animate="animate"
+            transition={createTransition(0.1)}
             className="rounded-lg border border-primary/20 bg-primary/5 p-3 backdrop-blur"
           >
             <p className="text-sm text-muted-foreground">Average Duration</p>
@@ -124,9 +127,10 @@ export function DurationAnalysis({ data }: DurationAnalysisProps) {
           </motion.div>
           
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.2 }}
+            variants={fadeInFromBottom}
+            initial="initial"
+            animate="animate"
+            transition={createTransition(0.2)}
             className="rounded-lg border border-primary/20 bg-primary/5 p-3 backdrop-blur"
           >
             <p className="text-sm text-muted-foreground">Most Common</p>
