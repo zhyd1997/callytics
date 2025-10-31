@@ -137,7 +137,7 @@ export const fetchCalBookings = async (
       throw new CalBookingsApiError(
         "Cal.com bookings request failed.",
         response.status,
-        payload,
+        JSON.stringify(payload),
       );
     }
 
