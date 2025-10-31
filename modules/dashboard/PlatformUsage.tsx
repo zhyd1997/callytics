@@ -1,9 +1,10 @@
 'use client';
 
+import Image from 'next/image';
+import { useTheme } from 'next-themes';
 import { motion } from 'motion/react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Video, Monitor, Globe } from 'lucide-react';
 import type { MeetingRecord } from '@/lib/types/meeting';
 
 interface PlatformUsageProps {
@@ -11,6 +12,8 @@ interface PlatformUsageProps {
 }
 
 export function PlatformUsage({ data }: PlatformUsageProps) {
+  const { resolvedTheme } = useTheme();
+
   // Extract platform from meeting URL
   const getPlatform = (url: string) => {
     if (url.includes('meet.google.com')) return 'Google Meet';
@@ -34,17 +37,36 @@ export function PlatformUsage({ data }: PlatformUsageProps) {
     }))
     .sort((a, b) => b.count - a.count);
 
+  const PLATFORM_ICON_MAP: Record<string, { light: string; dark?: string; alt: string }> = {
+    'Google Meet': {
+      light: '/platforms/Meet_Icon.original.png',
+      alt: 'Google Meet logo',
+    },
+    Zoom: {
+      light: '/platforms/Zoom_Logo_Bloom_RGB.svg',
+      alt: 'Zoom logo',
+    },
+    'Cal.com Video': {
+      light: '/platforms/cal-logo-light.jpeg',
+      dark: '/platforms/cal-logo-dark.jpeg',
+      alt: 'Cal.com logo',
+    },
+    Other: {
+      light: '/logo/callytics-logo-light.png',
+      dark: '/logo/callytics-logo-dark.png',
+      alt: 'Other platform logo',
+    },
+  };
+
   const getPlatformIcon = (platform: string) => {
-    switch (platform) {
-      case 'Google Meet':
-        return Globe;
-      case 'Zoom':
-        return Video;
-      case 'Cal.com Video':
-        return Monitor;
-      default:
-        return Video;
-    }
+    const iconConfig = PLATFORM_ICON_MAP[platform] ?? PLATFORM_ICON_MAP.Other;
+    const isDark = resolvedTheme === 'dark';
+    const src = isDark && iconConfig.dark ? iconConfig.dark : iconConfig.light;
+
+    return {
+      src,
+      alt: iconConfig.alt,
+    };
   };
 
   const getPlatformColor = (platform: string) => {
@@ -113,7 +135,7 @@ export function PlatformUsage({ data }: PlatformUsageProps) {
 
         <div className="space-y-3">
           {chartData.map((item, index) => {
-            const Icon = getPlatformIcon(item.platform);
+            const icon = getPlatformIcon(item.platform);
             return (
               <motion.div
                 key={item.platform}
@@ -124,12 +146,14 @@ export function PlatformUsage({ data }: PlatformUsageProps) {
               >
                 <div className="flex items-center gap-3">
                   <div 
-                    className="rounded-lg border border-transparent p-2 shadow-[0_0_25px_rgba(249,115,22,0.18)]"
-                    style={{ backgroundColor: `${getPlatformColor(item.platform)}33` }}
+                    className="flex h-10 w-10 items-center justify-center rounded-lg border border-border/40 bg-muted/40 shadow-[0_0_20px_rgba(249,115,22,0.15)]"
                   >
-                    <Icon 
-                      className="h-4 w-4" 
-                      style={{ color: getPlatformColor(item.platform) }}
+                    <Image
+                      src={icon.src}
+                      alt={icon.alt}
+                      width={28}
+                      height={28}
+                      className="h-7 w-7 object-contain rounded-[6px]"
                     />
                   </div>
                   <div>
