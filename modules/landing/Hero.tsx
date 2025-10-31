@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { authClient } from "@/lib/auth-client"
 import { signIn } from "@/lib/auth/sign-in"
 import Link from "next/link"
+import Image from "next/image"
 import { useState } from "react"
 import { toast } from "sonner"
 
@@ -43,7 +44,7 @@ export function Hero() {
                 Cal
               </span>
               <span className="text-foreground">lytics</span>
-              <span className="absolute -right-8 -top-4 text-4xl md:-right-12 md:-top-6 md:text-6xl animate-[candle-flicker_3s_ease-in-out_infinite]">
+              <span className="absolute -right-8 -bottom-4 text-4xl md:-right-12 md:-bottom-6 md:text-6xl animate-[candle-flicker_3s_ease-in-out_infinite]">
                 🎃
               </span>
               <span className="absolute -left-6 top-0 text-2xl md:-left-10 md:text-4xl animate-bounce [animation-duration:2s]">
@@ -60,7 +61,26 @@ export function Hero() {
           </div>
 
           <h1 className="mb-6 text-balance font-sans text-5xl font-bold leading-tight tracking-tight text-foreground md:text-7xl">
-            Analytics for Cal.com, simplified
+            Analytics for{" "}
+            <span className="relative inline-flex h-10 w-24 rotate-[-3deg] shrink-0 items-center justify-center md:h-16 md:w-32">
+              <Image
+                src="/platforms/cal-logo-light.jpeg"
+                alt="Cal.com"
+                fill
+                sizes="(min-width: 768px) 8rem, 6rem"
+                className="object-cover dark:hidden"
+                priority
+              />
+              <Image
+                src="/platforms/cal-logo-dark.jpeg"
+                alt="Cal.com"
+                fill
+                sizes="(min-width: 768px) 8rem, 6rem"
+                className="hidden object-cover dark:block"
+                priority
+              />
+            </span>{" "}
+            simplified
           </h1>
 
           <p className="mb-10 text-pretty text-lg leading-relaxed text-muted-foreground md:text-xl">
@@ -73,7 +93,7 @@ export function Hero() {
               <>
                 <Button
                   size="lg"
-                  className="min-w-[200px] text-base font-semibold"
+                  className="min-w-[200px] text-base font-semibold hover:cursor-pointer"
                   disabled={isConnecting}
                   onClick={handleCalOAuth}
                 >
