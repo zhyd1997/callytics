@@ -5,7 +5,7 @@
  * to remove self-meetings from your data.
  */
 
-import { removeSelfMeetings, countSelfMeetings, isSelfMeeting } from './meetings';
+import { removeSelfMeetings, countSelfMeetings, isSelfMeeting } from '@/lib/utils/meetings';
 import { MEETING_DATA } from "@/constants/meetings";
 
 // Example meeting data

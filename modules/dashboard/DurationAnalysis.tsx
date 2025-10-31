@@ -2,7 +2,6 @@
 
 import { motion } from 'motion/react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import type { TooltipProps } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import type { MeetingRecord } from '@/lib/types/meeting';
 import { scaleIn, fadeInFromBottom, createTransition } from '@/lib/constants/animations';
@@ -19,7 +18,14 @@ interface CustomTooltipPayload {
   sortKey: number;
 }
 
-const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
+interface CustomTooltipPropsType {
+  active?: boolean;
+  payload?: Array<{ payload: CustomTooltipPayload }>;
+  label?: string;
+}
+
+const CustomTooltip = (props: CustomTooltipPropsType) => {
+  const { active, payload, label } = props;
   if (active && payload && payload.length) {
     const data = payload[0].payload as CustomTooltipPayload;
     return (

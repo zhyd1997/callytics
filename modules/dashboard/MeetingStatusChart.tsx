@@ -2,7 +2,6 @@
 
 import { motion } from 'motion/react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
-import type { TooltipProps } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import type { MeetingRecord } from '@/lib/types/meeting';
 
@@ -16,12 +15,18 @@ interface CustomTooltipPayload {
   percentage: number;
 }
 
+interface CustomTooltipPropsType {
+  active?: boolean;
+  payload?: Array<{ payload: CustomTooltipPayload }>;
+}
+
 const COLORS = {
   Accepted: 'var(--color-chart-1)',
   Cancelled: '#f87171',
 };
 
-const CustomTooltip = ({ active, payload }: TooltipProps<number, string>) => {
+const CustomTooltip = (props: CustomTooltipPropsType) => {
+  const { active, payload } = props;
   if (active && payload && payload.length) {
     const data = payload[0].payload as CustomTooltipPayload;
     return (

@@ -4,7 +4,6 @@ import Image from 'next/image';
 import { useTheme } from 'next-themes';
 import { motion } from 'motion/react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import type { TooltipProps } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import type { MeetingRecord } from '@/lib/types/meeting';
 
@@ -16,6 +15,12 @@ interface CustomTooltipPayload {
   platform: string;
   count: number;
   percentage: number;
+}
+
+interface CustomTooltipPropsType {
+  active?: boolean;
+  payload?: Array<{ payload: CustomTooltipPayload }>;
+  label?: string;
 }
 
 const PLATFORM_ICON_MAP: Record<string, { light: string; dark?: string; alt: string }> = {
@@ -39,7 +44,8 @@ const PLATFORM_ICON_MAP: Record<string, { light: string; dark?: string; alt: str
   },
 };
 
-const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
+const CustomTooltip = (props: CustomTooltipPropsType) => {
+  const { active, payload, label } = props;
   if (active && payload && payload.length) {
     const data = payload[0].payload as CustomTooltipPayload;
     return (

@@ -2,7 +2,6 @@
 
 import { motion } from 'motion/react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import type { TooltipProps } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp } from 'lucide-react';
 import type { MeetingRecord } from '@/lib/types/meeting';
@@ -17,17 +16,23 @@ interface TooltipPayloadEntry {
   value: number;
 }
 
-const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
+interface CustomTooltipPropsType {
+  active?: boolean;
+  payload?: Array<{ color: string; name: string; value: number }>;
+  label?: string;
+}
+
+const CustomTooltip = (props: CustomTooltipPropsType) => {
+  const { active, payload, label } = props;
   if (active && payload && payload.length) {
     return (
       <div className="rounded-lg border border-primary/20 bg-card/90 p-3 shadow-[0_8px_30px_rgba(249,115,22,0.15)] backdrop-blur">
         <p className="mb-2 font-medium">{label}</p>
         <div className="space-y-1">
-          {payload.map((entry, index: number) => {
-            const typedEntry = entry as unknown as TooltipPayloadEntry;
+          {payload.map((entry: TooltipPayloadEntry, index: number) => {
             return (
               <p key={index} className="text-sm">
-                <span style={{ color: typedEntry.color }}>●</span> {typedEntry.name}: {typedEntry.value}
+                <span style={{ color: entry.color }}>●</span> {entry.name}: {entry.value}
               </p>
             );
           })}
