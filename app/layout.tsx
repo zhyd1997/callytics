@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
-import { Analytics } from "@vercel/analytics/next"
-import { Toaster } from "@/components/ui/sonner"
+import { Analytics } from "@vercel/analytics/next";
+import { Toaster } from "@/components/ui/sonner";
+import { AppHeader } from "@/components/AppHeader";
 
 import "./globals.css";
 
@@ -42,7 +43,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <div className="min-h-screen bg-background text-foreground">
+            <AppHeader />
+            <main>{children}</main>
+          </div>
           <Toaster />
           <Analytics />
         </ThemeProvider>

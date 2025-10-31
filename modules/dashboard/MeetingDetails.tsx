@@ -53,7 +53,7 @@ export function MeetingDetails({ meeting }: MeetingDetailsProps) {
           </Badge>
         </div>
         {meeting.description && (
-          <p className="text-muted-foreground text-sm">{meeting.description}</p>
+          <p className="text-muted-foreground text-sm whitespace-pre-line break-words">{meeting.description}</p>
         )}
       </div>
 
