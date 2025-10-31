@@ -58,15 +58,16 @@ export function OverviewStats({ data }: OverviewStatsProps) {
   ];
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 gap-4 auto-rows-fr lg:grid-cols-4">
       {stats.map((stat, index) => (
         <motion.div
           key={stat.title}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: index * 0.1 }}
+          className="h-full"
         >
-          <Card className="relative overflow-hidden border border-primary/10 bg-card/80 backdrop-blur">
+          <Card className="relative h-full overflow-hidden border border-primary/10 bg-card/80 backdrop-blur">
             <span className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(249,115,22,0.08),_transparent_70%)] opacity-60" />
             <CardContent className="relative z-[1] p-4 sm:p-6">
               <div className="flex items-center justify-between">
