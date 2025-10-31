@@ -2,7 +2,7 @@
 
 import type { ChangeEvent } from "react"
 
-import { useState, useActionState } from "react"
+import { useState, useActionState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -15,17 +15,33 @@ const initialState: WaitlistState = { message: '' }
 
 export function WaitlistSection() {
   const [email, setEmail] = useState("")
-  const [submitted, setSubmitted] = useState(false)
+  const [isManuallyReset, setIsManuallyReset] = useState(false)
   const [state, formAction, isPending] = useActionState(joinWaitlist, initialState)
+  const prevMessageRef = useRef<string>('')
 
-  // Check for success after form action completes
-  if (state.message === "Success" && !submitted) {
-    setSubmitted(true)
-    setEmail("")
-  }
+  // Derive submitted state from form action result, but allow manual reset
+  const submitted = state.message === "Success" && !isManuallyReset
+
+  // Reset email on success (only once per success) using a cleanup function to avoid cascading renders
+  useEffect(() => {
+    if (state.message === "Success" && prevMessageRef.current !== state.message) {
+      prevMessageRef.current = state.message
+      // Schedule state updates asynchronously to avoid cascading renders
+      const resetTimer = setTimeout(() => setIsManuallyReset(false), 0)
+      const emailTimer = setTimeout(() => setEmail(""), 0)
+      return () => {
+        clearTimeout(resetTimer)
+        clearTimeout(emailTimer)
+      }
+    }
+  }, [state.message])
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value)
+  }
+
+  const handleReset = () => {
+    setIsManuallyReset(true)
   }
 
   return (
@@ -70,7 +86,7 @@ export function WaitlistSection() {
                           We&apos;ll notify you when Callytics is ready for early access.
                         </p>
                       </div>
-                      <Button variant="outline" onClick={() => setSubmitted(false)} className="mt-4">
+                      <Button variant="outline" onClick={handleReset} className="mt-4">
                         Add another email
                       </Button>
                     </motion.div>

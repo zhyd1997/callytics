@@ -28,7 +28,7 @@ console.log('Is self-meeting:', isSelf); // Output: true
 // Usage Example 4: In React component with useMemo
 /*
 import { useMemo } from 'react';
-import { removeSelfMeetings } from './utils/meetings';
+import { removeSelfMeetings } from '@/lib/utils/meetings';
 
 function MyComponent({ rawMeetings }) {
   const filteredMeetings = useMemo(() => {
