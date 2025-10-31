@@ -1,4 +1,4 @@
-import { Calendar, Clock, Users, Video, MapPin, CheckCircle, XCircle, Info } from 'lucide-react';
+import { Calendar, Clock, Users, Video, CheckCircle, XCircle, Info } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import type { MeetingRecord } from '@/lib/types/meeting';

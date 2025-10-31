@@ -2,7 +2,7 @@
 
 import type { ChangeEvent } from "react"
 
-import { useEffect, useState, useActionState } from "react"
+import { useState, useActionState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -16,15 +16,13 @@ const initialState: WaitlistState = { message: '' }
 export function WaitlistSection() {
   const [email, setEmail] = useState("")
   const [submitted, setSubmitted] = useState(false)
-
   const [state, formAction, isPending] = useActionState(joinWaitlist, initialState)
 
-  useEffect(() => {
-    if (state.message === "Success") {
-      setSubmitted(true)
-      setEmail("")
-    }
-  }, [state.message])
+  // Check for success after form action completes
+  if (state.message === "Success" && !submitted) {
+    setSubmitted(true)
+    setEmail("")
+  }
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value)
@@ -67,9 +65,9 @@ export function WaitlistSection() {
                         <CheckCircle2 className="h-8 w-8 text-accent" />
                       </motion.div>
                       <div>
-                        <h3 className="text-xl font-semibold text-foreground">You're on the list!</h3>
+                        <h3 className="text-xl font-semibold text-foreground">You&apos;re on the list!</h3>
                         <p className="mt-2 text-sm text-muted-foreground">
-                          We'll notify you when Callytics is ready for early access.
+                          We&apos;ll notify you when Callytics is ready for early access.
                         </p>
                       </div>
                       <Button variant="outline" onClick={() => setSubmitted(false)} className="mt-4">

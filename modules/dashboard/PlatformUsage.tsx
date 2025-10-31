@@ -4,12 +4,55 @@ import Image from 'next/image';
 import { useTheme } from 'next-themes';
 import { motion } from 'motion/react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import type { TooltipProps } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import type { MeetingRecord } from '@/lib/types/meeting';
 
 interface PlatformUsageProps {
   readonly data: readonly MeetingRecord[];
 }
+
+interface CustomTooltipPayload {
+  platform: string;
+  count: number;
+  percentage: number;
+}
+
+const PLATFORM_ICON_MAP: Record<string, { light: string; dark?: string; alt: string }> = {
+  'Google Meet': {
+    light: '/platforms/Meet_Icon.original.png',
+    alt: 'Google Meet logo',
+  },
+  Zoom: {
+    light: '/platforms/Zoom_Logo_Bloom_RGB.svg',
+    alt: 'Zoom logo',
+  },
+  'Cal.com Video': {
+    light: '/platforms/cal-logo-light.jpeg',
+    dark: '/platforms/cal-logo-dark.jpeg',
+    alt: 'Cal.com logo',
+  },
+  Other: {
+    light: '/logo/callytics-logo-light.png',
+    dark: '/logo/callytics-logo-dark.png',
+    alt: 'Other platform logo',
+  },
+};
+
+const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload as CustomTooltipPayload;
+    return (
+      <div className="rounded-lg border border-primary/20 bg-card/90 p-3 shadow-[0_8px_30px_rgba(249,115,22,0.15)] backdrop-blur">
+        <p className="font-medium text-sm">{label}</p>
+        <p className="text-sm text-muted-foreground">
+          {data.count} meetings ({data.percentage}%)
+        </p>
+      </div>
+    );
+  }
+  return null;
+};
 
 export function PlatformUsage({ data }: PlatformUsageProps) {
   const { resolvedTheme } = useTheme();
@@ -37,27 +80,6 @@ export function PlatformUsage({ data }: PlatformUsageProps) {
     }))
     .sort((a, b) => b.count - a.count);
 
-  const PLATFORM_ICON_MAP: Record<string, { light: string; dark?: string; alt: string }> = {
-    'Google Meet': {
-      light: '/platforms/Meet_Icon.original.png',
-      alt: 'Google Meet logo',
-    },
-    Zoom: {
-      light: '/platforms/Zoom_Logo_Bloom_RGB.svg',
-      alt: 'Zoom logo',
-    },
-    'Cal.com Video': {
-      light: '/platforms/cal-logo-light.jpeg',
-      dark: '/platforms/cal-logo-dark.jpeg',
-      alt: 'Cal.com logo',
-    },
-    Other: {
-      light: '/logo/callytics-logo-light.png',
-      dark: '/logo/callytics-logo-dark.png',
-      alt: 'Other platform logo',
-    },
-  };
-
   const getPlatformIcon = (platform: string) => {
     const iconConfig = PLATFORM_ICON_MAP[platform] ?? PLATFORM_ICON_MAP.Other;
     const isDark = resolvedTheme === 'dark';
@@ -78,21 +100,6 @@ export function PlatformUsage({ data }: PlatformUsageProps) {
       'Other': '#f87171',
     };
     return colors[platform as keyof typeof colors] || '#6B7280';
-  };
-
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      const data = payload[0].payload;
-      return (
-        <div className="rounded-lg border border-primary/20 bg-card/90 p-3 shadow-[0_8px_30px_rgba(249,115,22,0.15)] backdrop-blur">
-          <p className="font-medium text-sm">{label}</p>
-          <p className="text-sm text-muted-foreground">
-            {data.count} meetings ({data.percentage}%)
-          </p>
-        </div>
-      );
-    }
-    return null;
   };
 
   const mostUsedPlatform = chartData[0];

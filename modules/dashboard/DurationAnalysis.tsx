@@ -2,12 +2,44 @@
 
 import { motion } from 'motion/react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import type { TooltipProps } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import type { MeetingRecord } from '@/lib/types/meeting';
 
 interface DurationAnalysisProps {
   readonly data: readonly MeetingRecord[];
 }
+
+interface CustomTooltipPayload {
+  duration: string;
+  total: number;
+  accepted: number;
+  cancelled: number;
+  sortKey: number;
+}
+
+const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload as CustomTooltipPayload;
+    return (
+      <div className="rounded-lg border border-primary/20 bg-card/90 p-3 shadow-[0_8px_30px_rgba(249,115,22,0.15)] backdrop-blur">
+        <p className="font-medium mb-2">{label}</p>
+        <div className="space-y-1">
+          <p className="text-sm">
+            <span style={{ color: 'var(--color-chart-1)' }}>●</span> Total: {data.total}
+          </p>
+          <p className="text-sm">
+            <span style={{ color: 'var(--color-chart-1)' }}>●</span> Accepted: {data.accepted}
+          </p>
+          <p className="text-sm">
+            <span style={{ color: '#f87171' }}>●</span> Cancelled: {data.cancelled}
+          </p>
+        </div>
+      </div>
+    );
+  }
+  return null;
+};
 
 export function DurationAnalysis({ data }: DurationAnalysisProps) {
   // Group meetings by duration
@@ -38,29 +70,6 @@ export function DurationAnalysis({ data }: DurationAnalysisProps) {
       sortKey: value.duration,
     }))
     .sort((a, b) => a.sortKey - b.sortKey);
-
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      const data = payload[0].payload;
-      return (
-        <div className="rounded-lg border border-primary/20 bg-card/90 p-3 shadow-[0_8px_30px_rgba(249,115,22,0.15)] backdrop-blur">
-          <p className="font-medium mb-2">{label}</p>
-          <div className="space-y-1">
-            <p className="text-sm">
-              <span style={{ color: 'var(--color-chart-1)' }}>●</span> Total: {data.total}
-            </p>
-            <p className="text-sm">
-              <span style={{ color: 'var(--color-chart-1)' }}>●</span> Accepted: {data.accepted}
-            </p>
-            <p className="text-sm">
-              <span style={{ color: '#f87171' }}>●</span> Cancelled: {data.cancelled}
-            </p>
-          </div>
-        </div>
-      );
-    }
-    return null;
-  };
 
   const averageDuration = data.length
     ? data.reduce((acc, meeting) => acc + meeting.duration, 0) / data.length

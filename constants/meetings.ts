@@ -42,10 +42,10 @@ const currentMonth = now.getUTCMonth();
 const currentMonthDate2 = deterministicUtcIsoIn(currentYear, currentMonth, 789);
 const currentMonthDate3 = deterministicUtcIsoIn(currentYear, currentMonth, 101112);
 
-// Generate date for month before last month
-const twoMonthsAgoYear = currentMonth <= 1 ? currentYear - 1 : currentYear;
-const twoMonthsAgoMonth = currentMonth <= 1 ? currentMonth + 10 : currentMonth - 2;
-const twoMonthsAgoDate = deterministicUtcIsoIn(twoMonthsAgoYear, twoMonthsAgoMonth, 131415);
+// Generate date for month before last month (reserved for future mock data generation)
+// const twoMonthsAgoYear = currentMonth <= 1 ? currentYear - 1 : currentYear;
+// const twoMonthsAgoMonth = currentMonth <= 1 ? currentMonth + 10 : currentMonth - 2;
+// const twoMonthsAgoDate = deterministicUtcIsoIn(twoMonthsAgoYear, twoMonthsAgoMonth, 131415);
 
 // Generate additional deterministic dates for more meetings
 const lastMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear;
@@ -57,8 +57,9 @@ const currentMonthDate4 = deterministicUtcIsoIn(currentYear, currentMonth, 22232
 const currentMonthDate5 = deterministicUtcIsoIn(currentYear, currentMonth, 252627);
 const currentMonthDate6 = deterministicUtcIsoIn(currentYear, currentMonth, 282930);
 
-const twoMonthsAgoDate2 = deterministicUtcIsoIn(twoMonthsAgoYear, twoMonthsAgoMonth, 313233);
-const twoMonthsAgoDate3 = deterministicUtcIsoIn(twoMonthsAgoYear, twoMonthsAgoMonth, 343536);
+// Unused: reserved for future mock data generation
+// const twoMonthsAgoDate2 = deterministicUtcIsoIn(twoMonthsAgoYear, twoMonthsAgoMonth, 313233);
+// const twoMonthsAgoDate3 = deterministicUtcIsoIn(twoMonthsAgoYear, twoMonthsAgoMonth, 343536);
 
 // Generate dates for month before the month before the last month (3 months ago)
 const threeMonthsAgoYear = currentMonth <= 2 ? currentYear - 1 : currentYear;

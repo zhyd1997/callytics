@@ -2,12 +2,39 @@
 
 import { motion } from 'motion/react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
+import type { TooltipProps } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import type { MeetingRecord } from '@/lib/types/meeting';
 
 interface MeetingStatusChartProps {
   readonly data: readonly MeetingRecord[];
 }
+
+interface CustomTooltipPayload {
+  name: string;
+  value: number;
+  percentage: number;
+}
+
+const COLORS = {
+  Accepted: 'var(--color-chart-1)',
+  Cancelled: '#f87171',
+};
+
+const CustomTooltip = ({ active, payload }: TooltipProps<number, string>) => {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload as CustomTooltipPayload;
+    return (
+      <div className="rounded-lg border border-primary/20 bg-card/90 p-3 shadow-[0_8px_30px_rgba(249,115,22,0.15)] backdrop-blur">
+        <p className="font-medium">{data.name}</p>
+        <p className="text-sm text-muted-foreground">
+          {data.value} meetings ({data.percentage}%)
+        </p>
+      </div>
+    );
+  }
+  return null;
+};
 
 export function MeetingStatusChart({ data }: MeetingStatusChartProps) {
   const statusCounts = data.reduce((acc, meeting) => {
@@ -20,26 +47,6 @@ export function MeetingStatusChart({ data }: MeetingStatusChartProps) {
     value: count,
     percentage: Math.round((count / data.length) * 100),
   }));
-
-  const COLORS = {
-    Accepted: 'var(--color-chart-1)',
-    Cancelled: '#f87171',
-  };
-
-  const CustomTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
-      const data = payload[0].payload;
-      return (
-        <div className="rounded-lg border border-primary/20 bg-card/90 p-3 shadow-[0_8px_30px_rgba(249,115,22,0.15)] backdrop-blur">
-          <p className="font-medium">{data.name}</p>
-          <p className="text-sm text-muted-foreground">
-            {data.value} meetings ({data.percentage}%)
-          </p>
-        </div>
-      );
-    }
-    return null;
-  };
 
   return (
     <Card className="border border-primary/10 bg-card/80 backdrop-blur">

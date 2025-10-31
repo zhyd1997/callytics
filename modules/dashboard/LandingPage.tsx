@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { Calendar, Github, ArrowRight, Mail } from 'lucide-react';
+import { Calendar, Github, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 // import { ImageWithFallback } from '/figma/ImageWithFallback';
