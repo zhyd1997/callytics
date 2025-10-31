@@ -1,8 +1,9 @@
 import { calBookingsQuerySchema } from "@/lib/schemas/calBookings";
-
-const DEFAULT_CAL_API_BASE_URL = "https://api.cal.com";
-const DEFAULT_CAL_API_VERSION = "2024-08-13";
-const BOOKINGS_ENDPOINT = "/v2/bookings";
+import {
+  CAL_API_ROOT_URL,
+  CAL_API_VERSION,
+  CAL_BOOKINGS_ENDPOINT,
+} from "@/constants/oauth";
 
 export type FetchCalBookingsOptions = {
   readonly accessToken: string;
@@ -80,12 +81,12 @@ const buildQueryString = (query?: Record<string, unknown>) => {
 };
 
 const resolveBaseUrl = (baseUrl?: string) => {
-  const resolved = baseUrl ?? process.env.CAL_API_BASE_URL ?? DEFAULT_CAL_API_BASE_URL;
+  const resolved = baseUrl ?? process.env.CAL_API_BASE_URL ?? CAL_API_ROOT_URL;
   return resolved.trim().replace(/\/$/, "");
 };
 
 const resolveApiVersion = (apiVersion?: string) => {
-  return apiVersion ?? process.env.CAL_API_VERSION ?? DEFAULT_CAL_API_VERSION;
+  return apiVersion ?? process.env.CAL_API_VERSION ?? CAL_API_VERSION;
 };
 
 export const fetchCalBookings = async (
@@ -113,7 +114,7 @@ export const fetchCalBookings = async (
     const resolvedBaseUrl = resolveBaseUrl(baseUrl);
     const resolvedApiVersion = resolveApiVersion(apiVersion);
 
-    const url = `${resolvedBaseUrl}${BOOKINGS_ENDPOINT}${buildQueryString(query)}`;
+    const url = `${resolvedBaseUrl}${CAL_BOOKINGS_ENDPOINT}${buildQueryString(query)}`;
 
     const response = await fetchImpl(url, {
       method: "GET",
