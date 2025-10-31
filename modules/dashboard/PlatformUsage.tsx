@@ -68,7 +68,6 @@ export function PlatformUsage({ data }: PlatformUsageProps) {
     if (url.includes('meet.google.com')) return 'Google Meet';
     if (url.includes('zoom.us')) return 'Zoom';
     if (url.includes('app.cal.com')) return 'Cal.com Video';
-    if (url.includes('meeting.dingtalk.com')) return 'DingTalk';
     return 'Other';
   };
 
@@ -102,7 +101,6 @@ export function PlatformUsage({ data }: PlatformUsageProps) {
       'Google Meet': 'var(--color-chart-1)',
       'Zoom': '#a855f7',
       'Cal.com Video': '#facc15',
-      'DingTalk': '#fb923c',
       'Other': '#f87171',
     };
     return colors[platform as keyof typeof colors] || '#6B7280';

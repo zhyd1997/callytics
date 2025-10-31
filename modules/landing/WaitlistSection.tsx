@@ -17,15 +17,15 @@ export function WaitlistSection() {
   const [email, setEmail] = useState("")
   const [isManuallyReset, setIsManuallyReset] = useState(false)
   const [state, formAction, isPending] = useActionState(joinWaitlist, initialState)
-  const prevMessageRef = useRef<string>('')
+  const lastSuccessStateRef = useRef<WaitlistState | null>(null)
 
   // Derive submitted state from form action result, but allow manual reset
   const submitted = state.message === "Success" && !isManuallyReset
 
   // Reset email on success (only once per success) using a cleanup function to avoid cascading renders
   useEffect(() => {
-    if (state.message === "Success" && prevMessageRef.current !== state.message) {
-      prevMessageRef.current = state.message
+    if (state.message === "Success" && lastSuccessStateRef.current !== state) {
+      lastSuccessStateRef.current = state
       // Schedule state updates asynchronously to avoid cascading renders
       const resetTimer = setTimeout(() => setIsManuallyReset(false), 0)
       const emailTimer = setTimeout(() => setEmail(""), 0)
@@ -34,7 +34,7 @@ export function WaitlistSection() {
         clearTimeout(emailTimer)
       }
     }
-  }, [state.message])
+  }, [state])
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value)
