@@ -5,6 +5,7 @@ import {
   type CalBookingsApiError,
 } from "@/lib/dal/calBookings";
 import type { Meeting, MeetingRecord, MeetingsPagination } from "@/lib/types/meeting";
+import { TOP_UPDATED_BOOKINGS_LIMIT, BOOKING_SUMMARY_FETCH_LIMIT } from "@/lib/constants/bookings";
 
 export type NormalizedCalBookingsResponse = {
   items: readonly CalBooking[];
@@ -249,7 +250,7 @@ export const fetchCalBookingSummaryByStatus = async (
       ...rest,
       query: {
         status: [validatedStatus],
-        take: 1,
+        take: BOOKING_SUMMARY_FETCH_LIMIT,
       },
     });
 
@@ -288,7 +289,7 @@ export const fetchTopUpdatedBookings = async (
     const normalizedQuery = {
       ...(query ?? {}),
       sortUpdatedAt: "desc" as const,
-      take: 3,
+      take: TOP_UPDATED_BOOKINGS_LIMIT,
     } satisfies CalBookingsQuery;
 
     const result = await fetchNormalizedCalBookings({

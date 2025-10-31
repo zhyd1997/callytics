@@ -1,12 +1,13 @@
+import type { CalBookingsQuery } from "@/lib/schemas/calBookings";
+import type { Meeting } from "@/lib/types/meeting";
 import { NextRequest, NextResponse } from "next/server";
 import { CalBookingsApiError } from "@/lib/dal/calBookings";
 import {
   fetchNormalizedCalBookings,
   mapNormalizedCalBookingsToMeeting,
 } from "@/lib/dto/calBookings";
-import { calBookingsQuerySchema, type CalBookingsQuery } from "@/lib/schemas/calBookings";
+import { calBookingsQuerySchema } from "@/lib/schemas/calBookings";
 import { ZodError } from "zod";
-import type { Meeting } from "@/lib/types/meeting";
 
 export const dynamic = "force-dynamic";
 

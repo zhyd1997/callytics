@@ -10,7 +10,7 @@ import { MeetingTimeline } from './MeetingTimeline';
 import { PlatformUsage } from './PlatformUsage';
 import { HostActivity } from './HostActivity';
 import { RecentMeetings } from './RecentMeetings';
-import { removeSelfMeetings } from '@/utils/meetings';
+import { removeSelfMeetings } from '@/lib/utils/meetings';
 import { MEETING_DATA } from '@/constants/meetings';
 import type { MeetingCollection, MeetingRecord } from '@/lib/types/meeting';
 

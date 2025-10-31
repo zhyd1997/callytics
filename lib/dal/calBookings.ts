@@ -33,85 +33,47 @@ const buildQueryString = (query?: Record<string, unknown>) => {
   const parsed = calBookingsQuerySchema.parse(query);
   const params = new URLSearchParams();
 
-  if (parsed.status?.length) {
-    params.set("status", parsed.status.join(","));
+  // Helper to add array parameters
+  const addArrayParam = (key: string, value: unknown) => {
+    if (Array.isArray(value) && value.length > 0) {
+      params.set(key, value.join(","));
+    }
+  };
+
+  // Helper to add string parameters
+  const addStringParam = (key: string, value: unknown) => {
+    if (typeof value === "string" && value) {
+      params.set(key, value);
+    }
+  };
+
+  // Helper to add numeric parameters
+  const addNumericParam = (key: string, value: unknown) => {
+    if (typeof value === "number") {
+      params.set(key, String(value));
+    }
+  };
+
+  // Array parameters
+  addArrayParam("status", parsed.status);
+  addArrayParam("eventTypeIds", parsed.eventTypeIds);
+  addArrayParam("teamIds", parsed.teamIds);
+
+  // String parameters
+  const stringParams = [
+    "attendeeEmail", "attendeeName", "bookingUid", "eventTypeId", "teamId",
+    "afterStart", "beforeEnd", "afterCreatedAt", "beforeCreatedAt",
+    "afterUpdatedAt", "beforeUpdatedAt", "sortStart", "sortEnd",
+    "sortCreated", "sortUpdatedAt"
+  ] as const;
+
+  for (const key of stringParams) {
+    addStringParam(key, parsed[key]);
   }
 
-  if (parsed.attendeeEmail) {
-    params.set("attendeeEmail", parsed.attendeeEmail);
-  }
-
-  if (parsed.attendeeName) {
-    params.set("attendeeName", parsed.attendeeName);
-  }
-
-  if (parsed.bookingUid) {
-    params.set("bookingUid", parsed.bookingUid);
-  }
-
-  if (parsed.eventTypeIds?.length) {
-    params.set("eventTypeIds", parsed.eventTypeIds.join(","));
-  }
-
-  if (parsed.eventTypeId) {
-    params.set("eventTypeId", parsed.eventTypeId);
-  }
-
-  if (parsed.teamIds?.length) {
-    params.set("teamIds", parsed.teamIds.join(","));
-  }
-
-  if (parsed.teamId) {
-    params.set("teamId", parsed.teamId);
-  }
-
-  if (parsed.afterStart) {
-    params.set("afterStart", parsed.afterStart);
-  }
-
-  if (parsed.beforeEnd) {
-    params.set("beforeEnd", parsed.beforeEnd);
-  }
-
-  if (parsed.afterCreatedAt) {
-    params.set("afterCreatedAt", parsed.afterCreatedAt);
-  }
-
-  if (parsed.beforeCreatedAt) {
-    params.set("beforeCreatedAt", parsed.beforeCreatedAt);
-  }
-
-  if (parsed.afterUpdatedAt) {
-    params.set("afterUpdatedAt", parsed.afterUpdatedAt);
-  }
-
-  if (parsed.beforeUpdatedAt) {
-    params.set("beforeUpdatedAt", parsed.beforeUpdatedAt);
-  }
-
-  if (parsed.sortStart) {
-    params.set("sortStart", parsed.sortStart);
-  }
-
-  if (parsed.sortEnd) {
-    params.set("sortEnd", parsed.sortEnd);
-  }
-
-  if (parsed.sortCreated) {
-    params.set("sortCreated", parsed.sortCreated);
-  }
-
-  if (parsed.sortUpdatedAt) {
-    params.set("sortUpdatedAt", parsed.sortUpdatedAt);
-  }
-
-  if (typeof parsed.take !== "undefined") {
-    params.set("take", String(parsed.take));
-  }
-
-  if (typeof parsed.skip !== "undefined") {
-    params.set("skip", String(parsed.skip));
-  }
+  // Numeric parameters
+  addNumericParam("take", parsed.take);
+  addNumericParam("skip", parsed.skip);
 
   const qs = params.toString();
   return qs.length ? `?${qs}` : "";
