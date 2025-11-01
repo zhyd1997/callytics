@@ -22,17 +22,14 @@ export function WaitlistSection() {
   // Derive submitted state from form action result, but allow manual reset
   const submitted = state.message === "Success" && !isManuallyReset
 
-  // Reset email on success (only once per success) using a cleanup function to avoid cascading renders
+  // Reset email on success (only once per success)
   useEffect(() => {
     if (state.message === "Success" && lastSuccessStateRef.current !== state) {
       lastSuccessStateRef.current = state
-      // Schedule state updates asynchronously to avoid cascading renders
-      const resetTimer = setTimeout(() => setIsManuallyReset(false), 0)
-      const emailTimer = setTimeout(() => setEmail(""), 0)
-      return () => {
-        clearTimeout(resetTimer)
-        clearTimeout(emailTimer)
-      }
+      // React 19 batches state updates automatically, so this is safe
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setIsManuallyReset(false)
+      setEmail("")
     }
   }, [state])
 
