@@ -57,8 +57,7 @@ export function Hero() {
           </div>
 
           <h1 className="mb-6 text-balance font-sans text-5xl font-bold leading-tight tracking-tight text-foreground md:text-7xl">
-            Payments-grade analytics for
-            {" "}
+            Analytics for{" "}
             <span className="relative inline-flex h-10 w-24 rotate-[-2deg] shrink-0 items-center justify-center md:h-16 md:w-32">
               <Image
                 src="/platforms/cal-logo-light.jpeg"
@@ -77,7 +76,7 @@ export function Hero() {
                 priority
               />
             </span>
-            {" "}teams
+            {" "}simplified
           </h1>
 
           <p className="mb-10 text-pretty text-lg leading-relaxed text-muted-foreground md:text-xl">
