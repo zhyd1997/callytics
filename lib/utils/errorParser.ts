@@ -146,7 +146,7 @@ export const parseErrorDetails = (error: Error): ErrorDetails => {
 
   const { userMessage, technicalMessage } = generateErrorMessages(
     error,
-    errorMessage,
+    errorMessageLower,
     classification
   );
 
