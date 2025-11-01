@@ -6,79 +6,11 @@ import { AlertTriangle, RefreshCcw } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { parseErrorDetails } from "@/lib/utils/errorParser";
 
 type DashboardErrorProps = {
   readonly error: Error & { digest?: string };
   readonly reset: () => void;
-};
-
-type ErrorDetails = {
-  isAuthError: boolean;
-  isForbiddenError: boolean;
-  userMessage: string;
-  technicalMessage?: string;
-};
-
-const parseErrorDetails = (error: Error): ErrorDetails => {
-  const errorName = error.name || "";
-  const errorMessage = error.message || "";
-  const errorMessageLower = errorMessage.toLowerCase();
-  
-  // Check if it's a CalBookingsApiError
-  const isCalBookingsError =
-    errorName === "CalBookingsApiError" ||
-    errorMessageLower.includes("cal.com bookings request failed");
-  
-  // Check for OAuth/authentication errors
-  const isOAuthError =
-    errorMessageLower.includes("permissionsguard") ||
-    errorMessageLower.includes("no oauth client found") ||
-    errorMessageLower.includes("access token");
-  
-  // Check for 403 Forbidden
-  const isForbiddenError =
-    (typeof error === "object" &&
-      error !== null &&
-      "status" in error &&
-      (error as { status: number }).status === 403) ||
-    errorMessageLower.includes("403") ||
-    errorMessageLower.includes("forbidden");
-  
-  const isAuthError =
-    isOAuthError ||
-    errorMessageLower.includes("no accesstoken found") ||
-    errorMessageLower.includes("no session found");
-  
-  // Generate user-friendly message
-  let userMessage = "An unexpected error occurred while loading your dashboard.";
-  let technicalMessage: string | undefined;
-  
-  if (isAuthError) {
-    if (isOAuthError && isForbiddenError) {
-      userMessage = "Your Cal.com authentication has expired or is invalid. Please sign in again to continue.";
-      technicalMessage = "OAuth client not found for access token";
-    } else if (errorMessage.includes("No accessToken found")) {
-      userMessage = "Authentication required. Please sign in to access your dashboard.";
-    } else if (errorMessage.includes("No session found")) {
-      userMessage = "Your session has expired. Please sign in again.";
-    } else {
-      userMessage = "There was a problem with your authentication. Please sign in again.";
-    }
-  } else if (isCalBookingsError && isForbiddenError) {
-    userMessage = "Unable to access your Cal.com bookings. Please verify your permissions and try again.";
-    technicalMessage = "Cal.com API returned a 403 Forbidden error";
-  } else if (isForbiddenError) {
-    userMessage = "You don't have permission to access this resource. Please check your account settings.";
-  } else if (errorMessageLower.includes("failed to fetch")) {
-    userMessage = "Unable to load your data. Please check your connection and try again.";
-  }
-  
-  return {
-    isAuthError,
-    isForbiddenError,
-    userMessage,
-    technicalMessage,
-  };
 };
 
 export default function DashboardError({ error, reset }: DashboardErrorProps) {
