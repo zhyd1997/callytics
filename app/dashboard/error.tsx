@@ -6,7 +6,7 @@ import { AlertTriangle, RefreshCcw } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { parseErrorDetails } from "@/lib/utils/errorParser";
+import { parseErrorDetails } from "@/modules/dashboard/utils/errorParser";
 
 type DashboardErrorProps = {
   readonly error: Error & { digest?: string };
