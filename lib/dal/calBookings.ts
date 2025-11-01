@@ -1,6 +1,6 @@
 import { calBookingsQuerySchema } from "@/lib/schemas/calBookings";
 import {
-  CAL_API_ROOT_URL,
+  CAL_API_BASE_URL,
   CAL_API_VERSION,
   CAL_BOOKINGS_ENDPOINT,
 } from "@/constants/oauth";
@@ -81,7 +81,7 @@ const buildQueryString = (query?: Record<string, unknown>) => {
 };
 
 const resolveBaseUrl = (baseUrl?: string) => {
-  const resolved = baseUrl ?? process.env.CAL_API_BASE_URL ?? CAL_API_ROOT_URL;
+  const resolved = baseUrl ?? process.env.CAL_API_BASE_URL ?? CAL_API_BASE_URL;
   return resolved.trim().replace(/\/$/, "");
 };
 

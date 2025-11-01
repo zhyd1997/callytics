@@ -20,7 +20,7 @@ export const CAL_TOKEN_URL = `${CAL_APP_BASE_URL}/api/auth/oauth/token`
 
 // API endpoints
 export const CAL_PROFILE_ENDPOINT = `${CAL_API_BASE_URL}/me`
-export const CAL_BOOKINGS_ENDPOINT = "/v2/bookings"
+export const CAL_BOOKINGS_ENDPOINT = "/bookings"
 
 // OAuth configuration
 export const OAUTH_CALLBACK_PATH = "/api/cal/oauth/callback"
