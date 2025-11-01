@@ -64,18 +64,23 @@ const isAuthError = (errorMessage: string): boolean => {
   );
 };
 
+type ErrorClassification = {
+  readonly isAuth: boolean;
+  readonly isOAuth: boolean;
+  readonly isForbidden: boolean;
+  readonly isCalBookings: boolean;
+};
+
 /**
  * Generates user-friendly error message and technical details
  */
 const generateErrorMessages = (
   error: Error,
   errorMessage: string,
-  isAuth: boolean,
-  isOAuth: boolean,
-  isForbidden: boolean,
-  isCalBookings: boolean
+  classification: ErrorClassification
 ): Pick<ErrorDetails, "userMessage" | "technicalMessage"> => {
   const defaultMessage = "An unexpected error occurred while loading your dashboard.";
+  const { isAuth, isOAuth, isForbidden, isCalBookings } = classification;
 
   if (isAuth) {
     if (isOAuth && isForbidden) {
@@ -132,23 +137,22 @@ export const parseErrorDetails = (error: Error): ErrorDetails => {
   const errorMessage = error.message || "";
   const errorMessageLower = errorMessage.toLowerCase();
 
-  const isCalBookings = isCalBookingsError(errorName, errorMessageLower);
-  const isOAuth = isOAuthError(errorMessageLower);
-  const isForbidden = isForbiddenError(error, errorMessageLower);
-  const isAuth = isAuthError(errorMessageLower);
+  const classification: ErrorClassification = {
+    isCalBookings: isCalBookingsError(errorName, errorMessageLower),
+    isOAuth: isOAuthError(errorMessageLower),
+    isForbidden: isForbiddenError(error, errorMessageLower),
+    isAuth: isAuthError(errorMessageLower),
+  };
 
   const { userMessage, technicalMessage } = generateErrorMessages(
     error,
     errorMessage,
-    isAuth,
-    isOAuth,
-    isForbidden,
-    isCalBookings
+    classification
   );
 
   return {
-    isAuthError: isAuth,
-    isForbiddenError: isForbidden,
+    isAuthError: classification.isAuth,
+    isForbiddenError: classification.isForbidden,
     userMessage,
     technicalMessage,
   };
