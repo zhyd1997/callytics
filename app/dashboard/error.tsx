@@ -22,26 +22,32 @@ type ErrorDetails = {
 const parseErrorDetails = (error: Error): ErrorDetails => {
   const errorName = error.name || "";
   const errorMessage = error.message || "";
+  const errorMessageLower = errorMessage.toLowerCase();
   
   // Check if it's a CalBookingsApiError
-  const isCalBookingsError = errorName === "CalBookingsApiError" || 
-    errorMessage.includes("Cal.com bookings request failed");
+  const isCalBookingsError =
+    errorName === "CalBookingsApiError" ||
+    errorMessageLower.includes("cal.com bookings request failed");
   
   // Check for OAuth/authentication errors
-  const isOAuthError = errorMessage.includes("PermissionsGuard") || 
-    errorMessage.includes("no oAuth client found") ||
-    errorMessage.includes("access token");
+  const isOAuthError =
+    errorMessageLower.includes("permissionsguard") ||
+    errorMessageLower.includes("no oauth client found") ||
+    errorMessageLower.includes("access token");
   
   // Check for 403 Forbidden
-  const isForbiddenError = (
-    (error && typeof error === "object" && "status" in error && (error as { status: number }).status === 403) ||
-    errorMessage.includes("403") ||
-    errorMessage.includes("Forbidden")
-  );
+  const isForbiddenError =
+    (typeof error === "object" &&
+      error !== null &&
+      "status" in error &&
+      (error as { status: number }).status === 403) ||
+    errorMessageLower.includes("403") ||
+    errorMessageLower.includes("forbidden");
   
-  const isAuthError = isOAuthError || 
-    errorMessage.includes("No accessToken found") ||
-    errorMessage.includes("No session found");
+  const isAuthError =
+    isOAuthError ||
+    errorMessageLower.includes("no accesstoken found") ||
+    errorMessageLower.includes("no session found");
   
   // Generate user-friendly message
   let userMessage = "An unexpected error occurred while loading your dashboard.";
@@ -63,7 +69,7 @@ const parseErrorDetails = (error: Error): ErrorDetails => {
     technicalMessage = "Cal.com API returned a 403 Forbidden error";
   } else if (isForbiddenError) {
     userMessage = "You don't have permission to access this resource. Please check your account settings.";
-  } else if (errorMessage.includes("Failed to fetch")) {
+  } else if (errorMessageLower.includes("failed to fetch")) {
     userMessage = "Unable to load your data. Please check your connection and try again.";
   }
   
