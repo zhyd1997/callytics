@@ -33,9 +33,11 @@ const parseErrorDetails = (error: Error): ErrorDetails => {
     errorMessage.includes("access token");
   
   // Check for 403 Forbidden
-  const isForbiddenError = ("status" in error && error.status === 403) ||
+  const isForbiddenError = (
+    (error && typeof error === "object" && "status" in error && (error as { status: number }).status === 403) ||
     errorMessage.includes("403") ||
-    errorMessage.includes("Forbidden");
+    errorMessage.includes("Forbidden")
+  );
   
   const isAuthError = isOAuthError || 
     errorMessage.includes("No accessToken found") ||
@@ -84,8 +86,12 @@ export default function DashboardError({ error, reset }: DashboardErrorProps) {
     <main className="flex min-h-screen items-center justify-center bg-background px-4 py-16 sm:px-6 lg:px-8">
       <section className="w-full max-w-xl rounded-2xl border border-border bg-card/80 p-8 shadow-sm backdrop-blur">
         <div className="flex flex-col items-center gap-6 text-center">
-          <span className={cn("flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10")}>
-            <AlertTriangle className="h-8 w-8 text-destructive" aria-hidden />
+          <span 
+            className={cn("flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10")}
+            role="img"
+            aria-label="Error"
+          >
+            <AlertTriangle className="h-8 w-8 text-destructive" aria-hidden="true" />
           </span>
           <div className="space-y-3">
             <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
@@ -116,7 +122,7 @@ export default function DashboardError({ error, reset }: DashboardErrorProps) {
                 </Link>
               </Button>
             ) : (
-              <Button onClick={reset} className="gap-2 bg-accent text-accent-foreground hover:bg-accent/90">
+              <Button onClick={reset} variant="default" className="gap-2">
                 <RefreshCcw className="h-4 w-4" aria-hidden />
                 Try again
               </Button>
