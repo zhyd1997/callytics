@@ -84,8 +84,11 @@ export function Hero() {
           </h1>
 
           <p className="mb-10 text-pretty text-lg leading-relaxed text-muted-foreground md:text-xl">
-            Launching this Halloween with powerful insights for your Cal.com bookings. Track meetings, analyze
-            conversion rates, and optimize your scheduling workflow with spooky precision.
+            Launching this Halloween with powerful insights for your{" "}
+            <span className="bg-gradient-to-r from-primary via-orange-600 to-primary bg-clip-text font-semibold text-transparent">
+              Cal.com
+            </span>{" "}
+            bookings. Track meetings, analyze conversion rates, and optimize your scheduling workflow with spooky precision.
           </p>
 
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
