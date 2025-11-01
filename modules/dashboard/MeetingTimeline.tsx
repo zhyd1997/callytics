@@ -10,6 +10,39 @@ interface MeetingTimelineProps {
   readonly data: readonly MeetingRecord[];
 }
 
+interface TooltipPayloadEntry {
+  color: string;
+  name: string;
+  value: number;
+}
+
+interface CustomTooltipPropsType {
+  active?: boolean;
+  payload?: Array<{ color: string; name: string; value: number }>;
+  label?: string;
+}
+
+const CustomTooltip = (props: CustomTooltipPropsType) => {
+  const { active, payload, label } = props;
+  if (active && payload && payload.length) {
+    return (
+      <div className="rounded-lg border border-primary/20 bg-card/90 p-3 shadow-[0_8px_30px_rgba(249,115,22,0.15)] backdrop-blur">
+        <p className="mb-2 font-medium">{label}</p>
+        <div className="space-y-1">
+          {payload.map((entry: TooltipPayloadEntry, index: number) => {
+            return (
+              <p key={index} className="text-sm">
+                <span style={{ color: entry.color }}>●</span> {entry.name}: {entry.value}
+              </p>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+  return null;
+};
+
 export function MeetingTimeline({ data }: MeetingTimelineProps) {
   // Group meetings by month
   const monthlyData = data.reduce((acc, meeting) => {
@@ -39,24 +72,6 @@ export function MeetingTimeline({ data }: MeetingTimelineProps) {
 
   const timelineData = Object.values(monthlyData)
     .sort((a, b) => a.sortKey.localeCompare(b.sortKey));
-
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="rounded-lg border border-primary/20 bg-card/90 p-3 shadow-[0_8px_30px_rgba(249,115,22,0.15)] backdrop-blur">
-          <p className="mb-2 font-medium">{label}</p>
-          <div className="space-y-1">
-            {payload.map((entry: any, index: number) => (
-              <p key={index} className="text-sm">
-                <span style={{ color: entry.color }}>●</span> {entry.name}: {entry.value}
-              </p>
-            ))}
-          </div>
-        </div>
-      );
-    }
-    return null;
-  };
 
   const totalMeetings = timelineData.reduce((sum, month) => sum + month.total, 0);
   const avgPerMonth = timelineData.length ? totalMeetings / timelineData.length : 0;

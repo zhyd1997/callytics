@@ -35,7 +35,7 @@ export const ReferralSection = () => {
           Looking for a Scheduling Solution?
         </h3>
         <p className="text-muted-foreground mb-6">
-          I use and recommend Cal.com for all my scheduling needs. It's open-source, 
+          I use and recommend Cal.com for all my scheduling needs. It&apos;s open-source, 
           privacy-focused, and incredibly flexible for any business.
         </p>
         
@@ -72,7 +72,7 @@ export const ReferralSection = () => {
         </div>
 
         <p className="text-center text-xs text-muted-foreground">
-          * Using my referral link helps support my work and gets you started with Cal.com's powerful features
+          * Using my referral link helps support my work and gets you started with Cal.com&apos;s powerful features
         </p>
       </div>
     </section>

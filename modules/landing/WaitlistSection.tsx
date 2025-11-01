@@ -2,7 +2,7 @@
 
 import type { ChangeEvent } from "react"
 
-import { useEffect, useState, useActionState } from "react"
+import { useState, useActionState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -15,19 +15,30 @@ const initialState: WaitlistState = { message: '' }
 
 export function WaitlistSection() {
   const [email, setEmail] = useState("")
-  const [submitted, setSubmitted] = useState(false)
-
+  const [isManuallyReset, setIsManuallyReset] = useState(false)
   const [state, formAction, isPending] = useActionState(joinWaitlist, initialState)
+  const lastSuccessStateRef = useRef<WaitlistState | null>(null)
 
+  // Derive submitted state from form action result, but allow manual reset
+  const submitted = state.message === "Success" && !isManuallyReset
+
+  // Reset email on success (only once per success)
   useEffect(() => {
-    if (state.message === "Success") {
-      setSubmitted(true)
+    if (state.message === "Success" && lastSuccessStateRef.current !== state) {
+      lastSuccessStateRef.current = state
+      // React 19 batches state updates automatically, so this is safe
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setIsManuallyReset(false)
       setEmail("")
     }
-  }, [state.message])
+  }, [state])
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value)
+  }
+
+  const handleReset = () => {
+    setIsManuallyReset(true)
   }
 
   return (
@@ -67,12 +78,12 @@ export function WaitlistSection() {
                         <CheckCircle2 className="h-8 w-8 text-accent" />
                       </motion.div>
                       <div>
-                        <h3 className="text-xl font-semibold text-foreground">You're on the list!</h3>
+                        <h3 className="text-xl font-semibold text-foreground">You&apos;re on the list!</h3>
                         <p className="mt-2 text-sm text-muted-foreground">
-                          We'll notify you when Callytics is ready for early access.
+                          We&apos;ll notify you when Callytics is ready for early access.
                         </p>
                       </div>
-                      <Button variant="outline" onClick={() => setSubmitted(false)} className="mt-4">
+                      <Button variant="outline" onClick={handleReset} className="mt-4">
                         Add another email
                       </Button>
                     </motion.div>

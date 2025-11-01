@@ -11,6 +11,55 @@ interface PlatformUsageProps {
   readonly data: readonly MeetingRecord[];
 }
 
+interface CustomTooltipPayload {
+  platform: string;
+  count: number;
+  percentage: number;
+}
+
+interface CustomTooltipPropsType {
+  active?: boolean;
+  payload?: Array<{ payload: CustomTooltipPayload }>;
+  label?: string;
+}
+
+const PLATFORM_ICON_MAP: Record<string, { light: string; dark?: string; alt: string }> = {
+  'Google Meet': {
+    light: '/platforms/Meet_Icon.original.png',
+    alt: 'Google Meet logo',
+  },
+  Zoom: {
+    light: '/platforms/Zoom_Logo_Bloom_RGB.svg',
+    alt: 'Zoom logo',
+  },
+  'Cal.com Video': {
+    light: '/platforms/cal-logo-light.jpeg',
+    dark: '/platforms/cal-logo-dark.jpeg',
+    alt: 'Cal.com logo',
+  },
+  Other: {
+    light: '/logo/callytics-logo-light.png',
+    dark: '/logo/callytics-logo-dark.png',
+    alt: 'Other platform logo',
+  },
+};
+
+const CustomTooltip = (props: CustomTooltipPropsType) => {
+  const { active, payload, label } = props;
+  if (active && payload && payload.length) {
+    const data = payload[0].payload as CustomTooltipPayload;
+    return (
+      <div className="rounded-lg border border-primary/20 bg-card/90 p-3 shadow-[0_8px_30px_rgba(249,115,22,0.15)] backdrop-blur">
+        <p className="font-medium text-sm">{label}</p>
+        <p className="text-sm text-muted-foreground">
+          {data.count} meetings ({data.percentage}%)
+        </p>
+      </div>
+    );
+  }
+  return null;
+};
+
 export function PlatformUsage({ data }: PlatformUsageProps) {
   const { resolvedTheme } = useTheme();
 
@@ -19,7 +68,6 @@ export function PlatformUsage({ data }: PlatformUsageProps) {
     if (url.includes('meet.google.com')) return 'Google Meet';
     if (url.includes('zoom.us')) return 'Zoom';
     if (url.includes('app.cal.com')) return 'Cal.com Video';
-    if (url.includes('meeting.dingtalk.com')) return 'DingTalk';
     return 'Other';
   };
 
@@ -37,27 +85,6 @@ export function PlatformUsage({ data }: PlatformUsageProps) {
     }))
     .sort((a, b) => b.count - a.count);
 
-  const PLATFORM_ICON_MAP: Record<string, { light: string; dark?: string; alt: string }> = {
-    'Google Meet': {
-      light: '/platforms/Meet_Icon.original.png',
-      alt: 'Google Meet logo',
-    },
-    Zoom: {
-      light: '/platforms/Zoom_Logo_Bloom_RGB.svg',
-      alt: 'Zoom logo',
-    },
-    'Cal.com Video': {
-      light: '/platforms/cal-logo-light.jpeg',
-      dark: '/platforms/cal-logo-dark.jpeg',
-      alt: 'Cal.com logo',
-    },
-    Other: {
-      light: '/logo/callytics-logo-light.png',
-      dark: '/logo/callytics-logo-dark.png',
-      alt: 'Other platform logo',
-    },
-  };
-
   const getPlatformIcon = (platform: string) => {
     const iconConfig = PLATFORM_ICON_MAP[platform] ?? PLATFORM_ICON_MAP.Other;
     const isDark = resolvedTheme === 'dark';
@@ -74,25 +101,9 @@ export function PlatformUsage({ data }: PlatformUsageProps) {
       'Google Meet': 'var(--color-chart-1)',
       'Zoom': '#a855f7',
       'Cal.com Video': '#facc15',
-      'DingTalk': '#fb923c',
       'Other': '#f87171',
     };
     return colors[platform as keyof typeof colors] || '#6B7280';
-  };
-
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      const data = payload[0].payload;
-      return (
-        <div className="rounded-lg border border-primary/20 bg-card/90 p-3 shadow-[0_8px_30px_rgba(249,115,22,0.15)] backdrop-blur">
-          <p className="font-medium text-sm">{label}</p>
-          <p className="text-sm text-muted-foreground">
-            {data.count} meetings ({data.percentage}%)
-          </p>
-        </div>
-      );
-    }
-    return null;
   };
 
   const mostUsedPlatform = chartData[0];

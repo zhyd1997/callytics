@@ -4,10 +4,49 @@ import { motion } from 'motion/react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import type { MeetingRecord } from '@/lib/types/meeting';
+import { scaleIn, fadeInFromBottom, createTransition } from '@/lib/constants/animations';
 
 interface DurationAnalysisProps {
   readonly data: readonly MeetingRecord[];
 }
+
+interface CustomTooltipPayload {
+  duration: string;
+  total: number;
+  accepted: number;
+  cancelled: number;
+  sortKey: number;
+}
+
+interface CustomTooltipPropsType {
+  active?: boolean;
+  payload?: Array<{ payload: CustomTooltipPayload }>;
+  label?: string;
+}
+
+const CustomTooltip = (props: CustomTooltipPropsType) => {
+  const { active, payload, label } = props;
+  if (active && payload && payload.length) {
+    const data = payload[0].payload as CustomTooltipPayload;
+    return (
+      <div className="rounded-lg border border-primary/20 bg-card/90 p-3 shadow-[0_8px_30px_rgba(249,115,22,0.15)] backdrop-blur">
+        <p className="font-medium mb-2">{label}</p>
+        <div className="space-y-1">
+          <p className="text-sm">
+            <span style={{ color: 'var(--color-chart-1)' }}>●</span> Total: {data.total}
+          </p>
+          <p className="text-sm">
+            <span style={{ color: 'var(--color-chart-1)' }}>●</span> Accepted: {data.accepted}
+          </p>
+          <p className="text-sm">
+            <span style={{ color: '#f87171' }}>●</span> Cancelled: {data.cancelled}
+          </p>
+        </div>
+      </div>
+    );
+  }
+  return null;
+};
 
 export function DurationAnalysis({ data }: DurationAnalysisProps) {
   // Group meetings by duration
@@ -39,29 +78,6 @@ export function DurationAnalysis({ data }: DurationAnalysisProps) {
     }))
     .sort((a, b) => a.sortKey - b.sortKey);
 
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      const data = payload[0].payload;
-      return (
-        <div className="rounded-lg border border-primary/20 bg-card/90 p-3 shadow-[0_8px_30px_rgba(249,115,22,0.15)] backdrop-blur">
-          <p className="font-medium mb-2">{label}</p>
-          <div className="space-y-1">
-            <p className="text-sm">
-              <span style={{ color: 'var(--color-chart-1)' }}>●</span> Total: {data.total}
-            </p>
-            <p className="text-sm">
-              <span style={{ color: 'var(--color-chart-1)' }}>●</span> Accepted: {data.accepted}
-            </p>
-            <p className="text-sm">
-              <span style={{ color: '#f87171' }}>●</span> Cancelled: {data.cancelled}
-            </p>
-          </div>
-        </div>
-      );
-    }
-    return null;
-  };
-
   const averageDuration = data.length
     ? data.reduce((acc, meeting) => acc + meeting.duration, 0) / data.length
     : 0;
@@ -80,9 +96,10 @@ export function DurationAnalysis({ data }: DurationAnalysisProps) {
       </CardHeader>
       <CardContent>
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
+          variants={scaleIn}
+          initial="initial"
+          animate="animate"
+          transition={createTransition()}
           className="h-[300px] w-full mb-4"
         >
           <ResponsiveContainer width="100%" height="100%">
@@ -105,9 +122,10 @@ export function DurationAnalysis({ data }: DurationAnalysisProps) {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.1 }}
+            variants={fadeInFromBottom}
+            initial="initial"
+            animate="animate"
+            transition={createTransition(0.1)}
             className="rounded-lg border border-primary/20 bg-primary/5 p-3 backdrop-blur"
           >
             <p className="text-sm text-muted-foreground">Average Duration</p>
@@ -115,9 +133,10 @@ export function DurationAnalysis({ data }: DurationAnalysisProps) {
           </motion.div>
           
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.2 }}
+            variants={fadeInFromBottom}
+            initial="initial"
+            animate="animate"
+            transition={createTransition(0.2)}
             className="rounded-lg border border-primary/20 bg-primary/5 p-3 backdrop-blur"
           >
             <p className="text-sm text-muted-foreground">Most Common</p>

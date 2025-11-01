@@ -10,9 +10,16 @@ import { MeetingTimeline } from './MeetingTimeline';
 import { PlatformUsage } from './PlatformUsage';
 import { HostActivity } from './HostActivity';
 import { RecentMeetings } from './RecentMeetings';
-import { removeSelfMeetings } from '@/utils/meetings';
+import { removeSelfMeetings } from '@/lib/utils/meetings';
 import { MEETING_DATA } from '@/constants/meetings';
 import type { MeetingCollection, MeetingRecord } from '@/lib/types/meeting';
+import {
+  fadeInFromTop,
+  fadeInFromBottom,
+  fadeInFromLeft,
+  fadeInFromRight,
+  createTransition,
+} from '@/lib/constants/animations';
 
 interface DashboardAppProps {
   readonly initialMeetings?: MeetingCollection;
@@ -34,9 +41,10 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_80%_30%,_rgba(59,130,246,0.18),_transparent_60%)] mix-blend-screen" />
       <div className="relative mx-auto max-w-7xl px-4 py-10 sm:pt-16">
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          variants={fadeInFromTop}
+          initial="initial"
+          animate="animate"
+          transition={createTransition()}
           className="mb-10 max-w-3xl text-center sm:text-left"
         >
           <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-4 py-1 text-xs font-medium text-primary shadow-[0_0_20px_rgba(249,115,22,0.35)] animate-[gradient-flow_5s_ease_infinite]">
@@ -55,9 +63,10 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
 
         {/* Overview Stats */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
+          variants={fadeInFromBottom}
+          initial="initial"
+          animate="animate"
+          transition={createTransition(0.1)}
           className="mb-8"
         >
           <OverviewStats data={filteredMeetings} />
@@ -65,9 +74,10 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
 
         {/* Recent Meetings */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.15 }}
+          variants={fadeInFromBottom}
+          initial="initial"
+          animate="animate"
+          transition={createTransition(0.15)}
           className="mb-8"
         >
           <RecentMeetings data={filteredMeetings} />
@@ -76,17 +86,19 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
         {/* Charts Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
+            variants={fadeInFromLeft}
+            initial="initial"
+            animate="animate"
+            transition={createTransition(0.2)}
           >
             <MeetingStatusChart data={filteredMeetings} />
           </motion.div>
           
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
+            variants={fadeInFromRight}
+            initial="initial"
+            animate="animate"
+            transition={createTransition(0.3)}
           >
             <DurationAnalysis data={filteredMeetings} />
           </motion.div>
@@ -94,9 +106,10 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
 
         {/* Timeline */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
+          variants={fadeInFromBottom}
+          initial="initial"
+          animate="animate"
+          transition={createTransition(0.4)}
           className="mb-8"
         >
           <MeetingTimeline data={filteredMeetings} />
@@ -105,17 +118,19 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
         {/* Bottom Row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.5 }}
+            variants={fadeInFromLeft}
+            initial="initial"
+            animate="animate"
+            transition={createTransition(0.5)}
           >
             <PlatformUsage data={filteredMeetings} />
           </motion.div>
           
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.6 }}
+            variants={fadeInFromRight}
+            initial="initial"
+            animate="animate"
+            transition={createTransition(0.6)}
           >
             <HostActivity data={filteredMeetings} />
           </motion.div>
