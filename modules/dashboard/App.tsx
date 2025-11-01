@@ -36,9 +36,9 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-background text-foreground transition-colors duration-300">
-      <div className="pointer-events-none absolute -top-32 left-1/2 h-[480px] w-[480px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle_at_center,_rgba(249,115,22,0.28),_transparent_70%)] blur-3xl" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,_rgba(168,85,247,0.25),_transparent_55%)]" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_80%_30%,_rgba(59,130,246,0.18),_transparent_60%)] mix-blend-screen" />
+      <div className="pointer-events-none absolute -top-32 left-1/2 h-[480px] w-[480px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle_at_center,_rgba(14,165,233,0.22),_transparent_70%)] blur-3xl" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,_rgba(2,132,199,0.18),_transparent_55%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_80%_30%,_rgba(8,47,73,0.15),_transparent_60%)] mix-blend-screen" />
       <div className="relative mx-auto max-w-7xl px-4 py-10 sm:pt-16">
         <motion.div
           variants={fadeInFromTop}
@@ -47,17 +47,17 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
           transition={createTransition()}
           className="mb-10 max-w-3xl text-center sm:text-left"
         >
-          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-4 py-1 text-xs font-medium text-primary shadow-[0_0_20px_rgba(249,115,22,0.35)] animate-[gradient-flow_5s_ease_infinite]">
-            <span className="text-base animate-[float_3s_ease-in-out_infinite]">🕸️</span>
-            Insights in full moon mode
+          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1 text-xs font-medium text-primary animate-[gradient-flow_5s_ease_infinite]">
+            <span className="inline-block h-2 w-2 rounded-full bg-primary" />
+            Scheduling intelligence, Cal.com style
           </div>
           <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-            <span className="bg-gradient-to-r from-primary via-orange-500 to-primary bg-clip-text text-transparent [text-shadow:0_0_30px_rgba(249,115,22,0.45)]">
+            <span className="bg-gradient-to-r from-primary via-sky-500 to-primary bg-clip-text text-transparent">
               Meeting Insights
             </span>
           </h1>
           <p className="mt-2 text-sm text-muted-foreground sm:text-base">
-            Comprehensive analytics for your calendar data with a seasonal glow.
+            Comprehensive analytics for your calendar data with a crisp, product-focused presentation.
           </p>
         </motion.div>
 

@@ -39,24 +39,18 @@ export function Hero() {
       <div className="container relative mx-auto px-4 py-24 md:py-32">
         <div className="mx-auto max-w-4xl text-center">
           <div className="mb-8 flex items-center justify-center">
-            <h2 className="relative font-serif text-6xl font-bold tracking-wider md:text-8xl">
-              <span className="bg-gradient-to-r from-primary via-orange-600 to-primary bg-clip-text text-transparent [text-shadow:0_0_30px_rgba(249,115,22,0.5)]">
+            <h2 className="font-serif text-6xl font-bold tracking-wider md:text-8xl">
+              <span className="bg-gradient-to-r from-primary via-sky-500 to-primary bg-clip-text text-transparent">
                 Cal
               </span>
               <span className="text-foreground">lytics</span>
-              <span className="absolute -right-8 -bottom-4 text-4xl md:-right-12 md:-bottom-6 md:text-6xl animate-[candle-flicker_3s_ease-in-out_infinite]">
-                🎃
-              </span>
-              <span className="absolute -left-6 top-0 text-2xl md:-left-10 md:text-4xl animate-bounce [animation-duration:2s]">
-                🦇
-              </span>
             </h2>
           </div>
 
-          <div className="mb-6 inline-block rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary shadow-[0_0_20px_rgba(249,115,22,0.3)] animate-[gradient-flow_4s_ease_infinite]">
+          <div className="mb-6 inline-block rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary animate-[gradient-flow_4s_ease_infinite]">
             <span className="flex items-center gap-2">
-              <span className="text-base animate-[float_3s_ease-in-out_infinite]">👻</span>
-              Now Live on Halloween
+              <span className="inline-block h-2 w-2 rounded-full bg-primary" />
+              Purpose-built for Cal.com teams
             </span>
           </div>
 
@@ -84,11 +78,11 @@ export function Hero() {
           </h1>
 
           <p className="mb-10 text-pretty text-lg leading-relaxed text-muted-foreground md:text-xl">
-            Launching this Halloween with powerful insights for your{" "}
-            <span className="bg-gradient-to-r from-primary via-orange-600 to-primary bg-clip-text font-semibold text-transparent">
+            Instantly surface the metrics that matter for your{" "}
+            <span className="bg-gradient-to-r from-primary via-sky-500 to-primary bg-clip-text font-semibold text-transparent">
               Cal.com
             </span>{" "}
-            bookings. Track meetings, analyze conversion rates, and optimize your scheduling workflow with spooky precision.
+            bookings. Track meetings, analyze conversion rates, and optimize every scheduling workflow with a polished, Cal.com-inspired experience.
           </p>
 
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
