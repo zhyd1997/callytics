@@ -5,15 +5,15 @@
 - Get instant insights into meetings, event types, and booking trends without a custom backend.
 - Built with Next.js 16, Tailwind CSS v4, and Prisma.
 - Cal.com OAuth 2.0 flow authenticates users via Next.js async cookies and exchanges tokens at `https://api.cal.com/v2/oauth/token`.
-- Landing and dashboard surfaces currently ship with a Halloween theme driven by shared tokens and animations in `app/globals.css`.
+- Landing and dashboard surfaces currently ship with a Cal.com-inspired theme driven by shared tokens and animations in `app/globals.css`.
 
 ## Code Map
 - `app/layout.tsx`: root layout, font loading, metadata, and analytics wiring
 - `.agent/cal-com-openapi-spec.yaml`: Cal.com API v2 OpenAPI excerpt kept in sync with the official docs
 - `.agent/coding-style.md`: shared coding conventions for components, styling, async flows, and quality gates
 - `.agent/react-component-template.md`: starter client component snippet for quick copy/paste usage
-- `modules/landing/Hero.tsx`: seasonal marketing hero with Cal.com OAuth CTA and motion accents
-- `modules/dashboard/App.tsx`: client dashboard shell with Halloween gradients and analytics modules
+- `modules/landing/Hero.tsx`: Cal.com-flavored marketing hero with OAuth CTA and motion accents
+- `modules/dashboard/App.tsx`: client dashboard shell with Cal.com gradients and analytics modules
 - `app/page.tsx`: primary UI; copy lives in the `DESCRIPTION` constant rendered twice to test wrapping
 - `app/dashboard/page.tsx`: server component entry point that renders the dashboard `App`
 - `app/dashboard/loading.tsx`: route-level loading fallback for the dashboard

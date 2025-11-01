@@ -8,8 +8,8 @@ Lightweight analytics for Cal.com workspaces. Callytics gives teams instant visi
 ## Features 💡
 - OAuth 2.0 flow for Cal.com accounts with stateful callback handling 🔐
 - Postgres-backed waitlist capture powered by Prisma Accelerate 📨
-- Interactive, Halloween-themed landing hero with shared neon animations and OAuth CTA 🎃
-- Analytics dashboard refreshed with the seasonal palette, motion charts, and dark-mode friendly glows 📈
+- Interactive landing hero styled to mirror Cal.com's product aesthetic and OAuth CTA ⚡️
+- Analytics dashboard refreshed with the Cal.com palette, motion charts, and dark-mode friendly glows 📈
 - Turbopack-enabled Next.js 16 app router with Tailwind CSS v4 styling ⚡️
 
 ## Tech Stack 🛠️
