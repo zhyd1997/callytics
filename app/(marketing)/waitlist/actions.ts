@@ -12,8 +12,12 @@ export async function joinWaitlist(initialState: WaitlistState, formData: FormDa
     });
 
     if (!validatedFields.success) {
+      const { formErrors, fieldErrors } = validatedFields.error.flatten();
+      const emailErrors = fieldErrors.email ?? [];
+      const messages = [...emailErrors, ...formErrors].filter(Boolean);
+
       return {
-        message: z.treeifyError(validatedFields.error).errors.flat().join("\n"),
+        message: messages.join("\n") || "Invalid email address.",
       };
     }
 
