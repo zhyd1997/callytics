@@ -119,7 +119,7 @@ export async function GET(request: NextRequest) {
     query = mapSearchParamsToQuery(request.nextUrl.searchParams);
   } catch (error) {
     if (error instanceof ZodError) {
-      logger.warn("Invalid query parameters in bookings request", undefined, {
+      logger.warn("Invalid query parameters in bookings request", {
         errors: error.flatten(),
       });
       return NextResponse.json(
