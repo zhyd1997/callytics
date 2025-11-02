@@ -12,28 +12,31 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
 import { genericOAuth } from "better-auth/plugins";
-import { buildAppUrl } from "@/lib/env";
+import { buildAppUrl, env } from "@/lib/config/env";
+import { createLogger } from "@/lib/logging/logger";
+import { ErrorFactory } from "@/lib/errors";
+
+const logger = createLogger("auth");
 
 // OAuth configuration with environment variable overrides
 const DEFAULT_REDIRECT_URI = buildAppUrl(OAUTH_CALLBACK_PATH);
 
-// Environment variables
-const CLIENT_ID = process.env.CAL_COM_CLIENT_ID;
-const CLIENT_SECRET = process.env.CAL_COM_CLIENT_SECRET;
-const TOKEN_URL = process.env.CAL_OAUTH_TOKEN_ENDPOINT ?? CAL_TOKEN_URL;
-const REDIRECT_URI =
-  process.env.CAL_OAUTH_REDIRECT_URI ?? DEFAULT_REDIRECT_URI;
+// Environment variables from validated config
+const CLIENT_ID = env.CAL_COM_CLIENT_ID;
+const CLIENT_SECRET = env.CAL_COM_CLIENT_SECRET;
+const TOKEN_URL = env.CAL_OAUTH_TOKEN_ENDPOINT ?? CAL_TOKEN_URL;
+const REDIRECT_URI = env.CAL_OAUTH_REDIRECT_URI ?? DEFAULT_REDIRECT_URI;
 
-if (!CLIENT_ID || !CLIENT_SECRET) {
-  throw new Error(
-    "`CAL_COM_CLIENT_ID` and `CAL_COM_CLIENT_SECRET` must be configured.",
-  );
-}
-
+/**
+ * Fetches Cal.com user profile using access token
+ */
 async function fetchCalProfile(accessToken?: string) {
   if (!accessToken) {
-    throw new Error("Missing access token!");
+    logger.error("Missing access token for profile fetch");
+    throw ErrorFactory.authentication("Missing access token");
   }
+
+  logger.debug("Fetching Cal.com profile");
 
   const response = await fetch(CAL_PROFILE_ENDPOINT, {
     headers: {
@@ -44,16 +47,25 @@ async function fetchCalProfile(accessToken?: string) {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to load Cal.com profile.");
+    logger.error("Failed to load Cal.com profile", undefined, {
+      status: response.status,
+      statusText: response.statusText,
+    });
+    throw ErrorFactory.externalAPI(
+      "Failed to load Cal.com profile",
+      response.status,
+    );
   }
 
   const payload = (await response.json()) as CalProfilePayload;
   const profile = payload.data;
 
   if (!profile?.id) {
-    throw new Error("Cal.com profile response missing id.");
+    logger.error("Cal.com profile response missing id");
+    throw ErrorFactory.externalAPI("Cal.com profile response missing id", 502);
   }
 
+  logger.debug("Successfully fetched Cal.com profile", { userId: profile.id });
   return profile;
 }
 

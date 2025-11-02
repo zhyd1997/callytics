@@ -13,6 +13,12 @@ import {
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { PROVIDER_ID } from "@/constants/oauth";
+import { requireAuth } from "@/lib/middleware/auth";
+import { validateOrThrow } from "@/lib/middleware/validation";
+import { createLogger } from "@/lib/logging/logger";
+import { ErrorFactory } from "@/lib/errors";
+
+const logger = createLogger("actions:bookings");
 
 type InputParams = FetchCalBookingsActionInput;
 
@@ -23,28 +29,29 @@ type ActionContext = {
   apiVersion?: string;
 };
 
+/**
+ * Resolves and validates action context with authentication
+ */
 const resolveActionContext = async (input: InputParams): Promise<ActionContext> => {
-  const { query, baseUrl, apiVersion, userId } = fetchCalBookingsActionSchema.parse(input);
+  // Validate input
+  const { query, baseUrl, apiVersion, userId } = validateOrThrow(
+    fetchCalBookingsActionSchema,
+    input,
+    "fetchCalBookingsAction input",
+  );
 
-  const requestHeaders = await headers();
-  const session = await auth.api.getSession({ headers: requestHeaders });
+  logger.debug("Resolving action context", { userId, hasQuery: !!query });
 
-  if (!session) {
-    throw new Error("No session found!");
+  // Authenticate user
+  const authResult = await requireAuth(userId);
+  
+  if (!authResult.success) {
+    throw authResult.error;
   }
 
-  if (session.session.userId !== userId) {
-    throw new Error("Not Authorized!");
-  }
+  const { accessToken } = authResult.data;
 
-  const { accessToken } = await auth.api.getAccessToken({
-    headers: requestHeaders,
-    body: { providerId: PROVIDER_ID, userId },
-  })
-
-  if (!accessToken) {
-    throw new Error("No accessToken found!");
-  }
+  logger.debug("Successfully resolved action context", { userId });
 
   return {
     accessToken,
@@ -54,8 +61,13 @@ const resolveActionContext = async (input: InputParams): Promise<ActionContext> 
   };
 };
 
+/**
+ * Server action to fetch Cal.com bookings
+ */
 export const fetchCalBookingsAction = async (input: InputParams) => {
   try {
+    logger.info("Executing fetchCalBookingsAction");
+    
     const { accessToken, query, baseUrl, apiVersion } = await resolveActionContext(input);
 
     const result = await fetchNormalizedCalBookings({
@@ -65,25 +77,44 @@ export const fetchCalBookingsAction = async (input: InputParams) => {
       apiVersion,
     });
 
-    return mapNormalizedCalBookingsToMeeting(result, query);
+    const meeting = mapNormalizedCalBookingsToMeeting(result, query);
+    
+    logger.info("Successfully fetched bookings", {
+      count: meeting.data.length,
+      totalItems: meeting.pagination.totalItems,
+    });
+
+    return meeting;
   } catch (error) {
-    console.error("Failed to execute fetchCalBookingsAction", error);
+    logger.error("Failed to execute fetchCalBookingsAction", error);
     throw error;
   }
 };
 
+/**
+ * Server action to fetch top updated bookings
+ */
 export const fetchTopUpdatedBookingsAction = async (input: InputParams) => {
   try {
+    logger.info("Executing fetchTopUpdatedBookingsAction");
+    
     const { accessToken, query, baseUrl, apiVersion } = await resolveActionContext(input);
 
-    return await fetchTopUpdatedBookings({
+    const result = await fetchTopUpdatedBookings({
       accessToken,
       query,
       baseUrl,
       apiVersion,
     });
+    
+    logger.info("Successfully fetched top updated bookings", {
+      count: result.data?.length ?? 0,
+      hasError: !!result.error,
+    });
+
+    return result;
   } catch (error) {
-    console.error("Failed to execute fetchTopUpdatedBookingsAction", error);
+    logger.error("Failed to execute fetchTopUpdatedBookingsAction", error);
     throw error;
   }
 };

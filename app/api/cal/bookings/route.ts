@@ -1,6 +1,5 @@
 import type { CalBookingsQuery } from "@/lib/schemas/calBookings";
-import type { Meeting } from "@/lib/types/meeting";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { CalBookingsApiError } from "@/lib/dal/calBookings";
 import {
   fetchNormalizedCalBookings,
@@ -8,24 +7,19 @@ import {
 } from "@/lib/dto/calBookings";
 import { calBookingsQuerySchema } from "@/lib/schemas/calBookings";
 import { ZodError } from "zod";
+import { requireAuthWithToken } from "@/lib/middleware/auth";
+import { validate } from "@/lib/middleware/validation";
+import { successResponse, errorResponse } from "@/lib/api/response";
+import { createLogger } from "@/lib/logging/logger";
+import { ErrorFactory } from "@/lib/errors";
+
+const logger = createLogger("api:bookings");
 
 export const dynamic = "force-dynamic";
 
-function parseAuthorizationHeader(request: NextRequest) {
-  const header = request.headers.get("authorization") ?? request.headers.get("Authorization");
-  if (!header) {
-    return null;
-  }
-
-  const trimmed = header.trim();
-  if (!trimmed.toLowerCase().startsWith("bearer ")) {
-    return null;
-  }
-
-  const token = trimmed.slice(7).trim();
-  return token.length ? token : null;
-}
-
+/**
+ * Maps URL search params to CalBookingsQuery
+ */
 function mapSearchParamsToQuery(searchParams: URLSearchParams): CalBookingsQuery | undefined {
   if ([...searchParams.keys()].length === 0) {
     return undefined;
@@ -58,87 +52,66 @@ function mapSearchParamsToQuery(searchParams: URLSearchParams): CalBookingsQuery
   return calBookingsQuerySchema.parse(raw);
 }
 
-const createEmptyPagination = (query?: CalBookingsQuery) => {
-  const take = typeof query?.take === "number" && query.take > 0 ? query.take : 0;
-  const skip = typeof query?.skip === "number" && query.skip >= 0 ? query.skip : 0;
-  const currentPage = take > 0 ? Math.floor(skip / take) : 0;
 
-  return {
-    totalItems: 0,
-    remainingItems: 0,
-    returnedItems: 0,
-    itemsPerPage: take,
-    currentPage,
-    totalPages: 0,
-    hasNextPage: false,
-    hasPreviousPage: skip > 0,
-  };
-};
-
-const createMeetingErrorResponse = (
-  message: string,
-  details?: unknown,
-  query?: CalBookingsQuery,
-): Meeting => {
-  const errorPayload: Record<string, unknown> = { message };
-  if (typeof details !== "undefined") {
-    errorPayload.details = details;
-  }
-
-  return {
-    status: "error",
-    data: [],
-    pagination: createEmptyPagination(query),
-    error: errorPayload,
-  };
-};
-
+/**
+ * GET /api/cal/bookings
+ * Fetches Cal.com bookings with authentication and validation
+ */
 export async function GET(request: NextRequest) {
-  const accessToken = parseAuthorizationHeader(request);
-  if (!accessToken) {
-    return NextResponse.json(
-      createMeetingErrorResponse(
-        "Missing or invalid Authorization header. Expected `Bearer <token>`.",
-      ),
-      { status: 401 },
-    );
-  }
-
-  let query: CalBookingsQuery | undefined;
   try {
-    query = mapSearchParamsToQuery(request.nextUrl.searchParams);
-  } catch (error) {
-    if (error instanceof ZodError) {
-      return NextResponse.json(
-        createMeetingErrorResponse("Invalid query parameters.", error.flatten()),
-        { status: 400 },
+    logger.info("Received bookings request");
+
+    // Authenticate request
+    const authResult = await requireAuthWithToken(request);
+    if (!authResult.success) {
+      return errorResponse(authResult.error);
+    }
+
+    const { accessToken } = authResult.data;
+
+    // Parse and validate query parameters
+    let query: CalBookingsQuery | undefined;
+    try {
+      query = mapSearchParamsToQuery(request.nextUrl.searchParams);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        logger.warn("Invalid query parameters", undefined, error);
+        return errorResponse(
+          ErrorFactory.validation("Invalid query parameters", error.flatten()),
+        );
+      }
+
+      logger.error("Failed to parse query parameters", error);
+      return errorResponse(
+        ErrorFactory.validation("Failed to parse query parameters", error),
       );
     }
 
-    return NextResponse.json(
-      createMeetingErrorResponse("Failed to parse query parameters.", error),
-      { status: 400 },
-    );
-  }
-
-  try {
+    // Fetch bookings
+    logger.debug("Fetching bookings", { hasQuery: !!query });
+    
     const result = await fetchNormalizedCalBookings({
       accessToken,
       query,
     });
 
-    return NextResponse.json(mapNormalizedCalBookingsToMeeting(result, query));
+    const meeting = mapNormalizedCalBookingsToMeeting(result, query);
+    
+    logger.info("Successfully fetched bookings", {
+      count: meeting.data.length,
+      totalItems: meeting.pagination.totalItems,
+    });
+
+    return successResponse(meeting);
   } catch (error) {
+    logger.error("Unexpected error in bookings endpoint", error);
+    
     if (error instanceof CalBookingsApiError) {
-      return NextResponse.json(
-        createMeetingErrorResponse(error.message, error.details, query),
-        { status: error.status || 500 },
+      return errorResponse(
+        ErrorFactory.externalAPI(error.message, error.status, error.details),
       );
     }
 
-    return NextResponse.json(
-      createMeetingErrorResponse("Unexpected error while fetching Cal.com bookings.", error, query),
-      { status: 500 },
-    );
+    return errorResponse(error);
   }
 }

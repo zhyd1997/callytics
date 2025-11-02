@@ -4,6 +4,10 @@ import {
   CAL_API_VERSION,
   CAL_BOOKINGS_ENDPOINT,
 } from "@/constants/oauth";
+import { ExternalAPIError } from "@/lib/errors";
+import { createLogger } from "@/lib/logging/logger";
+
+const logger = createLogger("dal:cal-bookings");
 
 export type FetchCalBookingsOptions = {
   readonly accessToken: string;
@@ -14,15 +18,13 @@ export type FetchCalBookingsOptions = {
   readonly fetchImpl?: typeof fetch;
 };
 
-export class CalBookingsApiError extends Error {
-  readonly status: number;
-  readonly details: unknown;
-
+/**
+ * @deprecated Use ExternalAPIError from @/lib/errors instead
+ */
+export class CalBookingsApiError extends ExternalAPIError {
   constructor(message: string, status: number, details: unknown) {
-    super(message);
+    super(message, status, details);
     this.name = "CalBookingsApiError";
-    this.status = status;
-    this.details = details;
   }
 }
 
@@ -103,18 +105,28 @@ export const fetchCalBookings = async (
     } = options;
 
     if (!accessToken || typeof accessToken !== "string") {
-      throw new Error("A valid Cal.com access token is required.");
+      throw new CalBookingsApiError(
+        "A valid Cal.com access token is required.",
+        400,
+        null,
+      );
     }
 
     const trimmedToken = accessToken.trim();
     if (!trimmedToken) {
-      throw new Error("Cal.com access token cannot be empty.");
+      throw new CalBookingsApiError(
+        "Cal.com access token cannot be empty.",
+        400,
+        null,
+      );
     }
 
     const resolvedBaseUrl = resolveBaseUrl(baseUrl);
     const resolvedApiVersion = resolveApiVersion(apiVersion);
 
     const url = `${resolvedBaseUrl}${CAL_BOOKINGS_ENDPOINT}${buildQueryString(query)}`;
+
+    logger.debug("Fetching Cal.com bookings", { url, hasQuery: !!query });
 
     const response = await fetchImpl(url, {
       method: "GET",
@@ -141,9 +153,10 @@ export const fetchCalBookings = async (
       );
     }
 
+    logger.debug("Successfully fetched Cal.com bookings");
     return payload;
   } catch (error) {
-    console.error("Failed to fetch Cal.com bookings", error);
+    logger.error("Failed to fetch Cal.com bookings", error);
     throw error;
   }
 };
