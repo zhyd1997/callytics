@@ -37,8 +37,14 @@ export default async function DashboardPage() {
   ]);
 
   if (topUpdatedResponse.error) {
-    console.error("Top updated bookings action returned an error", topUpdatedResponse.error);
-    throw new Error("Failed to fetch top updated bookings");
+    // If top updated bookings fails, we can still use the main bookings response
+    // Only throw if both fail or if it's a critical error
+    const error = topUpdatedResponse.error;
+    if (error instanceof Error) {
+      // Re-throw with more context for error boundary
+      throw new Error(`Failed to fetch top updated bookings: ${error.message}`);
+    }
+    // If bookingsResponse also failed, the error boundary will catch it
   }
 
   const meetings: MeetingCollection =
