@@ -36,9 +36,9 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-background text-foreground transition-colors duration-300">
-      <div className="pointer-events-none absolute -top-32 left-1/2 h-[480px] w-[480px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle_at_center,_rgba(14,165,233,0.22),_transparent_70%)] blur-3xl" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,_rgba(2,132,199,0.18),_transparent_55%)]" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_80%_30%,_rgba(8,47,73,0.15),_transparent_60%)] mix-blend-screen" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[520px] bg-[radial-gradient(circle_at_top,_rgba(15,23,42,0.16),_transparent_65%)] dark:bg-[radial-gradient(circle_at_top,_rgba(148,163,184,0.2),_transparent_70%)]" />
+      <div className="pointer-events-none absolute right-[-18%] top-32 h-[420px] w-[420px] rounded-full bg-[conic-gradient(from_140deg,_rgba(14,165,233,0.28),_transparent_55%)] blur-3xl" />
+      <div className="pointer-events-none absolute left-[-12%] bottom-[-20%] h-[360px] w-[360px] rounded-full bg-[radial-gradient(circle_at_bottom,_rgba(12,74,110,0.18),_transparent_60%)] blur-3xl" />
       <div className="relative mx-auto max-w-7xl px-4 py-10 sm:pt-16">
         <motion.div
           variants={fadeInFromTop}
@@ -47,17 +47,15 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
           transition={createTransition()}
           className="mb-10 max-w-3xl text-center sm:text-left"
         >
-          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1 text-xs font-medium text-primary animate-[gradient-flow_5s_ease_infinite]">
-            <span className="inline-block h-2 w-2 rounded-full bg-primary" />
-            Scheduling intelligence, Cal.com style
+          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-border/70 bg-secondary/60 px-4 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
+            <span className="inline-block h-2 w-2 rounded-full bg-accent" />
+            Cal.com overview
           </div>
-          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-            <span className="bg-gradient-to-r from-primary via-sky-500 to-primary bg-clip-text text-transparent">
-              Meeting Insights
-            </span>
+          <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
+            Meeting intelligence that mirrors Cal.com
           </h1>
-          <p className="mt-2 text-sm text-muted-foreground sm:text-base">
-            Comprehensive analytics for your calendar data with a crisp, product-focused presentation.
+          <p className="mt-3 text-sm text-muted-foreground sm:text-base">
+            Focus your operations reviews on signal, not noise. Surface booking momentum, host load, and event type velocity in a presentation layer that feels native to Cal.com.
           </p>
         </motion.div>
 
