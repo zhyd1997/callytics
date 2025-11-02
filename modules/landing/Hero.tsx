@@ -51,7 +51,7 @@ export function Hero() {
               <span className="relative inline-flex h-10 w-24 rotate-[-1deg] shrink-0 items-center justify-center md:h-16 md:w-32">
                 <Image
                   src="/platforms/cal-logo-light.jpeg"
-                  alt="Cal.com"
+                  alt="Cal.com logo"
                   fill
                   sizes="(min-width: 768px) 8rem, 6rem"
                   className="object-cover dark:hidden"
@@ -59,7 +59,7 @@ export function Hero() {
                 />
                 <Image
                   src="/platforms/cal-logo-dark.jpeg"
-                  alt="Cal.com"
+                  alt="Cal.com logo"
                   fill
                   sizes="(min-width: 768px) 8rem, 6rem"
                   className="hidden object-cover dark:block"
