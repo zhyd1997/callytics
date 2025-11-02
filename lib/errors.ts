@@ -5,9 +5,9 @@
 
 export class AppError extends Error {
   readonly statusCode: number;
-  readonly code: string;
   readonly isOperational: boolean;
   readonly details?: unknown;
+  protected _code: string;
 
   constructor(
     message: string,
@@ -18,12 +18,16 @@ export class AppError extends Error {
     super(message);
     this.name = this.constructor.name;
     this.statusCode = statusCode;
-    this.code = code;
+    this._code = code;
     this.isOperational = true;
     this.details = details;
 
     // Maintains proper stack trace for where our error was thrown
     Error.captureStackTrace?.(this, this.constructor);
+  }
+
+  get code(): string {
+    return this._code;
   }
 }
 
@@ -76,7 +80,10 @@ export class CalBookingsApiError extends ExternalApiError {
       details,
     );
     this.status = status;
-    this.code = "CAL_BOOKINGS_API_ERROR";
+  }
+
+  override get code(): string {
+    return "CAL_BOOKINGS_API_ERROR";
   }
 }
 

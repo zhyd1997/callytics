@@ -240,13 +240,15 @@ export type CalBookingStatusSummary = {
 export const fetchCalBookingSummaryByStatus = async (
   options: FetchCalBookingSummaryByStatusOptions,
 ): Promise<CalBookingStatusSummary> => {
-  try {
-    const { status, ...rest } = options;
-    if (!isValidCalBookingStatus(status)) {
-      throw new Error(`Unsupported Cal.com booking status: ${String(status)}`);
-    }
-    const validatedStatus = status;
+  const { status, ...rest } = options;
+  
+  if (!isValidCalBookingStatus(status)) {
+    throw new Error(`Unsupported Cal.com booking status: ${String(status)}`);
+  }
+  
+  const validatedStatus = status;
 
+  try {
     const result = await fetchNormalizedCalBookings({
       ...rest,
       query: {
