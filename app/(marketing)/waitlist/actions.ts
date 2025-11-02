@@ -4,6 +4,8 @@ import { z } from "zod";
 import type { WaitlistState } from "@/lib/schemas/waitlist";
 import { waitlistFormSchema } from "@/lib/schemas/waitlist";
 import { createWaitlistEntry } from "@/lib/dal/waitlist";
+import { logger } from "@/lib/logger";
+import { normalizeError } from "@/lib/errors";
 
 export async function joinWaitlist(initialState: WaitlistState, formData: FormData) {
   try {
@@ -25,7 +27,8 @@ export async function joinWaitlist(initialState: WaitlistState, formData: FormDa
       message: "Success",
     };
   } catch (error) {
-    console.error(error);
+    const normalizedError = normalizeError(error);
+    logger.error("Failed to join waitlist", normalizedError);
     return {
       message: "An unexpected error occurred. Please try again later.",
     };

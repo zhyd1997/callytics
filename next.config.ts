@@ -24,11 +24,9 @@ const nextConfig: NextConfig = {
     ]
   },
   typescript: {
-    // !! WARN !!
-    // Dangerously allow production builds to successfully complete even if
-    // your project has type errors.
-    // !! WARN !!
-    ignoreBuildErrors: true,
+    // Enforce type checking in production builds
+    // If you encounter type errors, fix them rather than ignoring them
+    ignoreBuildErrors: false,
   },
 };
 

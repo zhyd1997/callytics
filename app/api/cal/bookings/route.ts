@@ -1,29 +1,33 @@
 import type { CalBookingsQuery } from "@/lib/schemas/calBookings";
 import type { Meeting } from "@/lib/types/meeting";
 import { NextRequest, NextResponse } from "next/server";
-import { CalBookingsApiError } from "@/lib/dal/calBookings";
+import { CalBookingsApiError, normalizeError, getUserFriendlyMessage } from "@/lib/errors";
 import {
   fetchNormalizedCalBookings,
   mapNormalizedCalBookingsToMeeting,
 } from "@/lib/dto/calBookings";
 import { calBookingsQuerySchema } from "@/lib/schemas/calBookings";
+import { logger } from "@/lib/logger";
+import { HTTP_STATUS, HTTP_HEADERS, CONTENT_TYPES } from "@/lib/constants/http";
+import { envConfig } from "@/lib/env";
 import { ZodError } from "zod";
 
 export const dynamic = "force-dynamic";
 
-function parseAuthorizationHeader(request: NextRequest) {
-  const header = request.headers.get("authorization") ?? request.headers.get("Authorization");
+function parseAuthorizationHeader(request: NextRequest): string | null {
+  const header = request.headers.get(HTTP_HEADERS.AUTHORIZATION);
   if (!header) {
     return null;
   }
 
   const trimmed = header.trim();
-  if (!trimmed.toLowerCase().startsWith("bearer ")) {
+  const bearerPrefix = "bearer ";
+  if (!trimmed.toLowerCase().startsWith(bearerPrefix)) {
     return null;
   }
 
-  const token = trimmed.slice(7).trim();
-  return token.length ? token : null;
+  const token = trimmed.slice(bearerPrefix.length).trim();
+  return token.length > 0 ? token : null;
 }
 
 function mapSearchParamsToQuery(searchParams: URLSearchParams): CalBookingsQuery | undefined {
@@ -96,11 +100,17 @@ const createMeetingErrorResponse = (
 export async function GET(request: NextRequest) {
   const accessToken = parseAuthorizationHeader(request);
   if (!accessToken) {
+    logger.warn("Missing or invalid Authorization header in bookings request");
     return NextResponse.json(
       createMeetingErrorResponse(
         "Missing or invalid Authorization header. Expected `Bearer <token>`.",
       ),
-      { status: 401 },
+      {
+        status: HTTP_STATUS.UNAUTHORIZED,
+        headers: {
+          [HTTP_HEADERS.CONTENT_TYPE]: CONTENT_TYPES.JSON,
+        },
+      },
     );
   }
 
@@ -109,15 +119,29 @@ export async function GET(request: NextRequest) {
     query = mapSearchParamsToQuery(request.nextUrl.searchParams);
   } catch (error) {
     if (error instanceof ZodError) {
+      logger.warn("Invalid query parameters in bookings request", undefined, {
+        errors: error.flatten(),
+      });
       return NextResponse.json(
         createMeetingErrorResponse("Invalid query parameters.", error.flatten()),
-        { status: 400 },
+        {
+          status: HTTP_STATUS.BAD_REQUEST,
+          headers: {
+            [HTTP_HEADERS.CONTENT_TYPE]: CONTENT_TYPES.JSON,
+          },
+        },
       );
     }
 
+    logger.error("Failed to parse query parameters", error);
     return NextResponse.json(
       createMeetingErrorResponse("Failed to parse query parameters.", error),
-      { status: 400 },
+      {
+        status: HTTP_STATUS.BAD_REQUEST,
+        headers: {
+          [HTTP_HEADERS.CONTENT_TYPE]: CONTENT_TYPES.JSON,
+        },
+      },
     );
   }
 
@@ -127,18 +151,29 @@ export async function GET(request: NextRequest) {
       query,
     });
 
-    return NextResponse.json(mapNormalizedCalBookingsToMeeting(result, query));
+    return NextResponse.json(mapNormalizedCalBookingsToMeeting(result, query), {
+      status: HTTP_STATUS.OK,
+      headers: {
+        [HTTP_HEADERS.CONTENT_TYPE]: CONTENT_TYPES.JSON,
+      },
+    });
   } catch (error) {
-    if (error instanceof CalBookingsApiError) {
-      return NextResponse.json(
-        createMeetingErrorResponse(error.message, error.details, query),
-        { status: error.status || 500 },
-      );
-    }
+    const normalizedError = normalizeError(error);
+    const userMessage = getUserFriendlyMessage(normalizedError, envConfig.isDevelopment);
+
+    logger.error("Error fetching Cal.com bookings", normalizedError, {
+      statusCode: normalizedError.statusCode,
+      code: normalizedError.code,
+    });
 
     return NextResponse.json(
-      createMeetingErrorResponse("Unexpected error while fetching Cal.com bookings.", error, query),
-      { status: 500 },
+      createMeetingErrorResponse(userMessage, normalizedError.details, query),
+      {
+        status: normalizedError.statusCode,
+        headers: {
+          [HTTP_HEADERS.CONTENT_TYPE]: CONTENT_TYPES.JSON,
+        },
+      },
     );
   }
 }

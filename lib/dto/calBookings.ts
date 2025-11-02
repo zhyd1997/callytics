@@ -2,8 +2,9 @@ import type { CalBooking, CalBookingStatus, CalBookingsQuery } from "@/lib/schem
 import {
   fetchCalBookings,
   type FetchCalBookingsOptions,
-  type CalBookingsApiError,
 } from "@/lib/dal/calBookings";
+import { CalBookingsApiError } from "@/lib/errors";
+import { logger } from "@/lib/logger";
 import type { Meeting, MeetingRecord, MeetingsPagination } from "@/lib/types/meeting";
 import { TOP_UPDATED_BOOKINGS_LIMIT, BOOKING_SUMMARY_FETCH_LIMIT } from "@/lib/constants/bookings";
 
@@ -106,7 +107,7 @@ export const normalizeCalBookingsResponse = (
     };
   }
 
-  console.error("Unexpected Cal.com bookings payload received", payload);
+  logger.error("Unexpected Cal.com bookings payload received", undefined, { payload });
   throw new Error("Unsupported Cal.com bookings response shape.");
 };
 
@@ -219,7 +220,7 @@ export const fetchNormalizedCalBookings = async (
     const payload = await fetchCalBookings(options);
     return normalizeCalBookingsResponse(payload);
   } catch (error) {
-    console.error("Failed to fetch normalized Cal.com bookings", error);
+    logger.error("Failed to fetch normalized Cal.com bookings", error);
     throw error;
   }
 };
@@ -262,7 +263,9 @@ export const fetchCalBookingSummaryByStatus = async (
       totalItems,
     };
   } catch (error) {
-    console.error("Failed to summarize Cal.com bookings by status", error);
+    logger.error("Failed to summarize Cal.com bookings by status", error, {
+      status: validatedStatus,
+    });
     throw error;
   }
 };
@@ -306,11 +309,11 @@ export const fetchTopUpdatedBookings = async (
       error: null,
     };
   } catch (error) {
-    console.error("Failed to fetch top updated bookings", error);
+    logger.error("Failed to fetch top updated bookings", error);
     return {
       data: null,
       totalItems: null,
-      error: error as CalBookingsApiError | Error,
+      error: error instanceof Error ? error : new Error(String(error)),
     };
   }
 };

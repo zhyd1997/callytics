@@ -13,6 +13,8 @@ import {
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { PROVIDER_ID } from "@/constants/oauth";
+import { AuthenticationError, AuthorizationError, normalizeError } from "@/lib/errors";
+import { logger } from "@/lib/logger";
 
 type InputParams = FetchCalBookingsActionInput;
 
@@ -24,26 +26,51 @@ type ActionContext = {
 };
 
 const resolveActionContext = async (input: InputParams): Promise<ActionContext> => {
-  const { query, baseUrl, apiVersion, userId } = fetchCalBookingsActionSchema.parse(input);
+  let parsedInput;
+  try {
+    parsedInput = fetchCalBookingsActionSchema.parse(input);
+  } catch (error) {
+    logger.error("Invalid input for bookings action", error);
+    throw error;
+  }
+
+  const { query, baseUrl, apiVersion, userId } = parsedInput;
 
   const requestHeaders = await headers();
   const session = await auth.api.getSession({ headers: requestHeaders });
 
   if (!session) {
-    throw new Error("No session found!");
+    logger.warn("No session found in bookings action", undefined, { userId });
+    throw new AuthenticationError("No session found");
   }
 
   if (session.session.userId !== userId) {
-    throw new Error("Not Authorized!");
+    logger.warn("User ID mismatch in bookings action", undefined, {
+      sessionUserId: session.session.userId,
+      requestedUserId: userId,
+    });
+    throw new AuthorizationError("User ID mismatch");
   }
 
-  const { accessToken } = await auth.api.getAccessToken({
-    headers: requestHeaders,
-    body: { providerId: PROVIDER_ID, userId },
-  })
+  let accessToken: string;
+  try {
+    const tokenResult = await auth.api.getAccessToken({
+      headers: requestHeaders,
+      body: { providerId: PROVIDER_ID, userId },
+    });
 
-  if (!accessToken) {
-    throw new Error("No accessToken found!");
+    if (!tokenResult?.accessToken) {
+      logger.warn("No access token found in bookings action", undefined, { userId });
+      throw new AuthenticationError("No access token found");
+    }
+
+    accessToken = tokenResult.accessToken;
+  } catch (error) {
+    if (error instanceof AuthenticationError) {
+      throw error;
+    }
+    logger.error("Failed to get access token", error, { userId });
+    throw new AuthenticationError("Failed to retrieve access token");
   }
 
   return {
@@ -67,8 +94,11 @@ export const fetchCalBookingsAction = async (input: InputParams) => {
 
     return mapNormalizedCalBookingsToMeeting(result, query);
   } catch (error) {
-    console.error("Failed to execute fetchCalBookingsAction", error);
-    throw error;
+    const normalizedError = normalizeError(error);
+    logger.error("Failed to execute fetchCalBookingsAction", normalizedError, {
+      userId: input.userId,
+    });
+    throw normalizedError;
   }
 };
 
@@ -83,7 +113,10 @@ export const fetchTopUpdatedBookingsAction = async (input: InputParams) => {
       apiVersion,
     });
   } catch (error) {
-    console.error("Failed to execute fetchTopUpdatedBookingsAction", error);
-    throw error;
+    const normalizedError = normalizeError(error);
+    logger.error("Failed to execute fetchTopUpdatedBookingsAction", normalizedError, {
+      userId: input.userId,
+    });
+    throw normalizedError;
   }
 };

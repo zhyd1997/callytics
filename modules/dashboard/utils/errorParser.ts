@@ -2,6 +2,10 @@
  * Error parsing utilities for dashboard error handling
  */
 
+import { isAppError, type AppError, getUserFriendlyMessage } from "@/lib/errors";
+import { envConfig } from "@/lib/env";
+import { HTTP_STATUS } from "@/lib/constants/http";
+
 export type ErrorDetails = {
   readonly isAuthError: boolean;
   readonly isForbiddenError: boolean;
@@ -24,9 +28,13 @@ const isForbiddenStatus = (error: Error): boolean => {
 /**
  * Checks if error indicates a Cal.com bookings API issue
  */
-const isCalBookingsError = (errorName: string, errorMessage: string): boolean => {
+const isCalBookingsError = (error: Error): boolean => {
+  if (isAppError(error)) {
+    return error.code === "CAL_BOOKINGS_API_ERROR" || error.externalService === "Cal.com API";
+  }
+  const errorMessage = error.message.toLowerCase();
   return (
-    errorName === "CalBookingsApiError" ||
+    error.name === "CalBookingsApiError" ||
     errorMessage.includes("cal.com bookings request failed")
   );
 };
@@ -45,7 +53,11 @@ const isOAuthError = (errorMessage: string): boolean => {
 /**
  * Checks if error indicates a 403 Forbidden response
  */
-const isForbiddenError = (error: Error, errorMessage: string): boolean => {
+const isForbiddenError = (error: Error): boolean => {
+  if (isAppError(error)) {
+    return error.statusCode === HTTP_STATUS.FORBIDDEN || error.code === "AUTHORIZATION_ERROR";
+  }
+  const errorMessage = error.message.toLowerCase();
   return (
     isForbiddenStatus(error) ||
     errorMessage.includes("403") ||
@@ -56,7 +68,14 @@ const isForbiddenError = (error: Error, errorMessage: string): boolean => {
 /**
  * Checks if error is authentication-related
  */
-const isAuthError = (errorMessage: string): boolean => {
+const isAuthError = (error: Error): boolean => {
+  if (isAppError(error)) {
+    return (
+      error.code === "AUTHENTICATION_ERROR" ||
+      error.statusCode === HTTP_STATUS.UNAUTHORIZED
+    );
+  }
+  const errorMessage = error.message.toLowerCase();
   return (
     isOAuthError(errorMessage) ||
     errorMessage.includes("no accesstoken found") ||
@@ -132,16 +151,27 @@ const generateErrorMessages = (
 /**
  * Parses error object and returns structured error details for UI display
  */
-export const parseErrorDetails = (error: Error): ErrorDetails => {
-  const errorName = error.name || "";
+export const parseErrorDetails = (error: Error | AppError): ErrorDetails => {
+  // Use AppError utilities if available
+  if (isAppError(error)) {
+    const userMessage = getUserFriendlyMessage(error, envConfig.isDevelopment);
+    return {
+      isAuthError: error.code === "AUTHENTICATION_ERROR",
+      isForbiddenError: error.code === "AUTHORIZATION_ERROR" || error.statusCode === HTTP_STATUS.FORBIDDEN,
+      userMessage,
+      technicalMessage: envConfig.isDevelopment ? error.message : undefined,
+    };
+  }
+
+  // Fallback to legacy parsing for non-AppError instances
   const errorMessage = error.message || "";
   const errorMessageLower = errorMessage.toLowerCase();
 
   const classification: ErrorClassification = {
-    isCalBookings: isCalBookingsError(errorName, errorMessageLower),
+    isCalBookings: isCalBookingsError(error),
     isOAuth: isOAuthError(errorMessageLower),
-    isForbidden: isForbiddenError(error, errorMessageLower),
-    isAuth: isAuthError(errorMessageLower),
+    isForbidden: isForbiddenError(error),
+    isAuth: isAuthError(error),
   };
 
   const { userMessage, technicalMessage } = generateErrorMessages(
