@@ -3,6 +3,7 @@ import {
   fetchCalBookings,
   type FetchCalBookingsOptions,
   type CalBookingsApiError,
+  type CalBookingsResponse,
 } from "@/lib/dal/calBookings";
 import type { Meeting, MeetingRecord, MeetingsPagination } from "@/lib/types/meeting";
 import { TOP_UPDATED_BOOKINGS_LIMIT, BOOKING_SUMMARY_FETCH_LIMIT } from "@/lib/constants/bookings";
@@ -12,7 +13,7 @@ export type NormalizedCalBookingsResponse = {
   totalCount?: number;
   nextCursor?: string | number | null;
   prevCursor?: string | number | null;
-  raw: unknown;
+  raw: CalBookingsResponse;
 };
 
 const CAL_BOOKING_STATUS_VALUES = [
@@ -32,128 +33,75 @@ const CAL_BOOKING_STATUS_SET = new Set<string>(CAL_BOOKING_STATUS_VALUES);
 const isValidCalBookingStatus = (value: unknown): value is CalBookingStatus =>
   typeof value === "string" && CAL_BOOKING_STATUS_SET.has(value);
 
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === "object" && value !== null;
-
-const isBookingsArray = (value: unknown): value is CalBooking[] => {
-  return (
-    Array.isArray(value) &&
-    value.every((booking) => isRecord(booking) && typeof booking.id === "number")
-  );
-};
-
-type CalBookingsEnvelope =
-  | {
-      readonly data: CalBooking[];
-      readonly totalCount?: number;
-      readonly count?: number;
-      readonly nextCursor?: string | number | null;
-      readonly prevCursor?: string | number | null;
-    }
-  | {
-      readonly bookings: CalBooking[];
-      readonly meta?: {
-        readonly total?: number;
-        readonly count?: number;
-        readonly nextCursor?: string | number | null;
-        readonly prevCursor?: string | number | null;
-      };
-    };
-
-const isBookingsEnvelope = (value: unknown): value is CalBookingsEnvelope => {
-  if (!isRecord(value)) {
-    return false;
-  }
-
-  if ("data" in value && isBookingsArray(value.data)) {
-    return true;
-  }
-
-  if ("bookings" in value && isBookingsArray(value.bookings)) {
-    return true;
-  }
-
-  return false;
-};
-
 export const normalizeCalBookingsResponse = (
-  payload: unknown,
+  payload: CalBookingsResponse,
 ): NormalizedCalBookingsResponse => {
-  if (isBookingsArray(payload)) {
+  if (Array.isArray(payload)) {
     return {
       items: payload,
       raw: payload,
     };
   }
 
-  if (isBookingsEnvelope(payload)) {
-    if ("data" in payload) {
-      return {
-        items: payload.data,
-        totalCount: payload.totalCount ?? payload.count,
-        nextCursor: payload.nextCursor ?? null,
-        prevCursor: payload.prevCursor ?? null,
-        raw: payload,
-      };
-    }
-
+  if ("data" in payload) {
     return {
-      items: payload.bookings,
-      totalCount: payload.meta?.total ?? payload.meta?.count,
-      nextCursor: payload.meta?.nextCursor ?? null,
-      prevCursor: payload.meta?.prevCursor ?? null,
+      items: payload.data,
+      totalCount: payload.totalCount ?? payload.count,
+      nextCursor: payload.nextCursor ?? null,
+      prevCursor: payload.prevCursor ?? null,
       raw: payload,
     };
   }
 
-  console.error("Unexpected Cal.com bookings payload received", payload);
-  throw new Error("Unsupported Cal.com bookings response shape.");
+  const meta = payload.meta ?? {};
+
+  return {
+    items: payload.bookings,
+    totalCount: meta.total ?? meta.count,
+    nextCursor: meta.nextCursor ?? null,
+    prevCursor: meta.prevCursor ?? null,
+    raw: payload,
+  };
 };
 
 export const mapCalBookingToMeetingRecord = (booking: CalBooking): MeetingRecord => {
   const eventType = booking?.eventType;
-  const normalizedHosts = Array.isArray(booking?.hosts)
-    ? booking.hosts.map((host) => ({ ...host }))
-    : [];
-  const normalizedAttendees = Array.isArray(booking?.attendees)
-    ? booking.attendees.map((attendee) => ({
-        ...attendee,
-        absent: attendee?.absent ?? false,
-      }))
-    : [];
-  const normalizedGuests = Array.isArray(booking?.guests) ? booking.guests : [];
+  const normalizedHosts = booking.hosts.map((host) => ({ ...host }));
+  const normalizedAttendees = (booking.attendees ?? []).map((attendee) => ({
+    ...attendee,
+    absent: attendee.absent ?? false,
+  }));
+  const normalizedGuests = booking.guests ?? [];
 
   return {
-    id: typeof booking.id === "number" ? booking.id : 0,
-    uid: booking.uid ?? "",
-    title: booking.title ?? "",
+    id: booking.id,
+    uid: booking.uid,
+    title: booking.title,
     description: booking.description ?? "",
     hosts: normalizedHosts,
-    status: typeof booking.status === "string" ? booking.status : "pending",
+    status: booking.status,
     cancellationReason: booking.cancellationReason ?? undefined,
     cancelledByEmail: booking.cancelledByEmail ?? undefined,
     reschedulingReason: booking.reschedulingReason ?? undefined,
     rescheduledByEmail: booking.rescheduledByEmail ?? undefined,
     rescheduledFromUid: booking.rescheduledFromUid ?? undefined,
     rescheduledToUid: booking.rescheduledToUid ?? undefined,
-    start: booking.start ?? "",
-    end: booking.end ?? "",
-    duration: booking.duration ?? 0,
-    eventTypeId: booking.eventTypeId ?? (typeof eventType?.id === "number" ? eventType.id : 0),
+    start: booking.start,
+    end: booking.end,
+    duration: booking.duration,
+    eventTypeId: booking.eventTypeId,
     eventType: {
       id:
         typeof eventType?.id === "number"
           ? eventType.id
-          : typeof booking.eventTypeId === "number"
-            ? booking.eventTypeId
-            : 0,
+          : booking.eventTypeId,
       slug: typeof eventType?.slug === "string" ? eventType.slug : "",
     },
-    meetingUrl: booking.meetingUrl ?? "",
+    meetingUrl: booking.meetingUrl,
     location: booking.location ?? "",
     absentHost: booking.absentHost ?? false,
-    createdAt: booking.createdAt ?? "",
-    updatedAt: booking.updatedAt ?? "",
+    createdAt: booking.createdAt,
+    updatedAt: booking.updatedAt,
     metadata: (booking.metadata as Record<string, unknown> | undefined) ?? {},
     rating: booking.rating ?? 0,
     icsUid: booking.icsUid ?? "",

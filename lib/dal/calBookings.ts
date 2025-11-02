@@ -1,4 +1,9 @@
-import { calBookingsQuerySchema } from "@/lib/schemas/calBookings";
+import type { z } from "zod";
+import {
+  calBookingsQuerySchema,
+  calBookingsResponseSchema,
+  type CalBookingsQuery,
+} from "@/lib/schemas/calBookings";
 import {
   CAL_API_BASE_URL,
   CAL_API_VERSION,
@@ -7,26 +12,32 @@ import {
 
 export type FetchCalBookingsOptions = {
   readonly accessToken: string;
-  readonly query?: Record<string, unknown>;
+  readonly query?: CalBookingsQuery;
   readonly signal?: AbortSignal;
   readonly baseUrl?: string;
   readonly apiVersion?: string;
   readonly fetchImpl?: typeof fetch;
 };
 
+export type CalBookingsResponse = z.infer<typeof calBookingsResponseSchema>;
+
 export class CalBookingsApiError extends Error {
   readonly status: number;
   readonly details: unknown;
+  readonly cause?: unknown;
 
-  constructor(message: string, status: number, details: unknown) {
+  constructor(message: string, status: number, details?: unknown, cause?: unknown) {
     super(message);
     this.name = "CalBookingsApiError";
     this.status = status;
     this.details = details;
+    if (typeof cause !== "undefined") {
+      this.cause = cause;
+    }
   }
 }
 
-const buildQueryString = (query?: Record<string, unknown>) => {
+const buildQueryString = (query?: CalBookingsQuery) => {
   if (!query) {
     return "";
   }
@@ -91,7 +102,7 @@ const resolveApiVersion = (apiVersion?: string) => {
 
 export const fetchCalBookings = async (
   options: FetchCalBookingsOptions,
-): Promise<unknown> => {
+): Promise<CalBookingsResponse> => {
   try {
     const {
       accessToken,
@@ -103,12 +114,12 @@ export const fetchCalBookings = async (
     } = options;
 
     if (!accessToken || typeof accessToken !== "string") {
-      throw new Error("A valid Cal.com access token is required.");
+      throw new CalBookingsApiError("A valid Cal.com access token is required.", 401);
     }
 
     const trimmedToken = accessToken.trim();
     if (!trimmedToken) {
-      throw new Error("Cal.com access token cannot be empty.");
+      throw new CalBookingsApiError("Cal.com access token cannot be empty.", 401);
     }
 
     const resolvedBaseUrl = resolveBaseUrl(baseUrl);
@@ -127,21 +138,46 @@ export const fetchCalBookings = async (
       cache: "no-store",
     });
 
-    const payload = await response
-      .json()
-      .catch(() => ({
-        error: "Failed to parse response body as JSON.",
-      }));
+    const rawBody = await response.text();
+    const normalizedBody = rawBody.trim();
+    let payload: unknown = undefined;
+
+    if (normalizedBody.length > 0) {
+      try {
+        payload = JSON.parse(normalizedBody);
+      } catch (parseError) {
+        throw new CalBookingsApiError(
+          "Failed to parse Cal.com bookings response.",
+          response.ok ? 502 : response.status,
+          normalizedBody,
+          parseError,
+        );
+      }
+    }
 
     if (!response.ok) {
       throw new CalBookingsApiError(
         "Cal.com bookings request failed.",
         response.status,
-        JSON.stringify(payload),
+        payload ?? normalizedBody ?? null,
       );
     }
 
-    return payload;
+    const parsedPayload = calBookingsResponseSchema.safeParse(payload);
+    if (!parsedPayload.success) {
+      throw new CalBookingsApiError(
+        "Unsupported Cal.com bookings response shape.",
+        response.ok ? 502 : response.status,
+        {
+          issues: parsedPayload.error.issues,
+          details: parsedPayload.error.flatten(),
+          payload,
+        },
+        parsedPayload.error,
+      );
+    }
+
+    return parsedPayload.data;
   } catch (error) {
     console.error("Failed to fetch Cal.com bookings", error);
     throw error;
