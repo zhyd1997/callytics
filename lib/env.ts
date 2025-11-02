@@ -25,7 +25,6 @@ const envSchema = z.object({
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
 });
 
-type EnvInput = z.input<typeof envSchema>;
 type EnvOutput = z.output<typeof envSchema>;
 
 /**

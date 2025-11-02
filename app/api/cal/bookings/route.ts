@@ -1,7 +1,7 @@
 import type { CalBookingsQuery } from "@/lib/schemas/calBookings";
 import type { Meeting } from "@/lib/types/meeting";
 import { NextRequest, NextResponse } from "next/server";
-import { CalBookingsApiError, normalizeError, getUserFriendlyMessage } from "@/lib/errors";
+import { normalizeError, getUserFriendlyMessage } from "@/lib/errors";
 import {
   fetchNormalizedCalBookings,
   mapNormalizedCalBookingsToMeeting,
