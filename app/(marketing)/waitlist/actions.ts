@@ -7,7 +7,7 @@ import { createWaitlistEntry } from "@/lib/dal/waitlist";
 import { logger } from "@/lib/logger";
 import { normalizeError } from "@/lib/errors";
 
-export async function joinWaitlist(initialState: WaitlistState, formData: FormData) {
+export async function joinWaitlist(_initialState: WaitlistState, formData: FormData) {
   try {
     const validatedFields = waitlistFormSchema.safeParse({
       email: formData.get("email"),
