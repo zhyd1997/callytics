@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { authClient } from "@/lib/auth-client"
 import { signIn } from "@/lib/auth/sign-in"
 import Link from "next/link"
+import Image from "next/image"
 import { useState } from "react"
 import { toast } from "sonner"
 
@@ -46,7 +47,26 @@ export function Hero() {
               Cal.com native analytics
             </div>
             <h1 className="text-balance font-sans text-4xl font-semibold tracking-tight text-foreground sm:text-5xl md:text-6xl">
-              Operational clarity for every Cal.com booking
+              Operational clarity for every{" "}
+              <span className="relative inline-flex h-10 w-24 rotate-[-1deg] shrink-0 items-center justify-center md:h-16 md:w-32">
+                <Image
+                  src="/platforms/cal-logo-light.jpeg"
+                  alt="Cal.com"
+                  fill
+                  sizes="(min-width: 768px) 8rem, 6rem"
+                  className="object-cover dark:hidden"
+                  priority
+                />
+                <Image
+                  src="/platforms/cal-logo-dark.jpeg"
+                  alt="Cal.com"
+                  fill
+                  sizes="(min-width: 768px) 8rem, 6rem"
+                  className="hidden object-cover dark:block"
+                  priority
+                />
+              </span>{" "}
+              booking
             </h1>
             <p className="mt-6 text-pretty text-base leading-relaxed text-muted-foreground md:text-lg">
               Streamline scheduling performance reviews with an opinionated dashboard that mirrors Cal.com&apos;s product language. Monitor pipeline health, surface revenue signals, and confidently communicate growth to stakeholders.
