@@ -40,12 +40,12 @@ const resolveActionContext = async (input: InputParams): Promise<ActionContext> 
   const session = await auth.api.getSession({ headers: requestHeaders });
 
   if (!session) {
-    logger.warn("No session found in bookings action", undefined, { userId });
+    logger.warn("No session found in bookings action", { userId });
     throw new AuthenticationError("No session found");
   }
 
   if (session.session.userId !== userId) {
-    logger.warn("User ID mismatch in bookings action", undefined, {
+    logger.warn("User ID mismatch in bookings action", {
       sessionUserId: session.session.userId,
       requestedUserId: userId,
     });
@@ -60,7 +60,7 @@ const resolveActionContext = async (input: InputParams): Promise<ActionContext> 
     });
 
     if (!tokenResult?.accessToken) {
-      logger.warn("No access token found in bookings action", undefined, { userId });
+      logger.warn("No access token found in bookings action", { userId });
       throw new AuthenticationError("No access token found");
     }
 
