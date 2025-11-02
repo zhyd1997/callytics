@@ -103,6 +103,11 @@ export const auth = betterAuth({
           // discoveryUrl: "https://auth.example.com/.well-known/openid-configuration", 
           // ... other config options
           async getUserInfo(token) {
+            if (!token.accessToken) {
+              logger.error("Missing access token in getUserInfo", undefined, { token });
+              throw new AuthenticationError("Missing access token");
+            }
+
             const profile = await fetchCalProfile(token.accessToken);
 
             return {
