@@ -33,109 +33,134 @@ export function Hero() {
   const showConnectCta = !session || isPending || !!error
 
   return (
-    <section className="relative overflow-hidden border-b border-border">
-      <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
+    <section className="relative overflow-hidden border-b border-border bg-background">
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute inset-x-0 top-0 h-[540px] bg-[radial-gradient(circle_at_top,_rgba(15,23,42,0.14),_transparent_65%)] dark:bg-[radial-gradient(circle_at_top,_rgba(148,163,184,0.2),_transparent_70%)]" />
+        <div className="absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[conic-gradient(from_120deg,_rgba(14,165,233,0.3),_transparent_55%)] blur-3xl" />
+      </div>
 
       <div className="container relative mx-auto px-4 py-24 md:py-32">
-        <div className="mx-auto max-w-4xl text-center">
-          <div className="mb-8 flex items-center justify-center">
-            <h2 className="relative font-serif text-6xl font-bold tracking-wider md:text-8xl">
-              <span className="bg-gradient-to-r from-primary via-orange-600 to-primary bg-clip-text text-transparent [text-shadow:0_0_30px_rgba(249,115,22,0.5)]">
-                Cal
-              </span>
-              <span className="text-foreground">lytics</span>
-              <span className="absolute -right-8 -bottom-4 text-4xl md:-right-12 md:-bottom-6 md:text-6xl animate-[candle-flicker_3s_ease-in-out_infinite]">
-                🎃
-              </span>
-              <span className="absolute -left-6 top-0 text-2xl md:-left-10 md:text-4xl animate-bounce [animation-duration:2s]">
-                🦇
-              </span>
-            </h2>
-          </div>
+        <div className="grid items-center gap-16 lg:grid-cols-[3fr_2fr]">
+          <div className="text-center lg:text-left">
+            <div className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border border-border/60 bg-secondary/60 px-4 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-muted-foreground lg:mx-0">
+              <span className="inline-block h-2 w-2 rounded-full bg-accent" />
+              Cal.com native analytics
+            </div>
+            <h1 className="text-balance font-sans text-4xl font-semibold tracking-tight text-foreground sm:text-5xl md:text-6xl">
+              Operational clarity for every{" "}
+              <span className="relative inline-flex h-10 w-24 rotate-[-1deg] shrink-0 items-center justify-center md:h-16 md:w-32">
+                <Image
+                  src="/platforms/cal-logo-light.jpeg"
+                  alt="Cal.com logo"
+                  fill
+                  sizes="(min-width: 768px) 8rem, 6rem"
+                  className="object-cover dark:hidden"
+                  priority
+                />
+                <Image
+                  src="/platforms/cal-logo-dark.jpeg"
+                  alt="Cal.com logo"
+                  fill
+                  sizes="(min-width: 768px) 8rem, 6rem"
+                  className="hidden object-cover dark:block"
+                  priority
+                />
+              </span>{" "}
+              booking
+            </h1>
+            <p className="mt-6 text-pretty text-base leading-relaxed text-muted-foreground md:text-lg">
+              Streamline scheduling performance reviews with an opinionated dashboard that mirrors Cal.com&apos;s product language. Monitor pipeline health, surface revenue signals, and confidently communicate growth to stakeholders.
+            </p>
 
-          <div className="mb-6 inline-block rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary shadow-[0_0_20px_rgba(249,115,22,0.3)] animate-[gradient-flow_4s_ease_infinite]">
-            <span className="flex items-center gap-2">
-              <span className="text-base animate-[float_3s_ease-in-out_infinite]">👻</span>
-              Now Live on Halloween
-            </span>
-          </div>
-
-          <h1 className="mb-6 text-balance font-sans text-5xl font-bold leading-tight tracking-tight text-foreground md:text-7xl">
-            Analytics for{" "}
-            <span className="relative inline-flex h-10 w-24 rotate-[-3deg] shrink-0 items-center justify-center md:h-16 md:w-32">
-              <Image
-                src="/platforms/cal-logo-light.jpeg"
-                alt="Cal.com"
-                fill
-                sizes="(min-width: 768px) 8rem, 6rem"
-                className="object-cover dark:hidden"
-                priority
-              />
-              <Image
-                src="/platforms/cal-logo-dark.jpeg"
-                alt="Cal.com"
-                fill
-                sizes="(min-width: 768px) 8rem, 6rem"
-                className="hidden object-cover dark:block"
-                priority
-              />
-            </span>{" "}
-            simplified
-          </h1>
-
-          <p className="mb-10 text-pretty text-lg leading-relaxed text-muted-foreground md:text-xl">
-            Launching this Halloween with powerful insights for your{" "}
-            <span className="bg-gradient-to-r from-primary via-orange-600 to-primary bg-clip-text font-semibold text-transparent">
-              Cal.com
-            </span>{" "}
-            bookings. Track meetings, analyze conversion rates, and optimize your scheduling workflow with spooky precision.
-          </p>
-
-          <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-            {showConnectCta ? (
-              <>
+            <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-start">
+              {showConnectCta ? (
+                <>
+                  <Button
+                    size="lg"
+                    className="min-w-[200px] text-base font-semibold"
+                    disabled={isConnecting}
+                    onClick={handleCalOAuth}
+                  >
+                    {isConnecting ? "Connecting..." : "Connect with Cal.com"}
+                  </Button>
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="min-w-[200px] text-base border-border/70 bg-transparent text-foreground transition-colors hover:bg-secondary/50"
+                    asChild
+                  >
+                    <Link href="/demo">View Demo</Link>
+                  </Button>
+                </>
+              ) : (
                 <Button
                   size="lg"
-                  className="min-w-[200px] text-base font-semibold hover:cursor-pointer"
-                  disabled={isConnecting}
-                  onClick={handleCalOAuth}
+                  variant="outline"
+                  className="min-w-[200px] text-base border-primary/50 bg-primary/5 text-primary transition-transform hover:-translate-y-0.5 hover:border-primary/70 hover:bg-primary/15 hover:text-foreground"
+                  asChild
                 >
-                  {isConnecting ? "Connecting..." : "Connect with Cal.com"}
+                  <Link href="/dashboard">Go to Dashboard</Link>
                 </Button>
-                <Button size="lg" variant="outline" className="min-w-[200px] text-base bg-transparent" asChild>
-                  <Link href="/demo">View Demo</Link>
-                </Button>
-              </>
-            ) : (
-              <Button
-                size="lg"
-                variant="outline"
-                className="min-w-[200px] text-base border-primary/50 bg-primary/5 text-primary transition-transform hover:-translate-y-0.5 hover:border-primary/70 hover:bg-primary/25 hover:text-foreground"
-                asChild
-              >
-                <Link href="/dashboard">Go to Dashboard</Link>
-              </Button>
-            )}
+              )}
+            </div>
+
+            <ul className="mt-10 flex flex-col items-center gap-4 text-sm text-muted-foreground sm:flex-row sm:items-start sm:text-left">
+              <li className="flex items-center gap-2">
+                <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-secondary text-xs font-semibold text-foreground">
+                  •
+                </span>
+                OAuth-secured Cal.com access
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-secondary text-xs font-semibold text-foreground">
+                  •
+                </span>
+                Ready for revenue and ops reviews
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-secondary text-xs font-semibold text-foreground">
+                  •
+                </span>
+                Exportable KPIs on demand
+              </li>
+            </ul>
           </div>
 
-          <div className="mt-12 flex items-center justify-center gap-8 text-sm text-muted-foreground">
-            <div className="flex items-center gap-2">
-              <svg className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-              <span>No credit card required</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <svg className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <span>Launching Oct 31st</span>
-            </div>
+          <div className="mx-auto w-full max-w-md rounded-3xl border border-border/70 bg-card/70 p-8 text-left shadow-lg backdrop-blur">
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">Snapshot</p>
+            <dl className="mt-6 grid grid-cols-2 gap-6">
+              <div>
+                <dt className="text-xs uppercase tracking-[0.18em] text-muted-foreground">7 day bookings</dt>
+                <dd className="mt-2 text-3xl font-semibold text-foreground">284</dd>
+                <dd className="text-xs font-medium text-accent">+18.4% vs last week</dd>
+              </div>
+              <div>
+                <dt className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Avg. conversion</dt>
+                <dd className="mt-2 text-3xl font-semibold text-foreground">42%</dd>
+                <dd className="text-xs font-medium text-muted-foreground">Across 6 event types</dd>
+              </div>
+              <div className="col-span-2">
+                <dt className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Host coverage</dt>
+                <dd className="mt-3 flex items-baseline gap-3 text-2xl font-semibold text-foreground">
+                  11 hosts active
+                  <span className="rounded-full bg-secondary px-2 py-1 text-xs font-medium text-foreground">98% SLA</span>
+                </dd>
+              </div>
+              <div className="col-span-2">
+                <dt className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Booking velocity</dt>
+                <dd className="mt-3 flex items-end gap-3">
+                  <div className="flex flex-1 items-end gap-1">
+                    <span className="h-6 w-2 rounded-full bg-accent/60" />
+                    <span className="h-8 w-2 rounded-full bg-accent/70" />
+                    <span className="h-10 w-2 rounded-full bg-accent" />
+                    <span className="h-7 w-2 rounded-full bg-accent/70" />
+                    <span className="h-9 w-2 rounded-full bg-accent/80" />
+                    <span className="h-11 w-2 rounded-full bg-accent" />
+                  </div>
+                  <span className="text-sm font-medium text-muted-foreground">Weekly trend</span>
+                </dd>
+              </div>
+            </dl>
           </div>
         </div>
       </div>
