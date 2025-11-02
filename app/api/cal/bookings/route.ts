@@ -31,23 +31,19 @@ function mapSearchParamsToQuery(searchParams: URLSearchParams): CalBookingsQuery
     return undefined;
   }
 
-  const accumulator = new Map<string, string[]>();
-  for (const [key, value] of searchParams.entries()) {
-    const trimmed = value.trim();
-    if (!trimmed.length) {
+  const raw: Record<string, unknown> = {};
+  const keys = new Set(searchParams.keys());
+
+  for (const key of keys) {
+    const values = searchParams
+      .getAll(key)
+      .map((value) => value.trim())
+      .filter(Boolean);
+
+    if (!values.length) {
       continue;
     }
 
-    const existing = accumulator.get(key);
-    if (existing) {
-      existing.push(trimmed);
-    } else {
-      accumulator.set(key, [trimmed]);
-    }
-  }
-
-  const raw: Record<string, unknown> = {};
-  for (const [key, values] of accumulator.entries()) {
     raw[key] = values.length === 1 ? values[0] : values;
   }
 
@@ -75,14 +71,44 @@ const createEmptyPagination = (query?: CalBookingsQuery) => {
   };
 };
 
+const toSerializableErrorDetails = (details: unknown) => {
+  if (details === null || typeof details === "undefined") {
+    return undefined;
+  }
+
+  if (details instanceof ZodError) {
+    return details.flatten();
+  }
+
+  if (details instanceof Error) {
+    return {
+      name: details.name,
+      message: details.message,
+    };
+  }
+
+  if (typeof details === "object") {
+    try {
+      return JSON.parse(JSON.stringify(details));
+    } catch (serializationError) {
+      console.error("Failed to serialize error details", serializationError, details);
+      return undefined;
+    }
+  }
+
+  return details;
+};
+
 const createMeetingErrorResponse = (
   message: string,
   details?: unknown,
   query?: CalBookingsQuery,
 ): Meeting => {
+  const normalizedDetails = toSerializableErrorDetails(details);
   const errorPayload: Record<string, unknown> = { message };
-  if (typeof details !== "undefined") {
-    errorPayload.details = details;
+
+  if (typeof normalizedDetails !== "undefined") {
+    errorPayload.details = normalizedDetails;
   }
 
   return {

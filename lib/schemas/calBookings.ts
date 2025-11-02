@@ -181,6 +181,7 @@ export const calBookingsResponseSchema = z.union([
 export type CalBookingStatus = z.infer<typeof bookingStatusSchema>;
 export type CalBooking = z.infer<typeof calBookingSchema>;
 export type CalBookingsQuery = z.infer<typeof calBookingsQuerySchema>;
+export type CalBookingsResponse = z.infer<typeof calBookingsResponseSchema>;
 
 export const fetchCalBookingsActionSchema = z.object({
   userId: z.string(),
