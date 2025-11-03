@@ -199,6 +199,7 @@ const buildMeetingsPagination = (
 export const mapNormalizedCalBookingsToMeeting = (
   result: NormalizedCalBookingsResponse,
   query?: CalBookingsQuery,
+  statusCode?: number,
 ): Meeting => {
   const totalItems =
     typeof result.totalCount === "number" ? result.totalCount : result.items.length;
@@ -209,6 +210,7 @@ export const mapNormalizedCalBookingsToMeeting = (
     data: meetingData,
     pagination: buildMeetingsPagination(totalItems, meetingData.length, query),
     error: {},
+    ...(typeof statusCode === "number" && { statusCode }),
   };
 };
 

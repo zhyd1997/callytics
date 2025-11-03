@@ -78,6 +78,7 @@ export interface Meeting {
   readonly data: readonly MeetingItem[];
   readonly pagination: MeetingsPagination;
   readonly error: Record<string, unknown> | null;
+  readonly statusCode?: number; // HTTP status code for monitoring
 }
 
 export type MeetingCollection = Meeting["data"];

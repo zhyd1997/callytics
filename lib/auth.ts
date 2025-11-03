@@ -30,6 +30,19 @@ if (!CLIENT_ID || !CLIENT_SECRET) {
   );
 }
 
+class CalProfileApiError extends Error {
+  readonly statusCode: number;
+  readonly details: unknown;
+
+  constructor(message: string, statusCode: number, details?: unknown) {
+    super(message);
+    this.name = "CalProfileApiError";
+    this.statusCode = statusCode;
+    this.details = details;
+    Object.setPrototypeOf(this, CalProfileApiError.prototype);
+  }
+}
+
 async function fetchCalProfile(accessToken?: string) {
   if (!accessToken) {
     throw new Error("Missing access token!");
@@ -44,14 +57,48 @@ async function fetchCalProfile(accessToken?: string) {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to load Cal.com profile.");
+    const errorDetails = {
+      statusCode: response.status,
+      url: CAL_PROFILE_ENDPOINT,
+    };
+
+    // Log for Vercel monitoring
+    console.error("[Cal.com Profile API Error]", {
+      statusCode: response.status,
+      url: CAL_PROFILE_ENDPOINT,
+      timestamp: new Date().toISOString(),
+    });
+
+    let errorPayload: unknown;
+    try {
+      errorPayload = await response.json();
+    } catch {
+      errorPayload = { message: "Failed to parse error response" };
+    }
+
+    throw new CalProfileApiError(
+      `Failed to load Cal.com profile: ${response.status} ${response.statusText}`,
+      response.status,
+      { ...errorDetails, payload: errorPayload },
+    );
   }
+
+  // Log successful response for monitoring
+  console.log("[Cal.com Profile API Success]", {
+    statusCode: response.status,
+    url: CAL_PROFILE_ENDPOINT,
+    timestamp: new Date().toISOString(),
+  });
 
   const payload = (await response.json()) as CalProfilePayload;
   const profile = payload.data;
 
   if (!profile?.id) {
-    throw new Error("Cal.com profile response missing id.");
+    throw new CalProfileApiError(
+      "Cal.com profile response missing id.",
+      200, // Response was OK but data is invalid
+      { payload },
+    );
   }
 
   return profile;

@@ -25,7 +25,20 @@ export async function joinWaitlist(initialState: WaitlistState, formData: FormDa
       message: "Success",
     };
   } catch (error) {
-    console.error(error);
+    const statusCode = error instanceof Error && "statusCode" in error
+      ? (error as { statusCode: number }).statusCode
+      : 500;
+
+    console.error("[Waitlist Action Error]", {
+      action: "joinWaitlist",
+      statusCode,
+      error: {
+        name: error instanceof Error ? error.name : "UnknownError",
+        message: error instanceof Error ? error.message : String(error),
+      },
+      timestamp: new Date().toISOString(),
+    });
+
     return {
       message: "An unexpected error occurred. Please try again later.",
     };

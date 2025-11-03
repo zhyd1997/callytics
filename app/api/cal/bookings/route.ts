@@ -8,6 +8,7 @@ import {
 } from "@/lib/dto/calBookings";
 import { calBookingsQuerySchema } from "@/lib/schemas/calBookings";
 import { ZodError } from "zod";
+import { logApiResponse } from "@/lib/utils/api-response";
 
 export const dynamic = "force-dynamic";
 
@@ -79,10 +80,14 @@ const createMeetingErrorResponse = (
   message: string,
   details?: unknown,
   query?: CalBookingsQuery,
+  statusCode?: number,
 ): Meeting => {
   const errorPayload: Record<string, unknown> = { message };
   if (typeof details !== "undefined") {
     errorPayload.details = details;
+  }
+  if (typeof statusCode === "number") {
+    errorPayload.statusCode = statusCode;
   }
 
   return {
@@ -90,17 +95,25 @@ const createMeetingErrorResponse = (
     data: [],
     pagination: createEmptyPagination(query),
     error: errorPayload,
+    statusCode,
   };
 };
 
 export async function GET(request: NextRequest) {
+  const path = request.nextUrl.pathname;
   const accessToken = parseAuthorizationHeader(request);
+  
   if (!accessToken) {
+    const statusCode = 401;
+    logApiResponse(path, statusCode);
     return NextResponse.json(
       createMeetingErrorResponse(
         "Missing or invalid Authorization header. Expected `Bearer <token>`.",
+        undefined,
+        undefined,
+        statusCode,
       ),
-      { status: 401 },
+      { status: statusCode },
     );
   }
 
@@ -108,16 +121,19 @@ export async function GET(request: NextRequest) {
   try {
     query = mapSearchParamsToQuery(request.nextUrl.searchParams);
   } catch (error) {
+    const statusCode = 400;
+    logApiResponse(path, statusCode, error instanceof Error ? error : new Error(String(error)));
+    
     if (error instanceof ZodError) {
       return NextResponse.json(
-        createMeetingErrorResponse("Invalid query parameters.", error.flatten()),
-        { status: 400 },
+        createMeetingErrorResponse("Invalid query parameters.", error.flatten(), undefined, statusCode),
+        { status: statusCode },
       );
     }
 
     return NextResponse.json(
-      createMeetingErrorResponse("Failed to parse query parameters.", error),
-      { status: 400 },
+      createMeetingErrorResponse("Failed to parse query parameters.", error, undefined, statusCode),
+      { status: statusCode },
     );
   }
 
@@ -127,18 +143,31 @@ export async function GET(request: NextRequest) {
       query,
     });
 
-    return NextResponse.json(mapNormalizedCalBookingsToMeeting(result, query));
+    const meetingResponse = mapNormalizedCalBookingsToMeeting(result, query);
+    const statusCode = 200;
+    logApiResponse(path, statusCode);
+    
+    return NextResponse.json({
+      ...meetingResponse,
+      statusCode,
+    }, { status: statusCode });
   } catch (error) {
     if (error instanceof CalBookingsApiError) {
+      const statusCode = error.status || 500;
+      logApiResponse(path, statusCode, error);
+      
       return NextResponse.json(
-        createMeetingErrorResponse(error.message, error.details, query),
-        { status: error.status || 500 },
+        createMeetingErrorResponse(error.message, error.details, query, statusCode),
+        { status: statusCode },
       );
     }
 
+    const statusCode = 500;
+    logApiResponse(path, statusCode, error instanceof Error ? error : new Error(String(error)));
+    
     return NextResponse.json(
-      createMeetingErrorResponse("Unexpected error while fetching Cal.com bookings.", error, query),
-      { status: 500 },
+      createMeetingErrorResponse("Unexpected error while fetching Cal.com bookings.", error, query, statusCode),
+      { status: statusCode },
     );
   }
 }

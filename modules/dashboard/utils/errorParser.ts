@@ -7,17 +7,21 @@ export type ErrorDetails = {
   readonly isForbiddenError: boolean;
   readonly userMessage: string;
   readonly technicalMessage?: string;
+  readonly statusCode?: number;
 };
 
 /**
- * Checks if error has a status property with value 403
+ * Checks if error has a status or statusCode property with value 403
  */
 const isForbiddenStatus = (error: Error): boolean => {
+  if (typeof error !== "object" || error === null) {
+    return false;
+  }
+
+  const errorObj = error as { status?: number; statusCode?: number };
   return (
-    typeof error === "object" &&
-    error !== null &&
-    "status" in error &&
-    (error as { status: number }).status === 403
+    errorObj.status === 403 ||
+    errorObj.statusCode === 403
   );
 };
 
@@ -130,12 +134,24 @@ const generateErrorMessages = (
 };
 
 /**
+ * Extracts status code from error object
+ */
+const extractStatusCode = (error: Error): number | undefined => {
+  if (typeof error === "object" && error !== null) {
+    const errorObj = error as { status?: number; statusCode?: number };
+    return errorObj.statusCode ?? errorObj.status;
+  }
+  return undefined;
+};
+
+/**
  * Parses error object and returns structured error details for UI display
  */
 export const parseErrorDetails = (error: Error): ErrorDetails => {
   const errorName = error.name || "";
   const errorMessage = error.message || "";
   const errorMessageLower = errorMessage.toLowerCase();
+  const statusCode = extractStatusCode(error);
 
   const classification: ErrorClassification = {
     isCalBookings: isCalBookingsError(errorName, errorMessageLower),
@@ -155,5 +171,6 @@ export const parseErrorDetails = (error: Error): ErrorDetails => {
     isForbiddenError: classification.isForbidden,
     userMessage,
     technicalMessage,
+    statusCode,
   };
 };

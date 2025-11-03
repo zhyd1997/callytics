@@ -65,9 +65,24 @@ export const fetchCalBookingsAction = async (input: InputParams) => {
       apiVersion,
     });
 
-    return mapNormalizedCalBookingsToMeeting(result, query);
+    return mapNormalizedCalBookingsToMeeting(result, query, 200);
   } catch (error) {
-    console.error("Failed to execute fetchCalBookingsAction", error);
+    const statusCode = error instanceof Error && "statusCode" in error 
+      ? (error as { statusCode: number }).statusCode 
+      : error instanceof Error && "status" in error
+        ? (error as { status: number }).status
+        : 500;
+
+    console.error("[Server Action Error]", {
+      action: "fetchCalBookingsAction",
+      statusCode,
+      error: {
+        name: error instanceof Error ? error.name : "UnknownError",
+        message: error instanceof Error ? error.message : String(error),
+      },
+      timestamp: new Date().toISOString(),
+    });
+
     throw error;
   }
 };
@@ -83,7 +98,22 @@ export const fetchTopUpdatedBookingsAction = async (input: InputParams) => {
       apiVersion,
     });
   } catch (error) {
-    console.error("Failed to execute fetchTopUpdatedBookingsAction", error);
+    const statusCode = error instanceof Error && "statusCode" in error 
+      ? (error as { statusCode: number }).statusCode 
+      : error instanceof Error && "status" in error
+        ? (error as { status: number }).status
+        : 500;
+
+    console.error("[Server Action Error]", {
+      action: "fetchTopUpdatedBookingsAction",
+      statusCode,
+      error: {
+        name: error instanceof Error ? error.name : "UnknownError",
+        message: error instanceof Error ? error.message : String(error),
+      },
+      timestamp: new Date().toISOString(),
+    });
+
     throw error;
   }
 };

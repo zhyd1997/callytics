@@ -16,13 +16,20 @@ export type FetchCalBookingsOptions = {
 
 export class CalBookingsApiError extends Error {
   readonly status: number;
+  readonly statusCode: number; // Alias for consistency
   readonly details: unknown;
+  readonly url?: string;
 
-  constructor(message: string, status: number, details: unknown) {
+  constructor(message: string, status: number, details: unknown, url?: string) {
     super(message);
     this.name = "CalBookingsApiError";
     this.status = status;
+    this.statusCode = status; // Expose as statusCode for monitoring
     this.details = details;
+    this.url = url;
+    
+    // Ensure error is properly serializable
+    Object.setPrototypeOf(this, CalBookingsApiError.prototype);
   }
 }
 
@@ -131,19 +138,55 @@ export const fetchCalBookings = async (
       .json()
       .catch(() => ({
         error: "Failed to parse response body as JSON.",
+        statusCode: response.status,
       }));
 
     if (!response.ok) {
+      const errorDetails = {
+        ...(typeof payload === "object" && payload !== null ? payload : { raw: payload }),
+        statusCode: response.status,
+        url,
+      };
+
+      // Log for Vercel monitoring
+      console.error("[Cal.com API Error]", {
+        statusCode: response.status,
+        url,
+        details: errorDetails,
+        timestamp: new Date().toISOString(),
+      });
+
       throw new CalBookingsApiError(
-        "Cal.com bookings request failed.",
+        `Cal.com bookings request failed with status ${response.status}.`,
         response.status,
-        JSON.stringify(payload),
+        errorDetails,
+        url,
       );
     }
 
+    // Log successful response for monitoring
+    console.log("[Cal.com API Success]", {
+      statusCode: response.status,
+      url,
+      timestamp: new Date().toISOString(),
+    });
+
     return payload;
   } catch (error) {
-    console.error("Failed to fetch Cal.com bookings", error);
+    // Re-throw CalBookingsApiError as-is to preserve status code
+    if (error instanceof CalBookingsApiError) {
+      throw error;
+    }
+
+    // Wrap other errors with status code context
+    console.error("[Cal.com API Fetch Error]", {
+      error: {
+        name: error instanceof Error ? error.name : "UnknownError",
+        message: error instanceof Error ? error.message : String(error),
+      },
+      timestamp: new Date().toISOString(),
+    });
+
     throw error;
   }
 };

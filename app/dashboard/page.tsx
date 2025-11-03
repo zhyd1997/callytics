@@ -37,8 +37,23 @@ export default async function DashboardPage() {
   ]);
 
   if (topUpdatedResponse.error) {
-    console.error("Top updated bookings action returned an error", topUpdatedResponse.error);
-    throw new Error("Failed to fetch top updated bookings");
+    const statusCode = topUpdatedResponse.error instanceof Error && "statusCode" in topUpdatedResponse.error
+      ? (topUpdatedResponse.error as { statusCode: number }).statusCode
+      : topUpdatedResponse.error instanceof Error && "status" in topUpdatedResponse.error
+        ? (topUpdatedResponse.error as { status: number }).status
+        : 500;
+
+    console.error("[Dashboard Page Error]", {
+      action: "fetchTopUpdatedBookingsAction",
+      statusCode,
+      error: {
+        name: topUpdatedResponse.error instanceof Error ? topUpdatedResponse.error.name : "UnknownError",
+        message: topUpdatedResponse.error instanceof Error ? topUpdatedResponse.error.message : String(topUpdatedResponse.error),
+      },
+      timestamp: new Date().toISOString(),
+    });
+
+    throw new Error(`Failed to fetch top updated bookings (status: ${statusCode})`);
   }
 
   const meetings: MeetingCollection =
