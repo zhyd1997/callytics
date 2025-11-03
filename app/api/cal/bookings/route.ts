@@ -8,6 +8,11 @@ import {
 } from "@/lib/dto/calBookings";
 import { calBookingsQuerySchema } from "@/lib/schemas/calBookings";
 import { ZodError } from "zod";
+import {
+  logApiRequest,
+  logApiResponse,
+  logApiError,
+} from "@/lib/utils/api-logger";
 
 export const dynamic = "force-dynamic";
 
@@ -79,10 +84,14 @@ const createMeetingErrorResponse = (
   message: string,
   details?: unknown,
   query?: CalBookingsQuery,
+  statusCode?: number,
 ): Meeting => {
   const errorPayload: Record<string, unknown> = { message };
   if (typeof details !== "undefined") {
     errorPayload.details = details;
+  }
+  if (typeof statusCode === "number") {
+    errorPayload.statusCode = statusCode;
   }
 
   return {
@@ -94,11 +103,31 @@ const createMeetingErrorResponse = (
 };
 
 export async function GET(request: NextRequest) {
+  const startTime = Date.now();
+  const url = request.nextUrl.toString();
+  const method = "GET";
+
+  logApiRequest("GET /api/cal/bookings", {
+    method,
+    url,
+  });
+
   const accessToken = parseAuthorizationHeader(request);
   if (!accessToken) {
+    const duration = Date.now() - startTime;
+    logApiError("Missing authorization header", {
+      method,
+      url,
+      statusCode: 401,
+      duration,
+    });
+
     return NextResponse.json(
       createMeetingErrorResponse(
         "Missing or invalid Authorization header. Expected `Bearer <token>`.",
+        undefined,
+        undefined,
+        401,
       ),
       { status: 401 },
     );
@@ -108,16 +137,32 @@ export async function GET(request: NextRequest) {
   try {
     query = mapSearchParamsToQuery(request.nextUrl.searchParams);
   } catch (error) {
+    const duration = Date.now() - startTime;
+    const statusCode = 400;
+
+    logApiError("Invalid query parameters", {
+      method,
+      url,
+      statusCode,
+      duration,
+      error:
+        error instanceof ZodError
+          ? JSON.stringify(error.flatten())
+          : error instanceof Error
+            ? error.message
+            : String(error),
+    });
+
     if (error instanceof ZodError) {
       return NextResponse.json(
-        createMeetingErrorResponse("Invalid query parameters.", error.flatten()),
-        { status: 400 },
+        createMeetingErrorResponse("Invalid query parameters.", error.flatten(), undefined, statusCode),
+        { status: statusCode },
       );
     }
 
     return NextResponse.json(
-      createMeetingErrorResponse("Failed to parse query parameters.", error),
-      { status: 400 },
+      createMeetingErrorResponse("Failed to parse query parameters.", error, undefined, statusCode),
+      { status: statusCode },
     );
   }
 
@@ -127,17 +172,47 @@ export async function GET(request: NextRequest) {
       query,
     });
 
+    const duration = Date.now() - startTime;
+    logApiResponse("GET /api/cal/bookings - success", {
+      method,
+      url,
+      statusCode: 200,
+      duration,
+    });
+
     return NextResponse.json(mapNormalizedCalBookingsToMeeting(result, query));
   } catch (error) {
+    const duration = Date.now() - startTime;
+
     if (error instanceof CalBookingsApiError) {
+      const statusCode = error.status || 500;
+
+      logApiError("Cal.com bookings API error", {
+        method,
+        url,
+        statusCode,
+        duration,
+        error: error.message,
+        details: error.details,
+      });
+
       return NextResponse.json(
-        createMeetingErrorResponse(error.message, error.details, query),
-        { status: error.status || 500 },
+        createMeetingErrorResponse(error.message, error.details, query, statusCode),
+        { status: statusCode },
       );
     }
 
+    logApiError("Unexpected error in bookings API route", {
+      method,
+      url,
+      statusCode: 500,
+      duration,
+      error:
+        error instanceof Error ? error.message : String(error),
+    });
+
     return NextResponse.json(
-      createMeetingErrorResponse("Unexpected error while fetching Cal.com bookings.", error, query),
+      createMeetingErrorResponse("Unexpected error while fetching Cal.com bookings.", error, query, 500),
       { status: 500 },
     );
   }

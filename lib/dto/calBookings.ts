@@ -2,10 +2,11 @@ import type { CalBooking, CalBookingStatus, CalBookingsQuery } from "@/lib/schem
 import {
   fetchCalBookings,
   type FetchCalBookingsOptions,
-  type CalBookingsApiError,
+  CalBookingsApiError,
 } from "@/lib/dal/calBookings";
 import type { Meeting, MeetingRecord, MeetingsPagination } from "@/lib/types/meeting";
 import { TOP_UPDATED_BOOKINGS_LIMIT, BOOKING_SUMMARY_FETCH_LIMIT } from "@/lib/constants/bookings";
+import { logApiError } from "@/lib/utils/api-logger";
 
 export type NormalizedCalBookingsResponse = {
   items: readonly CalBooking[];
@@ -106,7 +107,11 @@ export const normalizeCalBookingsResponse = (
     };
   }
 
-  console.error("Unexpected Cal.com bookings payload received", payload);
+  logApiError("Unexpected Cal.com bookings payload received", {
+    method: "normalize",
+    statusCode: 500,
+    error: "Unsupported Cal.com bookings response shape.",
+  });
   throw new Error("Unsupported Cal.com bookings response shape.");
 };
 
@@ -219,7 +224,14 @@ export const fetchNormalizedCalBookings = async (
     const payload = await fetchCalBookings(options);
     return normalizeCalBookingsResponse(payload);
   } catch (error) {
-    console.error("Failed to fetch normalized Cal.com bookings", error);
+    const statusCode =
+      error instanceof CalBookingsApiError ? error.status : 500;
+
+    logApiError("Failed to fetch normalized Cal.com bookings", {
+      method: "normalize",
+      statusCode,
+      error: error instanceof Error ? error.message : String(error),
+    });
     throw error;
   }
 };
@@ -262,7 +274,14 @@ export const fetchCalBookingSummaryByStatus = async (
       totalItems,
     };
   } catch (error) {
-    console.error("Failed to summarize Cal.com bookings by status", error);
+    const statusCode =
+      error instanceof CalBookingsApiError ? error.status : 500;
+
+    logApiError("Failed to summarize Cal.com bookings by status", {
+      method: "summary",
+      statusCode,
+      error: error instanceof Error ? error.message : String(error),
+    });
     throw error;
   }
 };
@@ -306,7 +325,15 @@ export const fetchTopUpdatedBookings = async (
       error: null,
     };
   } catch (error) {
-    console.error("Failed to fetch top updated bookings", error);
+    const statusCode =
+      error instanceof CalBookingsApiError ? error.status : 500;
+
+    logApiError("Failed to fetch top updated bookings", {
+      method: "top-updated",
+      statusCode,
+      error: error instanceof Error ? error.message : String(error),
+    });
+
     return {
       data: null,
       totalItems: null,

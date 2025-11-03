@@ -13,6 +13,11 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
 import { genericOAuth } from "better-auth/plugins";
 import { buildAppUrl } from "@/lib/env";
+import {
+  logApiRequest,
+  logApiResponse,
+  logApiError,
+} from "@/lib/utils/api-logger";
 
 // OAuth configuration with environment variable overrides
 const DEFAULT_REDIRECT_URI = buildAppUrl(OAUTH_CALLBACK_PATH);
@@ -35,26 +40,75 @@ async function fetchCalProfile(accessToken?: string) {
     throw new Error("Missing access token!");
   }
 
-  const response = await fetch(CAL_PROFILE_ENDPOINT, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      Accept: "application/json",
-    },
-    cache: "no-store",
+  logApiRequest("Fetching Cal.com profile", {
+    method: "GET",
+    url: CAL_PROFILE_ENDPOINT,
   });
 
-  if (!response.ok) {
-    throw new Error("Failed to load Cal.com profile.");
+  try {
+    const startTime = Date.now();
+    const response = await fetch(CAL_PROFILE_ENDPOINT, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        Accept: "application/json",
+      },
+      cache: "no-store",
+    });
+
+    const duration = Date.now() - startTime;
+
+    // Always log response with status code for Vercel monitoring
+    logApiResponse("Cal.com profile API response", {
+      method: "GET",
+      url: CAL_PROFILE_ENDPOINT,
+      statusCode: response.status,
+      duration,
+    });
+
+    if (!response.ok) {
+      logApiError("Cal.com profile request failed", {
+        method: "GET",
+        url: CAL_PROFILE_ENDPOINT,
+        statusCode: response.status,
+        duration,
+      });
+
+      throw new Error(
+        `Failed to load Cal.com profile. Status: ${response.status} ${response.statusText}`,
+      );
+    }
+
+    const payload = (await response.json()) as CalProfilePayload;
+    const profile = payload.data;
+
+    if (!profile?.id) {
+      logApiError("Cal.com profile response missing id", {
+        method: "GET",
+        url: CAL_PROFILE_ENDPOINT,
+        statusCode: 200, // Response was OK but data invalid
+        duration,
+      });
+
+      throw new Error("Cal.com profile response missing id.");
+    }
+
+    return profile;
+  } catch (error) {
+    // Re-throw if already an Error with status info
+    if (error instanceof Error && error.message.includes("Status:")) {
+      throw error;
+    }
+
+    // Log unexpected errors
+    logApiError("Unexpected error fetching Cal.com profile", {
+      method: "GET",
+      url: CAL_PROFILE_ENDPOINT,
+      statusCode: 500,
+      error: error instanceof Error ? error.message : String(error),
+    });
+
+    throw error;
   }
-
-  const payload = (await response.json()) as CalProfilePayload;
-  const profile = payload.data;
-
-  if (!profile?.id) {
-    throw new Error("Cal.com profile response missing id.");
-  }
-
-  return profile;
 }
 
 /**

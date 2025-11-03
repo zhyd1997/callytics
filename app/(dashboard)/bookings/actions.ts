@@ -13,6 +13,11 @@ import {
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { PROVIDER_ID } from "@/constants/oauth";
+import {
+  logApiRequest,
+  logApiError,
+} from "@/lib/utils/api-logger";
+import { CalBookingsApiError } from "@/lib/dal/calBookings";
 
 type InputParams = FetchCalBookingsActionInput;
 
@@ -55,6 +60,11 @@ const resolveActionContext = async (input: InputParams): Promise<ActionContext> 
 };
 
 export const fetchCalBookingsAction = async (input: InputParams) => {
+  logApiRequest("fetchCalBookingsAction", {
+    method: "server-action",
+    userId: input.userId,
+  });
+
   try {
     const { accessToken, query, baseUrl, apiVersion } = await resolveActionContext(input);
 
@@ -67,12 +77,25 @@ export const fetchCalBookingsAction = async (input: InputParams) => {
 
     return mapNormalizedCalBookingsToMeeting(result, query);
   } catch (error) {
-    console.error("Failed to execute fetchCalBookingsAction", error);
+    const statusCode =
+      error instanceof CalBookingsApiError ? error.status : 500;
+
+    logApiError("fetchCalBookingsAction failed", {
+      method: "server-action",
+      statusCode,
+      userId: input.userId,
+      error: error instanceof Error ? error.message : String(error),
+    });
     throw error;
   }
 };
 
 export const fetchTopUpdatedBookingsAction = async (input: InputParams) => {
+  logApiRequest("fetchTopUpdatedBookingsAction", {
+    method: "server-action",
+    userId: input.userId,
+  });
+
   try {
     const { accessToken, query, baseUrl, apiVersion } = await resolveActionContext(input);
 
@@ -83,7 +106,15 @@ export const fetchTopUpdatedBookingsAction = async (input: InputParams) => {
       apiVersion,
     });
   } catch (error) {
-    console.error("Failed to execute fetchTopUpdatedBookingsAction", error);
+    const statusCode =
+      error instanceof CalBookingsApiError ? error.status : 500;
+
+    logApiError("fetchTopUpdatedBookingsAction failed", {
+      method: "server-action",
+      statusCode,
+      userId: input.userId,
+      error: error instanceof Error ? error.message : String(error),
+    });
     throw error;
   }
 };

@@ -4,6 +4,11 @@ import {
   CAL_API_VERSION,
   CAL_BOOKINGS_ENDPOINT,
 } from "@/constants/oauth";
+import {
+  logApiRequest,
+  logApiResponse,
+  logApiError,
+} from "@/lib/utils/api-logger";
 
 export type FetchCalBookingsOptions = {
   readonly accessToken: string;
@@ -17,12 +22,23 @@ export type FetchCalBookingsOptions = {
 export class CalBookingsApiError extends Error {
   readonly status: number;
   readonly details: unknown;
+  readonly url?: string;
+  readonly method?: string;
+  readonly timestamp: string;
 
-  constructor(message: string, status: number, details: unknown) {
+  constructor(
+    message: string,
+    status: number,
+    details: unknown,
+    context?: { url?: string; method?: string },
+  ) {
     super(message);
     this.name = "CalBookingsApiError";
     this.status = status;
     this.details = details;
+    this.url = context?.url;
+    this.method = context?.method;
+    this.timestamp = new Date().toISOString();
   }
 }
 
@@ -92,30 +108,37 @@ const resolveApiVersion = (apiVersion?: string) => {
 export const fetchCalBookings = async (
   options: FetchCalBookingsOptions,
 ): Promise<unknown> => {
+  const {
+    accessToken,
+    query,
+    signal,
+    baseUrl,
+    apiVersion,
+    fetchImpl = fetch,
+  } = options;
+
+  if (!accessToken || typeof accessToken !== "string") {
+    throw new Error("A valid Cal.com access token is required.");
+  }
+
+  const trimmedToken = accessToken.trim();
+  if (!trimmedToken) {
+    throw new Error("Cal.com access token cannot be empty.");
+  }
+
+  const resolvedBaseUrl = resolveBaseUrl(baseUrl);
+  const resolvedApiVersion = resolveApiVersion(apiVersion);
+
+  const url = `${resolvedBaseUrl}${CAL_BOOKINGS_ENDPOINT}${buildQueryString(query)}`;
+
+  logApiRequest("Fetching Cal.com bookings", {
+    method: "GET",
+    url,
+    apiVersion: resolvedApiVersion,
+  });
+
   try {
-    const {
-      accessToken,
-      query,
-      signal,
-      baseUrl,
-      apiVersion,
-      fetchImpl = fetch,
-    } = options;
-
-    if (!accessToken || typeof accessToken !== "string") {
-      throw new Error("A valid Cal.com access token is required.");
-    }
-
-    const trimmedToken = accessToken.trim();
-    if (!trimmedToken) {
-      throw new Error("Cal.com access token cannot be empty.");
-    }
-
-    const resolvedBaseUrl = resolveBaseUrl(baseUrl);
-    const resolvedApiVersion = resolveApiVersion(apiVersion);
-
-    const url = `${resolvedBaseUrl}${CAL_BOOKINGS_ENDPOINT}${buildQueryString(query)}`;
-
+    const startTime = Date.now();
     const response = await fetchImpl(url, {
       method: "GET",
       headers: {
@@ -127,23 +150,61 @@ export const fetchCalBookings = async (
       cache: "no-store",
     });
 
-    const payload = await response
-      .json()
-      .catch(() => ({
+    const duration = Date.now() - startTime;
+
+    let payload: unknown;
+    try {
+      payload = await response.json();
+    } catch {
+      payload = {
         error: "Failed to parse response body as JSON.",
-      }));
+      };
+    }
+
+    // Always log response with status code for Vercel monitoring
+    logApiResponse("Cal.com bookings API response", {
+      method: "GET",
+      url,
+      statusCode: response.status,
+      duration,
+      apiVersion: resolvedApiVersion,
+    });
 
     if (!response.ok) {
+      logApiError("Cal.com bookings request failed", {
+        method: "GET",
+        url,
+        statusCode: response.status,
+        duration,
+        error: JSON.stringify(payload),
+        apiVersion: resolvedApiVersion,
+      });
+
       throw new CalBookingsApiError(
-        "Cal.com bookings request failed.",
+        `Cal.com bookings request failed with status ${response.status}.`,
         response.status,
-        JSON.stringify(payload),
+        payload,
+        { url, method: "GET" },
       );
     }
 
     return payload;
   } catch (error) {
-    console.error("Failed to fetch Cal.com bookings", error);
+    // Re-throw CalBookingsApiError as-is (already logged)
+    if (error instanceof CalBookingsApiError) {
+      throw error;
+    }
+
+    // Log unexpected errors
+    logApiError("Unexpected error fetching Cal.com bookings", {
+      method: "GET",
+      url,
+      statusCode: 500,
+      error:
+        error instanceof Error ? error.message : String(error),
+      apiVersion: resolvedApiVersion,
+    });
+
     throw error;
   }
 };
