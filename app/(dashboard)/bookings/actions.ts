@@ -13,6 +13,7 @@ import {
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { PROVIDER_ID } from "@/constants/oauth";
+import { extractStatusCode, logError } from "@/lib/utils/errors";
 
 type InputParams = FetchCalBookingsActionInput;
 
@@ -54,6 +55,10 @@ const resolveActionContext = async (input: InputParams): Promise<ActionContext> 
   };
 };
 
+/**
+ * Fetches Cal.com bookings for authenticated user
+ * @throws {Error} When authentication fails or API request fails
+ */
 export const fetchCalBookingsAction = async (input: InputParams) => {
   try {
     const { accessToken, query, baseUrl, apiVersion } = await resolveActionContext(input);
@@ -65,13 +70,19 @@ export const fetchCalBookingsAction = async (input: InputParams) => {
       apiVersion,
     });
 
-    return mapNormalizedCalBookingsToMeeting(result, query);
+    return mapNormalizedCalBookingsToMeeting(result, query, 200);
   } catch (error) {
-    console.error("Failed to execute fetchCalBookingsAction", error);
+    logError('Server Action: fetchCalBookingsAction', error, {
+      statusCode: extractStatusCode(error),
+    });
     throw error;
   }
 };
 
+/**
+ * Fetches top updated bookings for authenticated user
+ * @throws {Error} When authentication fails or API request fails
+ */
 export const fetchTopUpdatedBookingsAction = async (input: InputParams) => {
   try {
     const { accessToken, query, baseUrl, apiVersion } = await resolveActionContext(input);
@@ -83,7 +94,9 @@ export const fetchTopUpdatedBookingsAction = async (input: InputParams) => {
       apiVersion,
     });
   } catch (error) {
-    console.error("Failed to execute fetchTopUpdatedBookingsAction", error);
+    logError('Server Action: fetchTopUpdatedBookingsAction', error, {
+      statusCode: extractStatusCode(error),
+    });
     throw error;
   }
 };

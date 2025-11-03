@@ -4,7 +4,14 @@ import { z } from "zod";
 import type { WaitlistState } from "@/lib/schemas/waitlist";
 import { waitlistFormSchema } from "@/lib/schemas/waitlist";
 import { createWaitlistEntry } from "@/lib/dal/waitlist";
+import { extractStatusCode, logError } from "@/lib/utils/errors";
 
+/**
+ * Server action to join the waitlist
+ * @param initialState - Current state of the form
+ * @param formData - Form data containing email
+ * @returns Success or error message
+ */
 export async function joinWaitlist(initialState: WaitlistState, formData: FormData) {
   try {
     const validatedFields = waitlistFormSchema.safeParse({
@@ -25,7 +32,10 @@ export async function joinWaitlist(initialState: WaitlistState, formData: FormDa
       message: "Success",
     };
   } catch (error) {
-    console.error(error);
+    logError('Server Action: joinWaitlist', error, {
+      statusCode: extractStatusCode(error),
+    });
+
     return {
       message: "An unexpected error occurred. Please try again later.",
     };
