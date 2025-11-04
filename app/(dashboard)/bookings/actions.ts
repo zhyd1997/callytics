@@ -13,6 +13,7 @@ import {
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { PROVIDER_ID } from "@/constants/oauth";
+import { getValidAccessToken } from "@/lib/oauth/refreshToken";
 
 type InputParams = FetchCalBookingsActionInput;
 
@@ -37,10 +38,8 @@ const resolveActionContext = async (input: InputParams): Promise<ActionContext> 
     throw new Error("Not Authorized!");
   }
 
-  const { accessToken } = await auth.api.getAccessToken({
-    headers: requestHeaders,
-    body: { providerId: PROVIDER_ID, userId },
-  })
+  // Get a valid access token, automatically refreshing if needed
+  const { accessToken } = await getValidAccessToken(userId, PROVIDER_ID);
 
   if (!accessToken) {
     throw new Error("No accessToken found!");
