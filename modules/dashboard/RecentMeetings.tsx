@@ -28,6 +28,9 @@ export function RecentMeetings({ data }: RecentMeetingsProps) {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  // Get current time once to avoid creating new Date objects in render
+  const now = new Date();
+
   // Filter for accepted meetings, sort by start date (most recent first) and take top 3
   const recentMeetings = [...data]
     .filter((meeting) => meeting.status === 'accepted')
@@ -76,10 +79,10 @@ export function RecentMeetings({ data }: RecentMeetingsProps) {
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <h3 className="text-sm truncate flex-1">{meeting.title}</h3>
                     <Badge
-                      variant={new Date(meeting.start) > new Date() ? 'default' : 'secondary'}
+                      variant={new Date(meeting.start) > now ? 'default' : 'secondary'}
                       className="shrink-0 text-xs"
                     >
-                      {new Date(meeting.start) > new Date() ? 'upcoming' : 'past'}
+                      {new Date(meeting.start) > now ? 'upcoming' : 'past'}
                     </Badge>
                   </div>
                   
