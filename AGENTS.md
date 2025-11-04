@@ -23,8 +23,8 @@
 - `public/`: static assets (favicon, etc.) served as-is by Next.js
 - `eslint.config.mjs`: workspace lint rules; lint runs with `pnpm lint`
 - `app/api/cal/oauth/callback/route.ts`: Cal.com OAuth 2.0 redirect handler exchanging auth codes for tokens ([docs](https://cal.com/docs/api-reference/v2/oauth-clients/))
-- `app/api/cal/oauth/refresh/route.ts`: Manual token refresh endpoint for authenticated users
-- `lib/oauth/refreshToken.ts`: Automatic access token refresh utility with expiration checking and database updates
+- `app/api/cal/oauth/refresh/route.ts`: Manual token refresh endpoint for authenticated users via better-auth plugin API
+- `lib/auth.ts`: better-auth configuration with Cal.com OAuth provider and custom token refresh plugin (`oauth-token-refresh`)
 - `lib/schemas/calBookings.ts`: Zod schemas for Cal.com bookings payloads plus server-action input validation
 - `lib/dto/calBookings.ts`: Normalization helpers and higher-level getters (summary, top bookings) built atop the DAL
 - `lib/dal/calBookings.ts`: Low-level fetchers returning raw Cal.com API responses with typed error handling
@@ -61,7 +61,8 @@
 - Thread authenticated Cal.com access tokens through cookies or secure storage so both the server action and API route can read them without exposing secrets client-side.
 - Call `fetchCalBookingSummaryByStatus` when you only need aggregate counts per status; it fetches a single booking slice and returns `{ status, totalItems }`.
 - Use `fetchTopUpdatedBookings` to retrieve the three most recently updated bookings with `{ data, error, totalItems }`, where `totalItems` honors the API's pagination counts.
-- Access tokens are automatically refreshed when expired or within 5 minutes of expiry via `getValidAccessToken()` from `lib/oauth/refreshToken.ts`.
+- Access tokens are automatically refreshed when expired or within 5 minutes of expiry via better-auth's `oauth-token-refresh` plugin using `auth.api.getValidAccessToken({ body: { providerId, userId } })`.
 - Use `POST /api/cal/oauth/refresh` to manually trigger a token refresh for the authenticated user.
+- The OAuth configuration includes `accessType: "offline"` to request refresh tokens from Cal.com during initial authentication.
 
 Keep this file current so future agents can onboard quickly.

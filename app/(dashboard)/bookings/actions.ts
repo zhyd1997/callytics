@@ -13,7 +13,6 @@ import {
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { PROVIDER_ID } from "@/constants/oauth";
-import { getValidAccessToken } from "@/lib/oauth/refreshToken";
 
 type InputParams = FetchCalBookingsActionInput;
 
@@ -38,15 +37,19 @@ const resolveActionContext = async (input: InputParams): Promise<ActionContext> 
     throw new Error("Not Authorized!");
   }
 
-  // Get a valid access token, automatically refreshing if needed
-  const { accessToken } = await getValidAccessToken(userId, PROVIDER_ID);
+  // Get a valid access token using better-auth's token refresh plugin
+  // This automatically refreshes the token if expired or expiring soon
+  const tokenResult = await auth.api.getValidAccessToken({
+    headers: requestHeaders,
+    body: { providerId: PROVIDER_ID, userId },
+  });
 
-  if (!accessToken) {
+  if (!tokenResult?.accessToken) {
     throw new Error("No accessToken found!");
   }
 
   return {
-    accessToken,
+    accessToken: tokenResult.accessToken,
     query,
     baseUrl,
     apiVersion,
