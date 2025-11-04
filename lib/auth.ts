@@ -114,6 +114,8 @@ const oauthTokenRefresh = (): BetterAuthPlugin => {
           }
 
           // Refresh the token using Cal.com's refresh endpoint
+          // Note: Cal.com uses a non-standard OAuth2 implementation where the
+          // refresh token is sent in the Authorization header (instead of the body)
           const response = await fetch(CAL_REFRESH_TOKEN_URL, {
             method: "POST",
             headers: {
