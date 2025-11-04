@@ -28,8 +28,9 @@ export function RecentMeetings({ data }: RecentMeetingsProps) {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Sort meetings by start date (most recent first) and take top 3
+  // Filter for accepted meetings, sort by start date (most recent first) and take top 3
   const recentMeetings = [...data]
+    .filter((meeting) => meeting.status === 'accepted')
     .sort((a, b) => new Date(b.start).getTime() - new Date(a.start).getTime())
     .slice(0, 3);
 
@@ -58,7 +59,7 @@ export function RecentMeetings({ data }: RecentMeetingsProps) {
             <Calendar className="w-5 h-5" />
             Recent Meetings
           </CardTitle>
-          <CardDescription>Your 3 most recent meetings</CardDescription>
+          <CardDescription>Your 3 most recent accepted meetings</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
@@ -75,10 +76,10 @@ export function RecentMeetings({ data }: RecentMeetingsProps) {
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <h3 className="text-sm truncate flex-1">{meeting.title}</h3>
                     <Badge
-                      variant={meeting.status === 'accepted' ? 'default' : 'secondary'}
+                      variant={new Date(meeting.start) > new Date() ? 'default' : 'secondary'}
                       className="shrink-0 text-xs"
                     >
-                      {meeting.status}
+                      {new Date(meeting.start) > new Date() ? 'upcoming' : 'past'}
                     </Badge>
                   </div>
                   
