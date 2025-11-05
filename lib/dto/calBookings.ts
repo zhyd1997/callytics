@@ -58,6 +58,21 @@ type CalBookingsEnvelope =
         readonly nextCursor?: string | number | null;
         readonly prevCursor?: string | number | null;
       };
+    }
+  | {
+      readonly status: string;
+      readonly data: CalBooking[];
+      readonly pagination: {
+        readonly totalItems: number;
+        readonly remainingItems: number;
+        readonly returnedItems: number;
+        readonly itemsPerPage: number;
+        readonly currentPage: number;
+        readonly totalPages: number;
+        readonly hasNextPage: boolean;
+        readonly hasPreviousPage: boolean;
+      };
+      readonly error: Record<string, unknown>;
     };
 
 const isBookingsEnvelope = (value: unknown): value is CalBookingsEnvelope => {
@@ -88,20 +103,57 @@ export const normalizeCalBookingsResponse = (
 
   if (isBookingsEnvelope(payload)) {
     if ("data" in payload) {
+      // Handle new pagination structure
+      if ("pagination" in payload && payload.pagination) {
+        const paginatedPayload = payload as {
+          readonly data: CalBooking[];
+          readonly pagination: {
+            readonly totalItems: number;
+            readonly hasNextPage: boolean;
+            readonly hasPreviousPage: boolean;
+            readonly currentPage: number;
+          };
+        };
+        return {
+          items: paginatedPayload.data,
+          totalCount: paginatedPayload.pagination.totalItems,
+          nextCursor: paginatedPayload.pagination.hasNextPage ? paginatedPayload.pagination.currentPage + 1 : null,
+          prevCursor: paginatedPayload.pagination.hasPreviousPage ? paginatedPayload.pagination.currentPage - 1 : null,
+          raw: payload,
+        };
+      }
+      
+      // Handle old structure
+      const oldPayload = payload as {
+        readonly data: CalBooking[];
+        readonly totalCount?: number;
+        readonly count?: number;
+        readonly nextCursor?: string | number | null;
+        readonly prevCursor?: string | number | null;
+      };
       return {
-        items: payload.data,
-        totalCount: payload.totalCount ?? payload.count,
-        nextCursor: payload.nextCursor ?? null,
-        prevCursor: payload.prevCursor ?? null,
+        items: oldPayload.data,
+        totalCount: oldPayload.totalCount ?? oldPayload.count,
+        nextCursor: oldPayload.nextCursor ?? null,
+        prevCursor: oldPayload.prevCursor ?? null,
         raw: payload,
       };
     }
 
+    const bookingsPayload = payload as {
+      readonly bookings: CalBooking[];
+      readonly meta?: {
+        readonly total?: number;
+        readonly count?: number;
+        readonly nextCursor?: string | number | null;
+        readonly prevCursor?: string | number | null;
+      };
+    };
     return {
-      items: payload.bookings,
-      totalCount: payload.meta?.total ?? payload.meta?.count,
-      nextCursor: payload.meta?.nextCursor ?? null,
-      prevCursor: payload.meta?.prevCursor ?? null,
+      items: bookingsPayload.bookings,
+      totalCount: bookingsPayload.meta?.total ?? bookingsPayload.meta?.count,
+      nextCursor: bookingsPayload.meta?.nextCursor ?? null,
+      prevCursor: bookingsPayload.meta?.prevCursor ?? null,
       raw: payload,
     };
   }

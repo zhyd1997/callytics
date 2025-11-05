@@ -147,6 +147,17 @@ export const calBookingSchema = z.object({
 
 const rawBookingsArraySchema = z.array(calBookingSchema);
 
+const paginationSchema = z.object({
+  totalItems: z.number(),
+  remainingItems: z.number(),
+  returnedItems: z.number(),
+  itemsPerPage: z.number(),
+  currentPage: z.number(),
+  totalPages: z.number(),
+  hasNextPage: z.boolean(),
+  hasPreviousPage: z.boolean(),
+});
+
 const rawBookingsEnvelopeSchema = z
   .object({
     data: rawBookingsArraySchema,
@@ -172,10 +183,20 @@ const rawBookingsEnvelopeAltSchema = z
   })
   .loose();
 
+const rawBookingsWithPaginationSchema = z
+  .object({
+    status: z.string(),
+    data: rawBookingsArraySchema,
+    pagination: paginationSchema,
+    error: z.record(z.string(), z.unknown()),
+  })
+  .loose();
+
 export const calBookingsResponseSchema = z.union([
   rawBookingsArraySchema,
   rawBookingsEnvelopeSchema,
   rawBookingsEnvelopeAltSchema,
+  rawBookingsWithPaginationSchema,
 ]);
 
 export type CalBookingStatus = z.infer<typeof bookingStatusSchema>;
