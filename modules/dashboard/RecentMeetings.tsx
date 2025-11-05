@@ -179,8 +179,8 @@ export function RecentMeetings({ data }: RecentMeetingsProps) {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-2 mb-2">
                       <h3 className="text-sm truncate flex-1">{meeting.title}</h3>
-                      <Badge {...getBadgeProps(meeting.status)}>
-                        {meeting.status}
+                      <Badge {...getBadgeProps(meeting.reschedulingReason ? 'rescheduled' : meeting.status)}>
+                        {meeting.reschedulingReason ? 'rescheduled' : meeting.status}
                       </Badge>
                     </div>
                     
