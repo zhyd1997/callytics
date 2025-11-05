@@ -109,11 +109,18 @@ export const normalizeCalBookingsResponse = (
           readonly data: CalBooking[];
           readonly pagination: {
             readonly totalItems: number;
+            readonly remainingItems: number;
+            readonly returnedItems: number;
+            readonly itemsPerPage: number;
+            readonly currentPage: number;
+            readonly totalPages: number;
             readonly hasNextPage: boolean;
             readonly hasPreviousPage: boolean;
-            readonly currentPage: number;
           };
         };
+        // Note: Using page numbers as cursors for new pagination format.
+        // The Cal.com API v2 with pagination object doesn't use traditional cursors,
+        // so we represent next/previous pages as numeric page identifiers.
         return {
           items: paginatedPayload.data,
           totalCount: paginatedPayload.pagination.totalItems,
