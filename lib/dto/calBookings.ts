@@ -1,4 +1,10 @@
-import type { CalBooking, CalBookingStatus, CalBookingsQuery } from "@/lib/schemas/calBookings";
+import type {
+  CalBooking,
+  CalBookingStatus,
+  CalBookingsQuery,
+  CalBookingsApiResponse,
+  CalBookingsPagination,
+} from "@/lib/schemas/calBookings";
 import {
   fetchCalBookings,
   type FetchCalBookingsOptions,
@@ -12,6 +18,7 @@ export type NormalizedCalBookingsResponse = {
   totalCount?: number;
   nextCursor?: string | number | null;
   prevCursor?: string | number | null;
+  pagination?: CalBookingsPagination;
   raw: unknown;
 };
 
@@ -76,9 +83,42 @@ const isBookingsEnvelope = (value: unknown): value is CalBookingsEnvelope => {
   return false;
 };
 
+const isCalBookingsApiResponse = (
+  value: unknown,
+): value is CalBookingsApiResponse => {
+  if (!isRecord(value)) {
+    return false;
+  }
+
+  return (
+    "status" in value &&
+    "data" in value &&
+    "pagination" in value &&
+    "error" in value &&
+    (value.status === "success" || value.status === "error") &&
+    isBookingsArray(value.data) &&
+    typeof value.pagination === "object" &&
+    value.pagination !== null &&
+    typeof (value.pagination as Record<string, unknown>).totalItems === "number"
+  );
+};
+
 export const normalizeCalBookingsResponse = (
   payload: unknown,
 ): NormalizedCalBookingsResponse => {
+  // Check for new standard API response structure first
+  if (isCalBookingsApiResponse(payload)) {
+    return {
+      items: payload.data,
+      totalCount: payload.pagination.totalItems,
+      nextCursor: null, // New structure uses pagination object instead of cursors
+      prevCursor: null,
+      pagination: payload.pagination,
+      raw: payload,
+    };
+  }
+
+  // Legacy formats for backward compatibility
   if (isBookingsArray(payload)) {
     return {
       items: payload,
@@ -204,10 +244,27 @@ export const mapNormalizedCalBookingsToMeeting = (
     typeof result.totalCount === "number" ? result.totalCount : result.items.length;
   const meetingData = mapCalBookingsToMeetingCollection(result.items);
 
+  // Use pagination from API response if available, otherwise build it
+  let pagination: MeetingsPagination;
+  if (result.pagination) {
+    pagination = {
+      totalItems: result.pagination.totalItems,
+      remainingItems: result.pagination.remainingItems,
+      returnedItems: result.pagination.returnedItems,
+      itemsPerPage: result.pagination.itemsPerPage,
+      currentPage: result.pagination.currentPage,
+      totalPages: result.pagination.totalPages,
+      hasNextPage: result.pagination.hasNextPage,
+      hasPreviousPage: result.pagination.hasPreviousPage,
+    };
+  } else {
+    pagination = buildMeetingsPagination(totalItems, meetingData.length, query);
+  }
+
   return {
     status: "success",
     data: meetingData,
-    pagination: buildMeetingsPagination(totalItems, meetingData.length, query),
+    pagination,
     error: {},
   };
 };

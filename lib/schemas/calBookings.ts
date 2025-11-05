@@ -147,6 +147,26 @@ export const calBookingSchema = z.object({
 
 const rawBookingsArraySchema = z.array(calBookingSchema);
 
+const paginationSchema = z.object({
+  totalItems: z.number(),
+  remainingItems: z.number(),
+  returnedItems: z.number(),
+  itemsPerPage: z.number(),
+  currentPage: z.number(),
+  totalPages: z.number(),
+  hasNextPage: z.boolean(),
+  hasPreviousPage: z.boolean(),
+});
+
+// New standard API response structure
+const calBookingsApiResponseSchema = z.object({
+  status: z.enum(["success", "error"]),
+  data: rawBookingsArraySchema,
+  pagination: paginationSchema,
+  error: z.record(z.string(), z.unknown()).or(z.object({})),
+});
+
+// Legacy envelope formats for backward compatibility
 const rawBookingsEnvelopeSchema = z
   .object({
     data: rawBookingsArraySchema,
@@ -173,6 +193,7 @@ const rawBookingsEnvelopeAltSchema = z
   .loose();
 
 export const calBookingsResponseSchema = z.union([
+  calBookingsApiResponseSchema,
   rawBookingsArraySchema,
   rawBookingsEnvelopeSchema,
   rawBookingsEnvelopeAltSchema,
@@ -181,6 +202,8 @@ export const calBookingsResponseSchema = z.union([
 export type CalBookingStatus = z.infer<typeof bookingStatusSchema>;
 export type CalBooking = z.infer<typeof calBookingSchema>;
 export type CalBookingsQuery = z.infer<typeof calBookingsQuerySchema>;
+export type CalBookingsPagination = z.infer<typeof paginationSchema>;
+export type CalBookingsApiResponse = z.infer<typeof calBookingsApiResponseSchema>;
 
 export const fetchCalBookingsActionSchema = z.object({
   userId: z.string(),

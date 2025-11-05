@@ -57,6 +57,44 @@ export function MeetingDetails({ meeting }: MeetingDetailsProps) {
         )}
       </div>
 
+      {/* Rescheduling Reason - Moved to top */}
+      {meeting.reschedulingReason && (
+        <>
+          <Separator />
+          <div className="flex items-start gap-3">
+            <Info className="w-5 h-5 text-muted-foreground mt-0.5" />
+            <div>
+              <div className="text-sm">Rescheduling Reason</div>
+              <div className="text-muted-foreground text-sm">{meeting.reschedulingReason}</div>
+              {meeting.rescheduledByEmail && (
+                <div className="text-muted-foreground text-xs mt-1">
+                  Rescheduled by: {meeting.rescheduledByEmail}
+                </div>
+              )}
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Cancellation Reason - Moved to top */}
+      {meeting.cancellationReason && (
+        <>
+          <Separator />
+          <div className="flex items-start gap-3">
+            <Info className="w-5 h-5 text-muted-foreground mt-0.5" />
+            <div>
+              <div className="text-sm">Cancellation Reason</div>
+              <div className="text-muted-foreground text-sm">{meeting.cancellationReason}</div>
+              {meeting.cancelledByEmail && (
+                <div className="text-muted-foreground text-xs mt-1">
+                  Cancelled by: {meeting.cancelledByEmail}
+                </div>
+              )}
+            </div>
+          </div>
+        </>
+      )}
+
       <Separator />
 
       {/* Date and Time */}
@@ -139,19 +177,6 @@ export function MeetingDetails({ meeting }: MeetingDetailsProps) {
         </>
       )}
 
-      {/* Cancellation Reason */}
-      {meeting.status === 'cancelled' && meeting.cancellationReason && (
-        <>
-          <Separator />
-          <div className="flex items-start gap-3">
-            <Info className="w-5 h-5 text-muted-foreground mt-0.5" />
-            <div>
-              <div className="text-sm">Cancellation Reason</div>
-              <div className="text-muted-foreground text-sm">{meeting.cancellationReason}</div>
-            </div>
-          </div>
-        </>
-      )}
     </div>
   );
 }
