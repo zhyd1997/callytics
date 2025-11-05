@@ -29,6 +29,23 @@ export class TokenRefreshError extends Error {
 /**
  * Refreshes the Cal.com access token using the refresh token
  * 
+ * Calls Cal.com's refresh token endpoint and updates the database with new tokens.
+ * This is typically called automatically by `getValidAccessToken()`, but can be
+ * called directly if you need to force a token refresh.
+ * 
+ * @example
+ * ```typescript
+ * try {
+ *   const result = await refreshCalAccessToken(userId);
+ *   console.log('New access token:', result.access_token);
+ * } catch (error) {
+ *   if (error instanceof TokenRefreshError) {
+ *     // Handle refresh error (e.g., prompt user to re-authenticate)
+ *     console.error('Token refresh failed:', error.message, error.status);
+ *   }
+ * }
+ * ```
+ * 
  * @param userId - The user ID to refresh the token for
  * @returns The new access token and optionally a new refresh token
  * @throws TokenRefreshError if the refresh fails
@@ -148,6 +165,21 @@ export async function refreshCalAccessToken(
 
 /**
  * Gets a valid access token for the user, refreshing if necessary
+ * 
+ * This function automatically handles token expiration by:
+ * 1. Checking if the current token is expired or will expire within 5 minutes
+ * 2. Refreshing the token if needed using the refresh token
+ * 3. Updating the database with new tokens
+ * 4. Returning a valid access token
+ * 
+ * @example
+ * ```typescript
+ * // In a server action
+ * const accessToken = await getValidAccessToken(userId);
+ * const response = await fetch('https://api.cal.com/v2/bookings', {
+ *   headers: { Authorization: `Bearer ${accessToken}` }
+ * });
+ * ```
  * 
  * @param userId - The user ID to get the access token for
  * @returns The valid access token
