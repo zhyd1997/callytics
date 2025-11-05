@@ -147,18 +147,16 @@ export const calBookingSchema = z.object({
 
 const rawBookingsArraySchema = z.array(calBookingSchema);
 
-const paginationSchema = z
-  .object({
-    totalItems: z.number().optional(),
-    remainingItems: z.number().optional(),
-    returnedItems: z.number().optional(),
-    itemsPerPage: z.number().optional(),
-    currentPage: z.number().optional(),
-    totalPages: z.number().optional(),
-    hasNextPage: z.boolean().optional(),
-    hasPreviousPage: z.boolean().optional(),
-  })
-  .partial();
+const paginationSchema = z.object({
+  totalItems: z.number().optional(),
+  remainingItems: z.number().optional(),
+  returnedItems: z.number().optional(),
+  itemsPerPage: z.number().optional(),
+  currentPage: z.number().optional(),
+  totalPages: z.number().optional(),
+  hasNextPage: z.boolean().optional(),
+  hasPreviousPage: z.boolean().optional(),
+});
 
 const rawBookingsEnvelopeSchema = z
   .object({
