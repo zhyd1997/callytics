@@ -1,15 +1,26 @@
 import { CAL_REFRESH_TOKEN_URL, PROVIDER_ID } from "@/constants/oauth";
 import prisma from "@/lib/prisma";
+import { z } from "zod";
+
+/**
+ * Buffer time before token expiry to trigger refresh (5 minutes in milliseconds)
+ */
+const TOKEN_EXPIRY_BUFFER_MS = 5 * 60 * 1000;
+
+/**
+ * Zod schema for validating Cal.com refresh token response
+ */
+const refreshTokenResponseSchema = z.object({
+  access_token: z.string(),
+  refresh_token: z.string().optional(),
+  expires_in: z.number().optional(),
+  token_type: z.string().optional(),
+});
 
 /**
  * Response from Cal.com refresh token endpoint
  */
-export type RefreshTokenResponse = {
-  access_token: string;
-  refresh_token?: string;
-  expires_in?: number;
-  token_type?: string;
-};
+export type RefreshTokenResponse = z.infer<typeof refreshTokenResponseSchema>;
 
 /**
  * Error thrown when token refresh fails
@@ -115,7 +126,9 @@ export async function refreshCalAccessToken(
     });
 
     if (!response.ok) {
-      const errorBody = await response.text().catch(() => "Unknown error");
+      const errorBody = await response.text().catch(() => 
+        `Failed to read error response body (status: ${response.status})`
+      );
       throw new TokenRefreshError(
         "Failed to refresh access token",
         response.status,
@@ -123,15 +136,19 @@ export async function refreshCalAccessToken(
       );
     }
 
-    const data = (await response.json()) as RefreshTokenResponse;
-
-    if (!data.access_token) {
+    // Parse and validate the response
+    const rawData = await response.json();
+    const parseResult = refreshTokenResponseSchema.safeParse(rawData);
+    
+    if (!parseResult.success) {
       throw new TokenRefreshError(
-        "Invalid refresh token response: missing access_token",
+        "Invalid refresh token response format",
         500,
-        data
+        parseResult.error.format()
       );
     }
+
+    const data = parseResult.data;
 
     // Update the account with new tokens
     const expiresAt = data.expires_in
@@ -214,10 +231,9 @@ export async function getValidAccessToken(
     );
   }
 
-  // Check if token is expired or will expire in the next 5 minutes
-  const expiryBuffer = 5 * 60 * 1000; // 5 minutes in milliseconds
+  // Check if token is expired or will expire soon
   const isExpired = account.accessTokenExpiresAt
-    ? account.accessTokenExpiresAt.getTime() - Date.now() < expiryBuffer
+    ? account.accessTokenExpiresAt.getTime() - Date.now() < TOKEN_EXPIRY_BUFFER_MS
     : false;
 
   if (isExpired) {
