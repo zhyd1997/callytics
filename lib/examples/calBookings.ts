@@ -23,12 +23,12 @@ export const acceptedBookingExample: CalBooking = {
     },
   ],
   status: "accepted",
-  cancellationReason: "User requested cancellation",
-  cancelledByEmail: "canceller@example.com",
-  reschedulingReason: "User rescheduled the event",
-  rescheduledByEmail: "rescheduler@example.com",
-  rescheduledFromUid: "previous_uid_123",
-  rescheduledToUid: "new_uid_456",
+  cancellationReason: null,
+  cancelledByEmail: null,
+  reschedulingReason: null,
+  rescheduledByEmail: null,
+  rescheduledFromUid: null,
+  rescheduledToUid: null,
   start: "2024-08-13T15:30:00Z",
   end: "2024-08-13T16:30:00Z",
   duration: 60,
@@ -278,6 +278,62 @@ export const upcomingBookingExample: CalBooking = {
 };
 
 /**
+ * Example booking with "accepted" status that was rescheduled
+ */
+export const rescheduledBookingExample: CalBooking = {
+  id: 128,
+  uid: "booking_uid_128_new",
+  title: "Strategy Review",
+  description: "Quarterly strategy review meeting that was rescheduled.",
+  hosts: [
+    {
+      id: 7,
+      name: "Helen Torres",
+      email: "helen@example.com",
+      username: "helent",
+      timeZone: "America/New_York",
+    },
+  ],
+  status: "accepted",
+  cancellationReason: null,
+  cancelledByEmail: null,
+  reschedulingReason: "Conflict with another meeting",
+  rescheduledByEmail: "helen@example.com",
+  rescheduledFromUid: "booking_uid_128_old",
+  rescheduledToUid: "booking_uid_128_new",
+  start: "2024-08-22T15:00:00Z",
+  end: "2024-08-22T16:00:00Z",
+  duration: 60,
+  eventTypeId: 55,
+  eventType: {
+    id: 6,
+    slug: "strategy-review",
+  },
+  meetingUrl: "https://example.com/strategy-meeting",
+  location: "Microsoft Teams",
+  absentHost: false,
+  createdAt: "2024-08-10T12:00:00Z",
+  updatedAt: "2024-08-15T09:30:00Z",
+  metadata: {
+    quarter: "Q3",
+    department: "Product",
+  },
+  rating: 0,
+  icsUid: "ics_uid_128",
+  attendees: [
+    {
+      name: "Ivan Martinez",
+      email: "ivan@team.com",
+      timeZone: "America/Chicago",
+      language: "en",
+      absent: false,
+    },
+  ],
+  guests: [],
+  bookingFieldsResponses: {},
+};
+
+/**
  * Example API response with new pagination format
  */
 export const bookingApiResponseWithPagination = {
@@ -329,4 +385,5 @@ export const allBookingExamples: CalBooking[] = [
   pendingBookingExample,
   rejectedBookingExample,
   upcomingBookingExample,
+  rescheduledBookingExample,
 ];

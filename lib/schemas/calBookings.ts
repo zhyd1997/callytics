@@ -189,7 +189,7 @@ const rawBookingsEnvelopeWithPaginationSchema = z
   .object({
     status: z.enum(["success", "error"]).optional(),
     data: rawBookingsArraySchema,
-    pagination: paginationSchema,
+    pagination: paginationSchema.optional(),
     error: z.record(z.string(), z.unknown()).optional(),
   })
   .loose();

@@ -37,6 +37,12 @@ Each example demonstrates a different booking status with realistic data:
    - Minimal fields example
    - Clean baseline for testing
 
+6. **`rescheduledBookingExample`** - Status: `accepted` (rescheduled)
+   - 60-minute strategy review that was rescheduled
+   - Demonstrates proper use of rescheduling fields
+   - Shows how `rescheduledFromUid` and `rescheduledToUid` relate
+   - Includes rescheduling reason and who rescheduled
+
 ### API Response Examples
 
 #### `bookingApiResponseWithPagination`
@@ -114,8 +120,8 @@ The examples ensure compatibility with:
 
 The examples demonstrate diversity in:
 
-- **Meeting Types**: Consultation, Demo, Interview, Sales Call, Check-in
-- **Durations**: 15 min to 90 min
+- **Meeting Types**: Consultation, Demo, Interview, Sales Call, Check-in, Strategy Review
+- **Durations**: 15 min to 90 min (15, 30, 45, 60, 90 minutes)
 - **Timezones**: America/Los_Angeles, America/Chicago, America/New_York, America/Denver, Europe/London, Asia/Tokyo
 - **Host Count**: Single host and multiple hosts
 - **Attendee Details**: With/without phone numbers, different languages

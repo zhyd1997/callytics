@@ -120,11 +120,15 @@ export const normalizeCalBookingsResponse = (
   // Check for new pagination format first
   if (isBookingsEnvelopeWithPagination(payload)) {
     const pagination = payload.pagination;
+    const currentPage = pagination?.currentPage ?? 0;
+    // Handle cursor based on 1-based page numbering (currentPage >= 1)
+    const nextCursor = pagination?.hasNextPage && currentPage >= 1 ? currentPage + 1 : null;
+    const prevCursor = pagination?.hasPreviousPage && currentPage > 1 ? currentPage - 1 : null;
     return {
       items: payload.data,
       totalCount: pagination?.totalItems,
-      nextCursor: pagination?.hasNextPage ? (pagination?.currentPage ?? 0) + 1 : null,
-      prevCursor: pagination?.hasPreviousPage ? (pagination?.currentPage ?? 0) - 1 : null,
+      nextCursor,
+      prevCursor,
       raw: payload,
     };
   }
