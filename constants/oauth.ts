@@ -17,6 +17,7 @@ export const CAL_API_VERSION = "2024-08-13"
 // OAuth endpoints
 export const CAL_AUTHORIZATION_URL = `${CAL_APP_BASE_URL}/auth/oauth2/authorize`
 export const CAL_TOKEN_URL = `${CAL_APP_BASE_URL}/api/auth/oauth/token`
+export const CAL_REFRESH_TOKEN_URL = `${CAL_APP_BASE_URL}/api/auth/oauth/refreshToken`
 
 // API endpoints
 export const CAL_PROFILE_ENDPOINT = `${CAL_API_BASE_URL}/me`
