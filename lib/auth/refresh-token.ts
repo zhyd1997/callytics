@@ -126,9 +126,9 @@ export async function refreshCalAccessToken(
     });
 
     if (!response.ok) {
-      const errorBody = await response.text().catch(() => 
-        `Failed to read error response body (status: ${response.status})`
-      );
+      const errorBody = await response
+        .text()
+        .catch(() => `Failed to read error response body (status: ${response.status})`);
       throw new TokenRefreshError(
         "Failed to refresh access token",
         response.status,
@@ -232,6 +232,8 @@ export async function getValidAccessToken(
   }
 
   // Check if token is expired or will expire soon
+  // If no expiration date is set, we cannot determine if it's expired,
+  // so we return the token as-is and let the API call fail if needed
   const isExpired = account.accessTokenExpiresAt
     ? account.accessTokenExpiresAt.getTime() - Date.now() < TOKEN_EXPIRY_BUFFER_MS
     : false;
