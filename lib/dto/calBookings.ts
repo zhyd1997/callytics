@@ -42,6 +42,17 @@ const isBookingsArray = (value: unknown): value is CalBooking[] => {
   );
 };
 
+type CalBookingsPagination = {
+  readonly totalItems?: number;
+  readonly remainingItems?: number;
+  readonly returnedItems?: number;
+  readonly itemsPerPage?: number;
+  readonly currentPage?: number;
+  readonly totalPages?: number;
+  readonly hasNextPage?: boolean;
+  readonly hasPreviousPage?: boolean;
+};
+
 type CalBookingsEnvelope =
   | {
       readonly data: CalBooking[];
@@ -58,6 +69,12 @@ type CalBookingsEnvelope =
         readonly nextCursor?: string | number | null;
         readonly prevCursor?: string | number | null;
       };
+    }
+  | {
+      readonly status?: "success" | "error";
+      readonly data: CalBooking[];
+      readonly pagination?: CalBookingsPagination;
+      readonly error?: Record<string, unknown>;
     };
 
 const isBookingsEnvelope = (value: unknown): value is CalBookingsEnvelope => {
@@ -76,12 +93,38 @@ const isBookingsEnvelope = (value: unknown): value is CalBookingsEnvelope => {
   return false;
 };
 
+const isBookingsEnvelopeWithPagination = (
+  value: unknown,
+): value is Extract<CalBookingsEnvelope, { pagination?: CalBookingsPagination }> => {
+  if (!isRecord(value)) {
+    return false;
+  }
+
+  return (
+    "data" in value &&
+    isBookingsArray(value.data) &&
+    ("pagination" in value || "status" in value)
+  );
+};
+
 export const normalizeCalBookingsResponse = (
   payload: unknown,
 ): NormalizedCalBookingsResponse => {
   if (isBookingsArray(payload)) {
     return {
       items: payload,
+      raw: payload,
+    };
+  }
+
+  // Check for new pagination format first
+  if (isBookingsEnvelopeWithPagination(payload)) {
+    const pagination = payload.pagination;
+    return {
+      items: payload.data,
+      totalCount: pagination?.totalItems,
+      nextCursor: pagination?.hasNextPage ? (pagination?.currentPage ?? 0) + 1 : null,
+      prevCursor: pagination?.hasPreviousPage ? (pagination?.currentPage ?? 0) - 1 : null,
       raw: payload,
     };
   }
