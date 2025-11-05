@@ -8,6 +8,12 @@ import { z } from "zod";
 const TOKEN_EXPIRY_BUFFER_MS = 5 * 60 * 1000;
 
 /**
+ * Default token expiry time if not provided by Cal.com (30 minutes in seconds)
+ * @see https://cal.com/help/apps-and-integrations/oauth#refresh-token-request
+ */
+const DEFAULT_TOKEN_EXPIRY_SECONDS = 30 * 60;
+
+/**
  * Zod schema for validating Cal.com refresh token response
  */
 const refreshTokenResponseSchema = z.object({
@@ -151,9 +157,9 @@ export async function refreshCalAccessToken(
     const data = parseResult.data;
 
     // Update the account with new tokens
-    const expiresAt = data.expires_in
-      ? new Date(Date.now() + data.expires_in * 1000)
-      : null;
+    // Use default expiry of 30 minutes if not provided by Cal.com
+    const expiresInSeconds = data.expires_in ?? DEFAULT_TOKEN_EXPIRY_SECONDS;
+    const expiresAt = new Date(Date.now() + expiresInSeconds * 1000);
 
     await prisma.account.update({
       where: {
@@ -232,8 +238,7 @@ export async function getValidAccessToken(
   }
 
   // Check if token is expired or will expire soon
-  // If no expiration date is set, we cannot determine if it's expired,
-  // so we return the token as-is and let the API call fail if needed
+  // Cal.com defaults to 30-minute expiry if not specified, which we set during refresh
   const isExpired = account.accessTokenExpiresAt
     ? account.accessTokenExpiresAt.getTime() - Date.now() < TOKEN_EXPIRY_BUFFER_MS
     : false;
