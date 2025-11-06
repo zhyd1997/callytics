@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { Calendar, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { Calendar, Clock, CheckCircle, XCircle, Users, TrendingUp } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { AnimatedNumber } from './AnimatedNumber';
 import type { MeetingRecord } from '@/lib/types/meeting';
@@ -16,6 +16,35 @@ export function OverviewStats({ data }: OverviewStatsProps) {
   const cancelledMeetings = data.filter(meeting => meeting.status === 'cancelled').length;
   const totalHours = data.reduce((acc, meeting) => acc + meeting.duration, 0) / 60;
   const acceptanceRate = totalMeetings > 0 ? Math.round((acceptedMeetings / totalMeetings) * 100) : 0;
+
+  // Calculate total unique participants (hosts + attendees)
+  const participantSet = new Set<string>();
+  data.forEach(meeting => {
+    // Add hosts
+    meeting.hosts.forEach(host => {
+      participantSet.add(host.email);
+    });
+    // Add attendees
+    meeting.attendees.forEach(attendee => {
+      participantSet.add(attendee.email);
+    });
+  });
+  const totalParticipants = participantSet.size;
+
+  // Calculate this week's meetings (Monday to Sunday of current week)
+  const now = new Date();
+  const dayOfWeek = now.getDay();
+  const diff = now.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1); // Adjust when day is Sunday
+  const monday = new Date(now.getFullYear(), now.getMonth(), diff);
+  monday.setHours(0, 0, 0, 0);
+  const sunday = new Date(monday);
+  sunday.setDate(monday.getDate() + 6);
+  sunday.setHours(23, 59, 59, 999);
+
+  const thisWeekMeetings = data.filter(meeting => {
+    const meetingDate = new Date(meeting.start);
+    return meetingDate >= monday && meetingDate <= sunday;
+  }).length;
 
   const stats = [
     {
@@ -55,10 +84,28 @@ export function OverviewStats({ data }: OverviewStatsProps) {
       iconColor: 'text-[#a855f7]',
       iconBg: 'bg-[#a855f7]/15 border border-[#a855f7]/30 shadow-[0_0_20px_rgba(168,85,247,0.4)]',
     },
+    {
+      title: 'Participants',
+      numericValue: totalParticipants,
+      suffix: '',
+      decimals: 0,
+      icon: Users,
+      iconColor: 'text-[#06b6d4]',
+      iconBg: 'bg-[#06b6d4]/15 border border-[#06b6d4]/30 shadow-[0_0_20px_rgba(6,182,212,0.35)]',
+    },
+    {
+      title: 'This Week',
+      numericValue: thisWeekMeetings,
+      suffix: '',
+      decimals: 0,
+      icon: TrendingUp,
+      iconColor: 'text-[#10b981]',
+      iconBg: 'bg-[#10b981]/15 border border-[#10b981]/30 shadow-[0_0_20px_rgba(16,185,129,0.35)]',
+    },
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-4 auto-rows-fr lg:grid-cols-4">
+    <div className="grid grid-cols-2 gap-4 auto-rows-fr sm:grid-cols-3 lg:grid-cols-6">
       {stats.map((stat, index) => (
         <motion.div
           key={stat.title}

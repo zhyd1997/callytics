@@ -10,6 +10,7 @@ import { MeetingTimeline } from './MeetingTimeline';
 import { PlatformUsage } from './PlatformUsage';
 import { HostActivity } from './HostActivity';
 import { RecentMeetings } from './RecentMeetings';
+import { MeetingTimes } from './MeetingTimes';
 import { removeSelfMeetings } from '@/lib/utils/meetings';
 import { MEETING_DATA } from '@/constants/meetings';
 import type { MeetingCollection, MeetingRecord } from '@/lib/types/meeting';
@@ -81,13 +82,24 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
           <RecentMeetings data={filteredMeetings} />
         </motion.div>
 
+        {/* Meeting Times */}
+        <motion.div
+          variants={fadeInFromBottom}
+          initial="initial"
+          animate="animate"
+          transition={createTransition(0.2)}
+          className="mb-8"
+        >
+          <MeetingTimes data={filteredMeetings} />
+        </motion.div>
+
         {/* Charts Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           <motion.div
             variants={fadeInFromLeft}
             initial="initial"
             animate="animate"
-            transition={createTransition(0.2)}
+            transition={createTransition(0.25)}
           >
             <MeetingStatusChart data={filteredMeetings} />
           </motion.div>
@@ -107,7 +119,7 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
           variants={fadeInFromBottom}
           initial="initial"
           animate="animate"
-          transition={createTransition(0.4)}
+          transition={createTransition(0.35)}
           className="mb-8"
         >
           <MeetingTimeline data={filteredMeetings} />
@@ -119,7 +131,7 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
             variants={fadeInFromLeft}
             initial="initial"
             animate="animate"
-            transition={createTransition(0.5)}
+            transition={createTransition(0.4)}
           >
             <PlatformUsage data={filteredMeetings} />
           </motion.div>
@@ -128,7 +140,7 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
             variants={fadeInFromRight}
             initial="initial"
             animate="animate"
-            transition={createTransition(0.6)}
+            transition={createTransition(0.45)}
           >
             <HostActivity data={filteredMeetings} />
           </motion.div>

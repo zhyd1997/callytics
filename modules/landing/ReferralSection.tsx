@@ -50,7 +50,7 @@ export const ReferralSection = () => {
         </div>
 
         <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <Button size="lg" className="gap-2 bg-accent text-accent-foreground hover:bg-accent/90" asChild>
+          <Button size="lg" className="gap-2 bg-accent text-accent-foreground hover:bg-accent/90 hover:text-accent-foreground" asChild>
             <a 
               href="https://cal.link/refer-cal-com" 
               target="_blank" 
@@ -60,7 +60,7 @@ export const ReferralSection = () => {
               Try Cal.com Free
             </a>
           </Button>
-          <Button variant="outline" size="lg" asChild>
+          <Button variant="outline" size="lg" className="hover:text-foreground" asChild>
             <a 
               href="https://github.com/calcom/cal.com" 
               target="_blank" 
