@@ -241,7 +241,7 @@ export async function getValidAccessToken(
   // Cal.com defaults to 30-minute expiry if not specified, which we set during refresh
   const isExpired = account.accessTokenExpiresAt
     ? account.accessTokenExpiresAt.getTime() - Date.now() < TOKEN_EXPIRY_BUFFER_MS
-    : false;
+    : true;
 
   if (isExpired) {
     // Token is expired or about to expire, refresh it
