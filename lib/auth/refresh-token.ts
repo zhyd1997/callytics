@@ -122,12 +122,12 @@ export async function refreshCalAccessToken(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${account.refreshToken}`,
       },
       body: JSON.stringify({
         client_id: clientId,
         client_secret: clientSecret,
         grant_type: "refresh_token",
-        refresh_token: account.refreshToken,
       }),
     });
 
