@@ -118,17 +118,19 @@ export async function refreshCalAccessToken(
     }
 
     // Call Cal.com refresh token endpoint
+    const params = new URLSearchParams({
+      client_id: clientId,
+      client_secret: clientSecret,
+      grant_type: "refresh_token",
+    });
+
     const response = await fetch(CAL_REFRESH_TOKEN_URL, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "application/x-www-form-urlencoded",
         "Authorization": `Bearer ${account.refreshToken}`,
       },
-      body: JSON.stringify({
-        client_id: clientId,
-        client_secret: clientSecret,
-        grant_type: "refresh_token",
-      }),
+      body: params.toString(),
     });
 
     if (!response.ok) {
