@@ -86,7 +86,7 @@ export function Hero() {
                   <Button
                     size="lg"
                     variant="outline"
-                    className="min-w-[200px] text-base border-border/70 bg-transparent text-foreground transition-colors hover:bg-secondary/50"
+                    className="min-w-[200px] text-base border-border/70 bg-transparent text-foreground transition-colors hover:bg-secondary/50 hover:text-foreground"
                     asChild
                   >
                     <Link href="/demo">View Demo</Link>
