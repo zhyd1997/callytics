@@ -49,6 +49,15 @@ Optional variables only need to be set when you diverge from the default local f
 - Copy the client ID and secret into your `.env.local`.
 - During the auth redirect the callback verifies the `state` cookie and exchanges the code for access/refresh tokens at `CAL_OAUTH_TOKEN_ENDPOINT`. Tokens are returned to the caller and should be persisted securely (e.g., server-side store).
 
+#### Automatic Token Refresh 🔄
+Callytics automatically refreshes expired Cal.com access tokens:
+- When server actions request an access token, the system checks if it's expired or within 5 minutes of expiry
+- If expired, it automatically calls Cal.com's refresh token endpoint (`POST https://app.cal.com/api/auth/oauth/refreshToken`)
+- The database is updated with new tokens transparently
+- No manual intervention required - your API calls just work!
+
+The refresh logic is implemented in `lib/auth/refresh-token.ts` and integrated into server actions via `getValidAccessToken(userId)`.
+
 ### Database & Prisma 🗄️
 - Prisma schema lives in `prisma/schema.prisma` and generates the client under `app/generated/prisma`.
 - Migrations are stored in `prisma/migrations`. Apply them with `pnpm prisma migrate dev` for local development or `pnpm prisma migrate deploy` in CI/CD.

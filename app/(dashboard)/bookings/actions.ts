@@ -12,7 +12,7 @@ import {
 } from "@/lib/dto/calBookings";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { PROVIDER_ID } from "@/constants/oauth";
+import { getValidAccessToken } from "@/lib/auth/refresh-token";
 
 type InputParams = FetchCalBookingsActionInput;
 
@@ -37,14 +37,8 @@ const resolveActionContext = async (input: InputParams): Promise<ActionContext> 
     throw new Error("Not Authorized!");
   }
 
-  const { accessToken } = await auth.api.getAccessToken({
-    headers: requestHeaders,
-    body: { providerId: PROVIDER_ID, userId },
-  })
-
-  if (!accessToken) {
-    throw new Error("No accessToken found!");
-  }
+  // Get a valid access token, automatically refreshing if expired
+  const accessToken = await getValidAccessToken(userId);
 
   return {
     accessToken,

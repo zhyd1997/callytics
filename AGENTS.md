@@ -23,11 +23,13 @@
 - `public/`: static assets (favicon, etc.) served as-is by Next.js
 - `eslint.config.mjs`: workspace lint rules; lint runs with `pnpm lint`
 - `app/api/cal/oauth/callback/route.ts`: Cal.com OAuth 2.0 redirect handler exchanging auth codes for tokens ([docs](https://cal.com/docs/api-reference/v2/oauth-clients/))
+- `lib/auth/refresh-token.ts`: Auto-refresh utilities for Cal.com OAuth tokens; `getValidAccessToken(userId)` returns valid tokens, refreshing if expired
+- `constants/oauth.ts`: Cal.com OAuth endpoints including `CAL_REFRESH_TOKEN_URL`
 - `lib/schemas/calBookings.ts`: Zod schemas for Cal.com bookings payloads plus server-action input validation
 - `lib/dto/calBookings.ts`: Normalization helpers and higher-level getters (summary, top bookings) built atop the DAL
 - `lib/dal/calBookings.ts`: Low-level fetchers returning raw Cal.com API responses with typed error handling
 - `app/(marketing)/waitlist/actions.ts`: server action for waitlist joins used by landing UI
-- `app/(dashboard)/bookings/actions.ts`: server action wrapper around Cal bookings DAL for dashboard flows
+- `app/(dashboard)/bookings/actions.ts`: server action wrapper around Cal bookings DAL for dashboard flows; uses auto-refresh tokens
 
 ## Local Development
 - Install deps with `pnpm install` (Node 18.18+ recommended for Next 16)
@@ -59,5 +61,13 @@
 - Thread authenticated Cal.com access tokens through cookies or secure storage so both the server action and API route can read them without exposing secrets client-side.
 - Call `fetchCalBookingSummaryByStatus` when you only need aggregate counts per status; it fetches a single booking slice and returns `{ status, totalItems }`.
 - Use `fetchTopUpdatedBookings` to retrieve the three most recently updated bookings with `{ data, error, totalItems }`, where `totalItems` honors the API's pagination counts.
+
+## Token Refresh
+- Access tokens are automatically refreshed when expired (or within 5 minutes of expiry)
+- Server actions use `getValidAccessToken(userId)` from `lib/auth/refresh-token.ts` which handles refresh transparently
+- Refresh tokens are stored in the `Account` table via Better Auth's genericOAuth plugin
+- The refresh flow calls Cal.com's `POST https://app.cal.com/api/auth/oauth/refreshToken` endpoint
+- If a refresh token expires or fails, users must re-authenticate via OAuth
+- For new integrations requiring Cal.com API access, always use `getValidAccessToken(userId)` instead of fetching tokens directly
 
 Keep this file current so future agents can onboard quickly.
