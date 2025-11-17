@@ -31,7 +31,19 @@ export function MeetingDetails({ meeting }: MeetingDetailsProps) {
     if (url.includes('meet.google.com')) return 'Google Meet';
     if (url.includes('zoom.us')) return 'Zoom';
     if (url.includes('app.cal.com')) return 'Cal.com Video';
+    if (url.includes('integrations:google:meet')) return 'Google Meet';
+    if (url.includes('integrations:zoom')) return 'Zoom';
+    if (url.includes('integrations:daily')) return 'Cal.com Video';
     return 'Other';
+  };
+
+  const isValidUrl = (url: string) => {
+    try {
+      new URL(url);
+      return true;
+    } catch {
+      return false;
+    }
   };
 
   return (
@@ -129,14 +141,20 @@ export function MeetingDetails({ meeting }: MeetingDetailsProps) {
         <div className="flex-1">
           <div className="text-sm">Platform</div>
           <div className="text-muted-foreground text-sm">{getPlatformName(meeting.meetingUrl)}</div>
-          <a
-            href={meeting.meetingUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs text-primary hover:underline break-all mt-1 block"
-          >
-            {meeting.meetingUrl}
-          </a>
+          {isValidUrl(meeting.meetingUrl) ? (
+            <a
+              href={meeting.meetingUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-primary hover:underline break-all mt-1 block"
+            >
+              {meeting.meetingUrl}
+            </a>
+          ) : (
+            <div className="text-xs text-muted-foreground break-all mt-1">
+              {meeting.meetingUrl}
+            </div>
+          )}
         </div>
       </div>
 

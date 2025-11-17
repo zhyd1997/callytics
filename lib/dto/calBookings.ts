@@ -162,6 +162,15 @@ export const mapCalBookingToMeetingRecord = (booking: CalBooking): MeetingRecord
       }))
     : [];
   const normalizedGuests = Array.isArray(booking?.guests) ? booking.guests : [];
+  
+  // Extract rescheduleReason from bookingFieldsResponses if not at top level
+  const bookingFields = (booking.bookingFieldsResponses as Record<string, unknown> | undefined) ?? {};
+  const rescheduleReasonFromFields = typeof bookingFields.rescheduleReason === "string" 
+    ? bookingFields.rescheduleReason 
+    : undefined;
+  
+  // Prefer top-level reschedulingReason, fallback to rescheduleReason from bookingFieldsResponses
+  const reschedulingReason = booking.reschedulingReason ?? rescheduleReasonFromFields;
 
   return {
     id: typeof booking.id === "number" ? booking.id : 0,
@@ -172,35 +181,31 @@ export const mapCalBookingToMeetingRecord = (booking: CalBooking): MeetingRecord
     status: typeof booking.status === "string" ? booking.status : "pending",
     cancellationReason: booking.cancellationReason ?? undefined,
     cancelledByEmail: booking.cancelledByEmail ?? undefined,
-    reschedulingReason: booking.reschedulingReason ?? undefined,
+    reschedulingReason: reschedulingReason ?? undefined,
     rescheduledByEmail: booking.rescheduledByEmail ?? undefined,
     rescheduledFromUid: booking.rescheduledFromUid ?? undefined,
     rescheduledToUid: booking.rescheduledToUid ?? undefined,
     start: booking.start ?? "",
     end: booking.end ?? "",
     duration: booking.duration ?? 0,
-    eventTypeId: booking.eventTypeId ?? (typeof eventType?.id === "number" ? eventType.id : 0),
-    eventType: {
-      id:
-        typeof eventType?.id === "number"
-          ? eventType.id
-          : typeof booking.eventTypeId === "number"
-            ? booking.eventTypeId
-            : 0,
-      slug: typeof eventType?.slug === "string" ? eventType.slug : "",
-    },
+    eventTypeId: booking.eventTypeId ?? null,
+    eventType: eventType
+      ? {
+          id: typeof eventType.id === "number" ? eventType.id : 0,
+          slug: typeof eventType.slug === "string" ? eventType.slug : "",
+        }
+      : null,
     meetingUrl: booking.meetingUrl ?? "",
     location: booking.location ?? "",
     absentHost: booking.absentHost ?? false,
     createdAt: booking.createdAt ?? "",
-    updatedAt: booking.updatedAt ?? "",
+    updatedAt: booking.updatedAt ?? null,
     metadata: (booking.metadata as Record<string, unknown> | undefined) ?? {},
-    rating: booking.rating ?? 0,
-    icsUid: booking.icsUid ?? "",
+    rating: booking.rating ?? null,
+    icsUid: booking.icsUid ?? null,
     attendees: normalizedAttendees,
     guests: normalizedGuests,
-    bookingFieldsResponses:
-      (booking.bookingFieldsResponses as Record<string, unknown> | undefined) ?? {},
+    bookingFieldsResponses: bookingFields,
   };
 };
 
