@@ -127,18 +127,20 @@ export const calBookingSchema = z.object({
   start: isoDateStringSchema,
   end: isoDateStringSchema,
   duration: z.number().nonnegative(),
-  eventTypeId: z.number(),
-  eventType: z.object({
-    id: z.number(),
-    slug: z.string(),
-  }),
-  meetingUrl: z.string().url(),
+  eventTypeId: z.number().nullable(),
+  eventType: z
+    .object({
+      id: z.number(),
+      slug: z.string(),
+    })
+    .nullable(),
+  meetingUrl: z.string(),
   location: z.string().nullable().optional(),
   absentHost: z.boolean().optional(),
   createdAt: isoDateStringSchema,
-  updatedAt: isoDateStringSchema,
+  updatedAt: isoDateStringSchema.nullable(),
   metadata: z.record(z.string(), z.unknown()).optional(),
-  rating: z.number().optional(),
+  rating: z.number().nullable().optional(),
   icsUid: z.string().nullable().optional(),
   attendees: z.array(bookingAttendeeSchema).optional(),
   guests: z.array(z.string().email()).optional(),
