@@ -5,6 +5,7 @@ import { Calendar, Clock, CheckCircle, XCircle, Users, TrendingUp } from 'lucide
 import { Card, CardContent } from '@/components/ui/card';
 import { AnimatedNumber } from './AnimatedNumber';
 import type { MeetingRecord } from '@/lib/types/meeting';
+import dayjs from 'dayjs';
 
 interface OverviewStatsProps {
   readonly data: readonly MeetingRecord[];
@@ -32,18 +33,14 @@ export function OverviewStats({ data }: OverviewStatsProps) {
   const totalParticipants = participantSet.size;
 
   // Calculate this week's meetings (Monday to Sunday of current week)
-  const now = new Date();
-  const dayOfWeek = now.getDay();
-  const diff = now.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1); // Adjust when day is Sunday
-  const monday = new Date(now.getFullYear(), now.getMonth(), diff);
-  monday.setHours(0, 0, 0, 0);
-  const sunday = new Date(monday);
-  sunday.setDate(monday.getDate() + 6);
-  sunday.setHours(23, 59, 59, 999);
+  const now = dayjs();
+  const dayOfWeek = now.day();
+  const monday = now.subtract(dayOfWeek === 0 ? 6 : dayOfWeek - 1, 'day').startOf('day');
+  const sunday = monday.add(6, 'day').endOf('day');
 
   const thisWeekMeetings = data.filter(meeting => {
-    const meetingDate = new Date(meeting.start);
-    return meetingDate >= monday && meetingDate <= sunday;
+    const meetingDate = dayjs(meeting.start);
+    return meetingDate.isAfter(monday) && meetingDate.isBefore(sunday) || meetingDate.isSame(monday, 'day') || meetingDate.isSame(sunday, 'day');
   }).length;
 
   const stats = [

@@ -5,6 +5,8 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp } from 'lucide-react';
 import type { MeetingRecord } from '@/lib/types/meeting';
+import dayjs from 'dayjs';
+import { formatMonthYear } from '@/lib/utils/date';
 
 interface MeetingTimelineProps {
   readonly data: readonly MeetingRecord[];
@@ -46,9 +48,9 @@ const CustomTooltip = (props: CustomTooltipPropsType) => {
 export function MeetingTimeline({ data }: MeetingTimelineProps) {
   // Group meetings by month
   const monthlyData = data.reduce((acc, meeting) => {
-    const date = new Date(meeting.start);
-    const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-    const monthName = date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    const date = dayjs(meeting.start);
+    const monthKey = date.format('YYYY-MM');
+    const monthName = formatMonthYear(meeting.start);
     
     if (!acc[monthKey]) {
       acc[monthKey] = {

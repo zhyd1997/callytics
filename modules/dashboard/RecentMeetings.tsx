@@ -9,6 +9,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from '@/components/ui/drawer';
 import { MeetingDetails } from './MeetingDetails';
 import type { MeetingRecord } from '@/lib/types/meeting';
+import { formatRelativeDate, formatTime, isFutureDate } from '@/lib/utils/date';
+import dayjs from 'dayjs';
 
 interface RecentMeetingsProps {
   readonly data: readonly MeetingRecord[];
@@ -29,11 +31,9 @@ export function RecentMeetings({ data }: RecentMeetingsProps) {
   }, []);
 
   // Filter out completed meetings with future dates (invalid data)
-  const now = new Date();
   const validMeetings = [...data].filter(meeting => {
-    const meetingStart = new Date(meeting.start);
     // Completed meetings must have past dates
-    if (meeting.status === 'completed' && meetingStart > now) {
+    if (meeting.status === 'completed' && isFutureDate(meeting.start)) {
       return false;
     }
     return true;
@@ -42,7 +42,7 @@ export function RecentMeetings({ data }: RecentMeetingsProps) {
   // Sort meetings by start date (most recent first) and take top 5
   // Ensure at least one cancelled meeting is included if available
   const sortedMeetings = validMeetings
-    .sort((a, b) => new Date(b.start).getTime() - new Date(a.start).getTime());
+    .sort((a, b) => dayjs(b.start).valueOf() - dayjs(a.start).valueOf());
   
   const top5 = sortedMeetings.slice(0, 5);
   const hasCancelledInTop5 = top5.some(meeting => meeting.status === 'cancelled');
@@ -55,31 +55,12 @@ export function RecentMeetings({ data }: RecentMeetingsProps) {
     if (mostRecentCancelled) {
       // Replace the oldest meeting (last in the array) with the cancelled one
       recentMeetings = [...top5.slice(0, 4), mostRecentCancelled]
-        .sort((a, b) => new Date(b.start).getTime() - new Date(a.start).getTime());
+        .sort((a, b) => dayjs(b.start).valueOf() - dayjs(a.start).valueOf());
     }
   }
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
-  };
-
-  const formatTime = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
-
   const isUpcomingAccepted = (meeting: MeetingRecord) => {
-    const now = new Date();
-    const meetingStart = new Date(meeting.start);
-    return meeting.status === 'accepted' && meetingStart > now;
+    return meeting.status === 'accepted' && isFutureDate(meeting.start);
   };
 
   const getBadgeProps = (status: string) => {
@@ -187,7 +168,7 @@ export function RecentMeetings({ data }: RecentMeetingsProps) {
                     <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs text-muted-foreground">
                       <div className="flex items-center gap-1">
                         <Calendar className="w-3 h-3" />
-                        {formatDate(meeting.start)}
+                        {formatRelativeDate(meeting.start)}
                       </div>
                       <div className="flex items-center gap-1">
                         <Clock className="w-3 h-3" />

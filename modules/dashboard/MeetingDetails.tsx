@@ -2,31 +2,13 @@ import { Calendar, Clock, Users, Video, CheckCircle, XCircle, Info } from 'lucid
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import type { MeetingRecord } from '@/lib/types/meeting';
+import { formatFullDate, formatTimeWithZone } from '@/lib/utils/date';
 
 interface MeetingDetailsProps {
   readonly meeting: MeetingRecord;
 }
 
 export function MeetingDetails({ meeting }: MeetingDetailsProps) {
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-  };
-
-  const formatTime = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-      timeZoneName: 'short',
-    });
-  };
-
   const getPlatformName = (url: string) => {
     if (url.includes('meet.google.com')) return 'Google Meet';
     if (url.includes('zoom.us')) return 'Zoom';
@@ -115,7 +97,7 @@ export function MeetingDetails({ meeting }: MeetingDetailsProps) {
           <Calendar className="w-5 h-5 text-muted-foreground mt-0.5" />
           <div>
             <div className="text-sm">Date</div>
-            <div className="text-muted-foreground text-sm">{formatDate(meeting.start)}</div>
+            <div className="text-muted-foreground text-sm">{formatFullDate(meeting.start)}</div>
           </div>
         </div>
 
@@ -124,7 +106,7 @@ export function MeetingDetails({ meeting }: MeetingDetailsProps) {
           <div>
             <div className="text-sm">Time</div>
             <div className="text-muted-foreground text-sm">
-              {formatTime(meeting.start)} - {formatTime(meeting.end)}
+              {formatTimeWithZone(meeting.start)} - {formatTimeWithZone(meeting.end)}
             </div>
             <div className="text-muted-foreground text-xs mt-1">
               Duration: {meeting.duration} minutes
