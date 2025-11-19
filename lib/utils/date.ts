@@ -1,14 +1,14 @@
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
-import relativeTime from 'dayjs/plugin/relativeTime';
-import calendar from 'dayjs/plugin/calendar';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 
 // Configure dayjs plugins
 dayjs.extend(utc);
 dayjs.extend(timezone);
-dayjs.extend(relativeTime);
-dayjs.extend(calendar);
+dayjs.extend(isSameOrAfter);
+dayjs.extend(isSameOrBefore);
 
 /**
  * Format a date string to show relative time (e.g., "today", "yesterday")
@@ -18,9 +18,10 @@ dayjs.extend(calendar);
  * @returns Formatted date string
  * 
  * @example
+ * // Assuming today is 2025-11-19
  * formatRelativeDate('2025-11-19T10:00:00Z') // "Today"
  * formatRelativeDate('2025-11-18T10:00:00Z') // "Yesterday"
- * formatRelativeDate('2025-11-10T10:00:00Z') // "Nov 10, 2025"
+ * formatRelativeDate('2025-11-15T10:00:00Z') // "Friday" (if within last 7 days)
  */
 export function formatRelativeDate(dateString: string): string {
   const date = dayjs(dateString);
@@ -41,8 +42,8 @@ export function formatRelativeDate(dateString: string): string {
     return 'Tomorrow';
   }
   
-  // Check if within the last 7 days
-  if (date.isAfter(now.subtract(7, 'day')) && date.isBefore(now)) {
+  // Check if within 7 days (past or future, excluding today, yesterday, tomorrow)
+  if (Math.abs(date.diff(now, 'day')) < 7 && Math.abs(date.diff(now, 'day')) > 1) {
     return date.format('dddd'); // Day name (e.g., "Monday")
   }
   
@@ -91,7 +92,7 @@ export function formatTimeWithZone(dateString: string, timezone?: string): strin
   if (timezone) {
     return dayjs(dateString).tz(timezone).format('h:mm A z');
   }
-  return dayjs(dateString).format('h:mm A z');
+  return dayjs(dateString).format('h:mm A');
 }
 
 /**

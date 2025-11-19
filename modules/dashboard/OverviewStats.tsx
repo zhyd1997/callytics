@@ -6,6 +6,12 @@ import { Card, CardContent } from '@/components/ui/card';
 import { AnimatedNumber } from './AnimatedNumber';
 import type { MeetingRecord } from '@/lib/types/meeting';
 import dayjs from 'dayjs';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+
+// Extend dayjs with comparison plugins
+dayjs.extend(isSameOrAfter);
+dayjs.extend(isSameOrBefore);
 
 interface OverviewStatsProps {
   readonly data: readonly MeetingRecord[];
@@ -40,7 +46,7 @@ export function OverviewStats({ data }: OverviewStatsProps) {
 
   const thisWeekMeetings = data.filter(meeting => {
     const meetingDate = dayjs(meeting.start);
-    return meetingDate.isAfter(monday) && meetingDate.isBefore(sunday) || meetingDate.isSame(monday, 'day') || meetingDate.isSame(sunday, 'day');
+    return meetingDate.isSameOrAfter(monday, 'day') && meetingDate.isSameOrBefore(sunday, 'day');
   }).length;
 
   const stats = [
