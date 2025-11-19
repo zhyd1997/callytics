@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { AnimatedNumber } from './AnimatedNumber';
 import type { MeetingRecord } from '@/lib/types/meeting';
 import { fadeInFromBottom, createTransition } from '@/lib/constants/animations';
+import dayjs from 'dayjs';
 
 interface MeetingTimesProps {
   readonly data: readonly MeetingRecord[];
@@ -25,8 +26,7 @@ interface TimeCategoryData {
 }
 
 const getTimeCategory = (startTime: string): TimeCategory => {
-  const date = new Date(startTime);
-  const hour = date.getHours();
+  const hour = dayjs(startTime).hour();
   
   if (hour >= 6 && hour < 12) return 'morning';
   if (hour >= 12 && hour < 17) return 'afternoon';
