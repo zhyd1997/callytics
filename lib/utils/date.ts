@@ -42,7 +42,7 @@ export function formatRelativeDate(dateString: string): string {
   }
   
   // Check if within the last 7 days
-  if (date.isAfter(now.subtract(7, 'day'))) {
+  if (date.isAfter(now.subtract(7, 'day')) && date.isBefore(now)) {
     return date.format('dddd'); // Day name (e.g., "Monday")
   }
   
