@@ -35,16 +35,17 @@ export function Hero() {
   return (
     <section className="relative overflow-hidden border-b border-border bg-background">
       <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute inset-x-0 top-0 h-[540px] bg-[radial-gradient(circle_at_top,_rgba(15,23,42,0.14),_transparent_65%)] dark:bg-[radial-gradient(circle_at_top,_rgba(148,163,184,0.2),_transparent_70%)]" />
-        <div className="absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[conic-gradient(from_120deg,_rgba(14,165,233,0.3),_transparent_55%)] blur-3xl" />
+        <div className="holiday-vignette" />
+        <div className="holiday-cone" />
+        <div className="holiday-snow" />
       </div>
 
       <div className="container relative mx-auto px-4 py-24 md:py-32">
         <div className="grid items-center gap-16 lg:grid-cols-[3fr_2fr]">
           <div className="text-center lg:text-left">
-            <div className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border border-border/60 bg-secondary/60 px-4 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-muted-foreground lg:mx-0">
-              <span className="inline-block h-2 w-2 rounded-full bg-accent" />
-              Cal.com native analytics
+            <div className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border border-border/60 bg-secondary/70 px-4 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-muted-foreground lg:mx-0">
+              <span className="inline-block h-2 w-2 rounded-full bg-primary shadow-[0_0_0_4px_rgba(193,18,31,0.18)]" />
+              Holiday edition • Cal.com native analytics
             </div>
             <h1 className="text-balance font-sans text-4xl font-semibold tracking-tight text-foreground sm:text-5xl md:text-6xl">
               Operational clarity for every{" "}
@@ -69,7 +70,7 @@ export function Hero() {
               booking
             </h1>
             <p className="mt-6 text-pretty text-base leading-relaxed text-muted-foreground md:text-lg">
-              Streamline scheduling performance reviews with an opinionated dashboard that mirrors Cal.com&apos;s product language. Monitor pipeline health, surface revenue signals, and confidently communicate growth to stakeholders.
+              Streamline scheduling performance reviews with an opinionated dashboard that mirrors Cal.com&apos;s product language. Monitor pipeline health, surface revenue signals, and keep seasonal demand humming with a festive-ready control center.
             </p>
 
             <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-start">
@@ -127,12 +128,12 @@ export function Hero() {
           </div>
 
           <div className="mx-auto w-full max-w-md rounded-3xl border border-border/70 bg-card/70 p-8 text-left shadow-lg backdrop-blur">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">Snapshot</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">Festive snapshot</p>
             <dl className="mt-6 grid grid-cols-2 gap-6">
               <div>
                 <dt className="text-xs uppercase tracking-[0.18em] text-muted-foreground">7 day bookings</dt>
                 <dd className="mt-2 text-3xl font-semibold text-foreground">284</dd>
-                <dd className="text-xs font-medium text-accent">+18.4% vs last week</dd>
+                <dd className="text-xs font-medium text-primary">+18.4% vs last week</dd>
               </div>
               <div>
                 <dt className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Avg. conversion</dt>
