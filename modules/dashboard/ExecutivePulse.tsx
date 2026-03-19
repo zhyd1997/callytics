@@ -47,7 +47,7 @@ export const ExecutivePulse = ({
           <div className="mt-6 flex flex-wrap items-center gap-3">
             <Button
               size="lg"
-              className="rounded-full bg-white text-slate-950 hover:bg-white/90"
+              className="rounded-full bg-accent text-accent-foreground hover:bg-accent/90"
               onClick={onFocusAttention}
             >
               Review at-risk meetings

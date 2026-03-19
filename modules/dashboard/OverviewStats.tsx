@@ -61,8 +61,8 @@ export function OverviewStats({ data }: OverviewStatsProps) {
       decimals: 0,
       icon: Target,
       eyebrow: "Volume",
-      iconColor: "text-sky-700 dark:text-sky-300",
-      iconBg: "bg-sky-500/10 border border-sky-500/20",
+      iconColor: "text-primary",
+      iconBg: "bg-accent/18 border border-accent/28",
       detail: `${thisWeekMeetings} this week`,
     },
     {
@@ -73,7 +73,7 @@ export function OverviewStats({ data }: OverviewStatsProps) {
       icon: AlertTriangle,
       eyebrow: "Needs review",
       iconColor: "text-amber-700 dark:text-amber-300",
-      iconBg: "bg-amber-500/10 border border-amber-500/20",
+      iconBg: "bg-amber-500/12 border border-amber-500/24",
       detail:
         pulse.atRiskCount > 0
           ? "Cancelled, pending, rejected, or rescheduled bookings"
@@ -86,8 +86,8 @@ export function OverviewStats({ data }: OverviewStatsProps) {
       decimals: 1,
       icon: Clock3,
       eyebrow: "Conversion",
-      iconColor: "text-emerald-700 dark:text-emerald-300",
-      iconBg: "bg-emerald-500/10 border border-emerald-500/20",
+      iconColor: "text-chart-5",
+      iconBg: "bg-chart-5/12 border border-chart-5/24",
       detail: `${pulse.cancellationRate}% cancellation rate`,
     },
     {
@@ -97,8 +97,8 @@ export function OverviewStats({ data }: OverviewStatsProps) {
       decimals: 0,
       icon: Users,
       eyebrow: "Reach",
-      iconColor: "text-violet-700 dark:text-violet-300",
-      iconBg: "bg-violet-500/10 border border-violet-500/20",
+      iconColor: "text-chart-4",
+      iconBg: "bg-chart-4/12 border border-chart-4/24",
       detail: `${totalHours.toFixed(1)} hours booked`,
     },
   ]

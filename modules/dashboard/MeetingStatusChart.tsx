@@ -21,13 +21,13 @@ const STATUS_META: Record<
   }
 > = {
   accepted: {
-    tone: "bg-emerald-500",
-    track: "bg-emerald-500/12",
+    tone: "bg-chart-5",
+    track: "bg-chart-5/12",
     icon: CheckCircle2,
   },
   completed: {
-    tone: "bg-sky-500",
-    track: "bg-sky-500/12",
+    tone: "bg-accent",
+    track: "bg-accent/16",
     icon: CheckCircle2,
   },
   cancelled: {
@@ -36,13 +36,13 @@ const STATUS_META: Record<
     icon: XCircle,
   },
   pending: {
-    tone: "bg-amber-500",
-    track: "bg-amber-500/12",
+    tone: "bg-chart-2",
+    track: "bg-chart-2/12",
     icon: Clock3,
   },
   rejected: {
-    tone: "bg-orange-500",
-    track: "bg-orange-500/12",
+    tone: "bg-chart-4",
+    track: "bg-chart-4/12",
     icon: AlertTriangle,
   },
   unconfirmed: {

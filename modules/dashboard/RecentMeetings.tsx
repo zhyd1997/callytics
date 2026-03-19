@@ -36,7 +36,7 @@ const getBadgeProps = (status: string) => {
       return {
         variant: "outline" as const,
         className:
-          "shrink-0 rounded-full border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
+          "shrink-0 rounded-full border-chart-5/30 bg-chart-5/12 text-chart-5",
       }
     case "cancelled":
       return {
@@ -55,7 +55,7 @@ const getBadgeProps = (status: string) => {
       return {
         variant: "outline" as const,
         className:
-          "shrink-0 rounded-full border-sky-500/30 bg-sky-500/10 text-sky-700 dark:text-sky-300",
+          "shrink-0 rounded-full border-accent/30 bg-accent/14 text-accent-foreground",
       }
     default:
       return {

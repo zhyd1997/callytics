@@ -116,9 +116,9 @@ export function PlatformUsage({ data }: PlatformUsageProps) {
 
   const getPlatformColor = (platform: string) => {
     const colors = {
-      'Google Meet': 'var(--color-chart-1)',
-      'Zoom': '#a855f7',
-      'Cal.com Video': '#facc15',
+      'Google Meet': 'var(--color-chart-2)',
+      'Zoom': 'var(--color-chart-3)',
+      'Cal.com Video': 'var(--color-accent)',
       'Other': '#f87171',
     };
     return colors[platform as keyof typeof colors] || '#6B7280';
