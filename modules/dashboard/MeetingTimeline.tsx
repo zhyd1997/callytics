@@ -7,6 +7,7 @@ import { TrendingUp } from 'lucide-react';
 import type { MeetingRecord } from '@/lib/types/meeting';
 import dayjs from 'dayjs';
 import { formatMonthYear } from '@/lib/utils/date';
+import { WidgetEmptyState } from './WidgetEmptyState';
 
 interface MeetingTimelineProps {
   readonly data: readonly MeetingRecord[];
@@ -46,6 +47,23 @@ const CustomTooltip = (props: CustomTooltipPropsType) => {
 };
 
 export function MeetingTimeline({ data }: MeetingTimelineProps) {
+  if (data.length === 0) {
+    return (
+      <Card className="surface-tertiary">
+        <CardHeader>
+          <CardTitle>Meeting Timeline</CardTitle>
+          <CardDescription>No monthly activity is visible in the current slice.</CardDescription>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <WidgetEmptyState
+            title="Timeline unavailable"
+            description="Bring more meetings into scope to see activity build over time."
+          />
+        </CardContent>
+      </Card>
+    );
+  }
+
   // Group meetings by month
   const monthlyData = data.reduce((acc, meeting) => {
     const date = dayjs(meeting.start);
@@ -85,7 +103,7 @@ export function MeetingTimeline({ data }: MeetingTimelineProps) {
     : undefined;
 
   return (
-    <Card className="border border-primary/10 bg-card/80 backdrop-blur">
+    <Card className="surface-tertiary">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>

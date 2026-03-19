@@ -1,121 +1,161 @@
-'use client';
+"use client"
 
-import { motion } from 'motion/react';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import type { MeetingRecord } from '@/lib/types/meeting';
+import { AlertTriangle, CheckCircle2, Clock3, XCircle } from "lucide-react"
+import { motion } from "motion/react"
+
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import type { MeetingRecord } from "@/lib/types/meeting"
+
+import { WidgetEmptyState } from "./WidgetEmptyState"
 
 interface MeetingStatusChartProps {
-  readonly data: readonly MeetingRecord[];
+  readonly data: readonly MeetingRecord[]
 }
 
-interface CustomTooltipPayload {
-  name: string;
-  value: number;
-  percentage: number;
-}
-
-interface CustomTooltipPropsType {
-  active?: boolean;
-  payload?: Array<{ payload: CustomTooltipPayload }>;
-}
-
-const COLORS = {
-  Accepted: 'var(--color-chart-1)',
-  Cancelled: '#f87171',
-};
-
-const CustomTooltip = (props: CustomTooltipPropsType) => {
-  const { active, payload } = props;
-  if (active && payload && payload.length) {
-    const data = payload[0].payload as CustomTooltipPayload;
-    return (
-      <div className="rounded-lg border border-primary/20 bg-card/90 p-3 shadow-[0_8px_30px_rgba(249,115,22,0.15)] backdrop-blur">
-        <p className="font-medium">{data.name}</p>
-        <p className="text-sm text-muted-foreground">
-          {data.value} meetings ({data.percentage}%)
-        </p>
-      </div>
-    );
+const STATUS_META: Record<
+  string,
+  {
+    readonly tone: string
+    readonly track: string
+    readonly icon: typeof CheckCircle2
   }
-  return null;
-};
+> = {
+  accepted: {
+    tone: "bg-emerald-500",
+    track: "bg-emerald-500/12",
+    icon: CheckCircle2,
+  },
+  completed: {
+    tone: "bg-sky-500",
+    track: "bg-sky-500/12",
+    icon: CheckCircle2,
+  },
+  cancelled: {
+    tone: "bg-rose-500",
+    track: "bg-rose-500/12",
+    icon: XCircle,
+  },
+  pending: {
+    tone: "bg-amber-500",
+    track: "bg-amber-500/12",
+    icon: Clock3,
+  },
+  rejected: {
+    tone: "bg-orange-500",
+    track: "bg-orange-500/12",
+    icon: AlertTriangle,
+  },
+  unconfirmed: {
+    tone: "bg-slate-500",
+    track: "bg-slate-500/12",
+    icon: AlertTriangle,
+  },
+}
 
 export function MeetingStatusChart({ data }: MeetingStatusChartProps) {
-  const statusCounts = data.reduce((acc, meeting) => {
-    acc[meeting.status] = (acc[meeting.status] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
+  if (data.length === 0) {
+    return (
+      <Card className="surface-tertiary">
+        <CardHeader>
+          <CardTitle>Status Breakdown</CardTitle>
+          <CardDescription>No meeting statuses to compare in the current view.</CardDescription>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <WidgetEmptyState
+            title="Nothing to compare yet"
+            description="Once bookings match the current filters, status share and workflow stability will appear here."
+          />
+        </CardContent>
+      </Card>
+    )
+  }
 
-  const chartData = Object.entries(statusCounts).map(([status, count]) => ({
-    name: status.charAt(0).toUpperCase() + status.slice(1),
-    value: count,
-    percentage: Math.round((count / data.length) * 100),
-  }));
+  const statusCounts = data.reduce<Record<string, number>>((acc, meeting) => {
+    acc[meeting.status] = (acc[meeting.status] || 0) + 1
+    return acc
+  }, {})
+
+  const rows = Object.entries(statusCounts)
+    .map(([status, count]) => ({
+      status,
+      label: status.charAt(0).toUpperCase() + status.slice(1),
+      count,
+      percentage: Math.round((count / data.length) * 100),
+      meta: STATUS_META[status] ?? {
+        tone: "bg-[color:var(--color-chart-3)]",
+        track: "bg-[color:color-mix(in_oklab,var(--color-chart-3)_12%,transparent)]",
+        icon: Clock3,
+      },
+    }))
+    .sort((a, b) => b.count - a.count)
+
+  const stableShare = rows
+    .filter((row) => row.status === "accepted" || row.status === "completed")
+    .reduce((total, row) => total + row.percentage, 0)
 
   return (
-    <Card className="border border-primary/10 bg-card/80 backdrop-blur">
-      <CardHeader className="relative">
-        <span className="pointer-events-none absolute -left-12 top-6 hidden h-24 w-24 rounded-full bg-[radial-gradient(circle_at_center,_rgba(249,115,22,0.1),_transparent_70%)] sm:block" />
-        <CardTitle>Meeting Status Distribution</CardTitle>
+    <Card className="surface-tertiary h-full">
+      <CardHeader>
+        <CardTitle>Status Breakdown</CardTitle>
         <CardDescription>
-          Breakdown of accepted vs cancelled meetings
+          A ranked view is easier to scan than a pie when you are checking workflow stability.
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
-          className="h-[300px] w-full"
-        >
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={chartData}
-                cx="50%"
-                cy="50%"
-                innerRadius={60}
-                outerRadius={100}
-                paddingAngle={5}
-                dataKey="value"
+        <div className="mb-6 rounded-2xl border border-border/70 bg-background/70 p-4">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <p className="text-[0.7rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                Stable share
+              </p>
+              <p className="mt-2 text-2xl font-semibold">{stableShare}%</p>
+            </div>
+            <p className="max-w-xs text-right text-sm leading-6 text-muted-foreground">
+              Accepted and completed meetings currently make up most of the visible workload.
+            </p>
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          {rows.map((row, index) => {
+            const Icon = row.meta.icon
+
+            return (
+              <motion.div
+                key={row.status}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.25, delay: index * 0.08 }}
+                className="rounded-2xl border border-border/70 bg-background/75 p-4"
               >
-                {chartData.map((entry, index) => (
-                  <Cell 
-                    key={`cell-${index}`} 
-                    fill={COLORS[entry.name as keyof typeof COLORS]}
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <div className={`rounded-xl p-2 ${row.meta.track}`}>
+                      <Icon className="h-4 w-4 text-foreground" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="font-medium">{row.label}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {row.count} meetings in the current slice
+                      </p>
+                    </div>
+                  </div>
+                  <p className="text-sm font-semibold text-muted-foreground">{row.percentage}%</p>
+                </div>
+
+                <div className={`mt-4 h-2 overflow-hidden rounded-full ${row.meta.track}`}>
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${row.percentage}%` }}
+                    transition={{ duration: 0.45, delay: index * 0.08 }}
+                    className={`h-full rounded-full ${row.meta.tone}`}
                   />
-                ))}
-              </Pie>
-              <Tooltip content={<CustomTooltip />} />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
-        </motion.div>
-        
-        <div className="mt-4 grid grid-cols-2 gap-4">
-          {chartData.map((item, index) => (
-            <motion.div
-              key={item.name}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.3, delay: index * 0.1 }}
-              className="flex items-center gap-2 rounded-lg border border-primary/20 bg-primary/5 p-3 text-sm backdrop-blur"
-            >
-              <div 
-                className="w-3 h-3 rounded-full"
-                style={{ backgroundColor: COLORS[item.name as keyof typeof COLORS] }}
-              />
-              <div className="flex-1">
-                <p className="text-sm font-medium">{item.name}</p>
-                <p className="text-xs text-muted-foreground">
-                  {item.value} ({item.percentage}%)
-                </p>
-              </div>
-            </motion.div>
-          ))}
+                </div>
+              </motion.div>
+            )
+          })}
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }

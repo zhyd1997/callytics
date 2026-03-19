@@ -121,6 +121,26 @@
   }
   body {
     @apply bg-background text-foreground transition-colors duration-300;
+    background-image:
+      radial-gradient(circle at top, color-mix(in oklab, var(--accent) 10%, transparent), transparent 42%),
+      linear-gradient(to bottom, color-mix(in oklab, var(--background) 96%, white 4%), var(--background));
+  }
+}
+
+@layer utilities {
+  .surface-primary {
+    @apply border border-slate-900/10 bg-slate-950 text-white backdrop-blur;
+    box-shadow: 0 28px 80px rgba(15, 23, 42, 0.18);
+  }
+
+  .surface-secondary {
+    @apply border border-border/70 bg-card/78 backdrop-blur;
+    box-shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
+  }
+
+  .surface-tertiary {
+    @apply border border-border/65 bg-card/60 backdrop-blur;
+    box-shadow: 0 14px 34px rgba(15, 23, 42, 0.05);
   }
 }
 

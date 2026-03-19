@@ -1,107 +1,127 @@
-'use client';
+"use client"
 
-import { motion } from 'motion/react';
-import { Sunrise, Coffee, Moon, Clock } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { AnimatedNumber } from './AnimatedNumber';
-import type { MeetingRecord } from '@/lib/types/meeting';
-import { fadeInFromBottom, createTransition } from '@/lib/constants/animations';
-import dayjs from 'dayjs';
+import dayjs from "dayjs"
+import { Clock, Coffee, Moon, Sunrise } from "lucide-react"
+import { motion } from "motion/react"
+
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { createTransition, fadeInFromBottom } from "@/lib/constants/animations"
+import type { MeetingRecord } from "@/lib/types/meeting"
+
+import { AnimatedNumber } from "./AnimatedNumber"
+import { WidgetEmptyState } from "./WidgetEmptyState"
 
 interface MeetingTimesProps {
-  readonly data: readonly MeetingRecord[];
+  readonly data: readonly MeetingRecord[]
 }
 
-type TimeCategory = 'morning' | 'afternoon' | 'evening' | 'night';
+type TimeCategory = "morning" | "afternoon" | "evening" | "night"
 
 interface TimeCategoryData {
-  readonly label: string;
-  readonly timeRange: string;
-  readonly count: number;
-  readonly percentage: number;
-  readonly icon: typeof Sunrise;
-  readonly iconColor: string;
-  readonly iconBg: string;
-  readonly progressColor: string;
+  readonly label: string
+  readonly timeRange: string
+  readonly count: number
+  readonly percentage: number
+  readonly icon: typeof Sunrise
+  readonly iconColor: string
+  readonly iconBg: string
+  readonly progressClassName: string
 }
 
 const getTimeCategory = (startTime: string): TimeCategory => {
-  const hour = dayjs(startTime).hour();
-  
-  if (hour >= 6 && hour < 12) return 'morning';
-  if (hour >= 12 && hour < 17) return 'afternoon';
-  if (hour >= 17 && hour < 21) return 'evening';
-  return 'night';
-};
+  const hour = dayjs(startTime).hour()
+
+  if (hour >= 6 && hour < 12) return "morning"
+  if (hour >= 12 && hour < 17) return "afternoon"
+  if (hour >= 17 && hour < 21) return "evening"
+  return "night"
+}
 
 export function MeetingTimes({ data }: MeetingTimesProps) {
-  const timeCategories = data.reduce((acc, meeting) => {
-    const category = getTimeCategory(meeting.start);
-    acc[category] = (acc[category] || 0) + 1;
-    return acc;
-  }, {} as Record<TimeCategory, number>);
+  if (data.length === 0) {
+    return (
+      <Card className="surface-tertiary h-full">
+        <CardHeader>
+          <CardTitle>Meeting Times</CardTitle>
+          <CardDescription>Time-of-day concentration appears once bookings are visible.</CardDescription>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <WidgetEmptyState
+            title="No timing pattern yet"
+            description="Update the dashboard filters to inspect when meetings cluster across the day."
+          />
+        </CardContent>
+      </Card>
+    )
+  }
 
-  const totalMeetings = data.length;
+  const timeCategories = data.reduce((acc, meeting) => {
+    const category = getTimeCategory(meeting.start)
+    acc[category] = (acc[category] || 0) + 1
+    return acc
+  }, {} as Record<TimeCategory, number>)
+
+  const totalMeetings = data.length
 
   const categoryData: Record<TimeCategory, TimeCategoryData> = {
     morning: {
-      label: 'Morning',
-      timeRange: '6AM - 12PM',
+      label: "Morning",
+      timeRange: "6AM - 12PM",
       count: timeCategories.morning || 0,
       percentage: totalMeetings > 0 ? Math.round(((timeCategories.morning || 0) / totalMeetings) * 100) : 0,
       icon: Sunrise,
-      iconColor: 'text-[#facc15]',
-      iconBg: 'bg-[#facc15]/15 border border-[#facc15]/30',
-      progressColor: '#f97316',
+      iconColor: "text-amber-700 dark:text-amber-300",
+      iconBg: "bg-amber-500/10 border border-amber-500/20",
+      progressClassName: "bg-amber-500",
     },
     afternoon: {
-      label: 'Afternoon',
-      timeRange: '12PM - 5PM',
+      label: "Afternoon",
+      timeRange: "12PM - 5PM",
       count: timeCategories.afternoon || 0,
       percentage: totalMeetings > 0 ? Math.round(((timeCategories.afternoon || 0) / totalMeetings) * 100) : 0,
       icon: Coffee,
-      iconColor: 'text-[#f97316]',
-      iconBg: 'bg-[#f97316]/15 border border-[#f97316]/30',
-      progressColor: '#f97316',
+      iconColor: "text-orange-700 dark:text-orange-300",
+      iconBg: "bg-orange-500/10 border border-orange-500/20",
+      progressClassName: "bg-orange-500",
     },
     evening: {
-      label: 'Evening',
-      timeRange: '5PM - 9PM',
+      label: "Evening",
+      timeRange: "5PM - 9PM",
       count: timeCategories.evening || 0,
       percentage: totalMeetings > 0 ? Math.round(((timeCategories.evening || 0) / totalMeetings) * 100) : 0,
       icon: Moon,
-      iconColor: 'text-[#a855f7]',
-      iconBg: 'bg-[#a855f7]/15 border border-[#a855f7]/30',
-      progressColor: '#a855f7',
+      iconColor: "text-indigo-700 dark:text-indigo-300",
+      iconBg: "bg-indigo-500/10 border border-indigo-500/20",
+      progressClassName: "bg-indigo-500",
     },
     night: {
-      label: 'Night',
-      timeRange: '9PM - 6AM',
+      label: "Night",
+      timeRange: "9PM - 6AM",
       count: timeCategories.night || 0,
       percentage: totalMeetings > 0 ? Math.round(((timeCategories.night || 0) / totalMeetings) * 100) : 0,
       icon: Clock,
-      iconColor: 'text-muted-foreground',
-      iconBg: 'bg-muted/15 border border-muted/30',
-      progressColor: '#6b7280',
+      iconColor: "text-slate-600 dark:text-slate-300",
+      iconBg: "bg-slate-500/10 border border-slate-500/20",
+      progressClassName: "bg-slate-500",
     },
-  };
+  }
 
-  const categories: TimeCategory[] = ['morning', 'afternoon', 'evening', 'night'];
+  const categories: TimeCategory[] = ["morning", "afternoon", "evening", "night"]
 
   return (
-    <Card className="border border-primary/10 bg-card/80 backdrop-blur">
+    <Card className="surface-tertiary h-full">
       <CardHeader>
         <CardTitle>Meeting Times</CardTitle>
         <CardDescription>
-          Distribution of meetings across different times of day
+          Distribution across the day so teams can spot timing concentration quickly.
         </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
           {categories.map((category, index) => {
-            const categoryInfo = categoryData[category];
-            const Icon = categoryInfo.icon;
-            
+            const categoryInfo = categoryData[category]
+            const Icon = categoryInfo.icon
+
             return (
               <motion.div
                 key={category}
@@ -109,12 +129,12 @@ export function MeetingTimes({ data }: MeetingTimesProps) {
                 initial="initial"
                 animate="animate"
                 transition={createTransition(index * 0.1)}
-                className="flex items-center gap-4"
+                className="flex items-center gap-4 rounded-2xl border border-border/70 bg-background/70 p-3"
               >
-                <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${categoryInfo.iconBg} shadow-[0_0_20px_rgba(249,115,22,0.15)]`}>
+                <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${categoryInfo.iconBg}`}>
                   <Icon className={`h-5 w-5 ${categoryInfo.iconColor}`} />
                 </div>
-                
+
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-1">
                     <div className="flex-1 min-w-0">
@@ -135,17 +155,15 @@ export function MeetingTimes({ data }: MeetingTimesProps) {
                       initial={{ width: 0 }}
                       animate={{ width: `${categoryInfo.percentage}%` }}
                       transition={{ duration: 0.8, delay: index * 0.1 }}
-                      className="h-full rounded-full"
-                      style={{ backgroundColor: categoryInfo.progressColor }}
+                      className={`h-full rounded-full ${categoryInfo.progressClassName}`}
                     />
                   </div>
                 </div>
               </motion.div>
-            );
+            )
           })}
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }
-
