@@ -1,10 +1,11 @@
-'use client';
+"use client";
 
 import { motion } from 'motion/react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import type { MeetingRecord } from '@/lib/types/meeting';
 import { scaleIn, fadeInFromBottom, createTransition } from '@/lib/constants/animations';
+import { WidgetEmptyState } from './WidgetEmptyState';
 
 interface DurationAnalysisProps {
   readonly data: readonly MeetingRecord[];
@@ -49,6 +50,23 @@ const CustomTooltip = (props: CustomTooltipPropsType) => {
 };
 
 export function DurationAnalysis({ data }: DurationAnalysisProps) {
+  if (data.length === 0) {
+    return (
+      <Card className="surface-tertiary">
+        <CardHeader>
+          <CardTitle>Meeting Duration Analysis</CardTitle>
+          <CardDescription>No duration data is visible in the current slice.</CardDescription>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <WidgetEmptyState
+            title="Duration analysis is empty"
+            description="Widen the current filters to compare meeting lengths and success patterns."
+          />
+        </CardContent>
+      </Card>
+    );
+  }
+
   // Group meetings by duration
   const durationGroups = data.reduce((acc, meeting) => {
     const duration = meeting.duration;
@@ -87,7 +105,7 @@ export function DurationAnalysis({ data }: DurationAnalysisProps) {
   const mostCommonDurationStats = mostCommonDurationEntry?.[1];
 
   return (
-    <Card className="border border-primary/10 bg-card/80 backdrop-blur">
+    <Card className="surface-tertiary">
       <CardHeader>
         <CardTitle>Meeting Duration Analysis</CardTitle>
         <CardDescription>

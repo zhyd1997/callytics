@@ -1,40 +1,40 @@
 "use client"
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { BarChart3, Calendar, Users, Zap, TrendingUp, PieChart } from "lucide-react"
+import { BarChart3, CalendarClock, Layers3, ShieldCheck, Sparkles, Users } from "lucide-react"
 import { motion } from "motion/react"
 
 export function Features() {
   const features = [
     {
-      icon: BarChart3,
-      title: "Booking Analytics",
-      description: "Track booking trends, conversion rates, and popular time slots with beautiful visualizations.",
+      icon: ShieldCheck,
+      title: "Connect",
+      description: "Authenticate with Cal.com through OAuth and keep access scoped to the signed-in workspace.",
     },
     {
-      icon: Calendar,
-      title: "Event Type Insights",
-      description: "Understand which event types perform best and optimize your scheduling strategy.",
+      icon: Layers3,
+      title: "Triage",
+      description: "Group meetings by attention level so operators can review risk, upcoming work, and recent changes separately.",
+    },
+    {
+      icon: BarChart3,
+      title: "Explain",
+      description: "Translate raw booking activity into decision-oriented metrics the team can use in planning and stakeholder updates.",
+    },
+    {
+      icon: CalendarClock,
+      title: "Control Time",
+      description: "See when demand clusters so teams can rebalance scheduling windows before bottlenecks appear.",
     },
     {
       icon: Users,
-      title: "Workspace Performance",
-      description: "Monitor team productivity and individual performance across your entire workspace.",
+      title: "Watch Host Load",
+      description: "Identify which hosts carry the calendar and where uneven distribution starts to hurt response quality.",
     },
     {
-      icon: TrendingUp,
-      title: "Growth Metrics",
-      description: "Track your growth over time with detailed reports and forecasting capabilities.",
-    },
-    {
-      icon: PieChart,
-      title: "Custom Reports",
-      description: "Create custom dashboards tailored to your specific business needs and KPIs.",
-    },
-    {
-      icon: Zap,
-      title: "Real-time Sync",
-      description: "Automatic synchronization with Cal.com ensures your data is always up-to-date.",
+      icon: Sparkles,
+      title: "Tell the Story",
+      description: "Use one polished review surface instead of stitching together screenshots and spreadsheet pivots.",
     },
   ]
 
@@ -49,10 +49,10 @@ export function Features() {
           className="mx-auto max-w-2xl text-center"
         >
           <h2 className="text-balance text-2xl font-bold tracking-tight text-foreground sm:text-3xl lg:text-4xl">
-            Everything you need to understand your bookings
+            A clearer flow from raw bookings to weekly decisions
           </h2>
           <p className="mt-3 text-pretty text-base text-muted-foreground sm:mt-4 sm:text-lg">
-            Powerful analytics features designed specifically for Cal.com users who want deeper insights.
+            The product should guide users from connection to action, not leave them inside an undifferentiated grid of metrics.
           </p>
         </motion.div>
 
@@ -68,14 +68,14 @@ export function Features() {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 whileHover={{ y: -4 }}
               >
-                <Card className="h-full border-border bg-card/50 transition-colors hover:bg-card">
+                <Card className="surface-secondary h-full transition-colors hover:bg-card">
                   <CardHeader>
                     <motion.div
                       initial={{ scale: 0 }}
                       whileInView={{ scale: 1 }}
                       viewport={{ once: true }}
                       transition={{ duration: 0.3, delay: index * 0.1 + 0.2 }}
-                      className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-accent/10"
+                      className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-accent/20 bg-accent/10"
                     >
                       <Icon className="h-6 w-6 text-accent" />
                     </motion.div>

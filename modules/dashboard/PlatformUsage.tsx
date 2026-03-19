@@ -6,6 +6,7 @@ import { motion } from 'motion/react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import type { MeetingRecord } from '@/lib/types/meeting';
+import { WidgetEmptyState } from './WidgetEmptyState';
 
 interface PlatformUsageProps {
   readonly data: readonly MeetingRecord[];
@@ -63,6 +64,23 @@ const CustomTooltip = (props: CustomTooltipPropsType) => {
 export function PlatformUsage({ data }: PlatformUsageProps) {
   const { resolvedTheme } = useTheme();
 
+  if (data.length === 0) {
+    return (
+      <Card className="surface-tertiary">
+        <CardHeader>
+          <CardTitle>Platform Usage</CardTitle>
+          <CardDescription>No platform distribution is visible in the current slice.</CardDescription>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <WidgetEmptyState
+            title="Platform usage is empty"
+            description="Update the current filters to compare where meetings are actually happening."
+          />
+        </CardContent>
+      </Card>
+    );
+  }
+
   // Extract platform from meeting URL
   const getPlatform = (url: string) => {
     if (url.includes('meet.google.com')) return 'Google Meet';
@@ -98,9 +116,9 @@ export function PlatformUsage({ data }: PlatformUsageProps) {
 
   const getPlatformColor = (platform: string) => {
     const colors = {
-      'Google Meet': 'var(--color-chart-1)',
-      'Zoom': '#a855f7',
-      'Cal.com Video': '#facc15',
+      'Google Meet': 'var(--color-chart-2)',
+      'Zoom': 'var(--color-chart-3)',
+      'Cal.com Video': 'var(--color-accent)',
       'Other': '#f87171',
     };
     return colors[platform as keyof typeof colors] || '#6B7280';
@@ -109,7 +127,7 @@ export function PlatformUsage({ data }: PlatformUsageProps) {
   const mostUsedPlatform = chartData[0];
 
   return (
-    <Card className="border border-primary/10 bg-card/80 backdrop-blur">
+    <Card className="surface-tertiary">
       <CardHeader>
         <CardTitle>Platform Usage</CardTitle>
         <CardDescription>

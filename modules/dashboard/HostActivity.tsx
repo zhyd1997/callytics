@@ -6,12 +6,30 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Users, Calendar, Clock } from 'lucide-react';
 import type { MeetingRecord } from '@/lib/types/meeting';
+import { WidgetEmptyState } from './WidgetEmptyState';
 
 interface HostActivityProps {
   readonly data: readonly MeetingRecord[];
 }
 
 export function HostActivity({ data }: HostActivityProps) {
+  if (data.length === 0) {
+    return (
+      <Card className="surface-tertiary">
+        <CardHeader>
+          <CardTitle>Host Activity</CardTitle>
+          <CardDescription>No host activity is visible in the current slice.</CardDescription>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <WidgetEmptyState
+            title="Host activity is empty"
+            description="Widen the current filters to compare workload, success rate, and meeting time across hosts."
+          />
+        </CardContent>
+      </Card>
+    );
+  }
+
   // Aggregate host statistics
   const hostStats = data.reduce((acc, meeting) => {
     meeting.hosts.forEach(host => {
@@ -68,7 +86,7 @@ export function HostActivity({ data }: HostActivityProps) {
   const totalHostHours = Object.values(hostStats).reduce((sum, host) => sum + host.totalDuration, 0) / 60;
 
   return (
-    <Card className="border border-primary/10 bg-card/80 backdrop-blur">
+    <Card className="surface-tertiary">
       <CardHeader>
         <CardTitle>Host Activity</CardTitle>
         <CardDescription>
