@@ -2,6 +2,8 @@
 
 import type { FC } from "react"
 import { useMemo, useState } from "react"
+import dayjs from "dayjs"
+import { ArrowUpRight, CalendarDays, Clock3, Filter, Users } from "lucide-react"
 import { motion } from "motion/react"
 
 import { MEETING_DATA } from "@/constants/meetings"
@@ -27,6 +29,7 @@ import { PlatformUsage } from "./PlatformUsage"
 import { RecentMeetings } from "./RecentMeetings"
 import {
   filterMeetings,
+  getDashboardPulse,
   getEventTypeLabel,
   type DashboardFiltersState,
 } from "./utils/insights"
@@ -58,6 +61,10 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
   const visibleMeetings = useMemo(() => {
     return filterMeetings(filteredMeetings, filters)
   }, [filteredMeetings, filters])
+
+  const pulse = useMemo(() => {
+    return getDashboardPulse(visibleMeetings)
+  }, [visibleMeetings])
 
   const hostOptions = useMemo(() => {
     const hosts = filteredMeetings.flatMap((meeting) => meeting.hosts)
@@ -98,33 +105,102 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
     ]
   }, [filteredMeetings])
 
+  const focusCards = [
+    {
+      label: "Visible meetings",
+      value: visibleMeetings.length.toString(),
+      detail: `${filteredMeetings.length} total synced records`,
+      icon: CalendarDays,
+    },
+    {
+      label: "At-risk bookings",
+      value: pulse.atRiskCount.toString().padStart(2, "0"),
+      detail: "Needs attention in the next 14 days",
+      icon: Filter,
+    },
+    {
+      label: "Busiest host",
+      value: pulse.busiestHost?.[0] ?? "Unassigned",
+      detail: pulse.busiestHost ? `${pulse.busiestHost[1]} meetings in range` : "No host activity yet",
+      icon: Users,
+    },
+    {
+      label: "Peak slot",
+      value: pulse.hottestSlot?.[0] ?? "N/A",
+      detail: pulse.hottestSlot ? `${pulse.hottestSlot[1]} bookings clustered` : "Waiting for enough data",
+      icon: Clock3,
+    },
+  ] as const
+
+  const rangeLabel = {
+    "7d": "Last 7 days",
+    "30d": "Last 30 days",
+    "90d": "Last 90 days",
+    all: "All time",
+  }[filters.range]
+
   return (
     <div className="relative min-h-screen overflow-hidden bg-background text-foreground transition-colors duration-300">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-[520px] bg-[radial-gradient(circle_at_top,_rgba(15,23,42,0.16),_transparent_65%)] dark:bg-[radial-gradient(circle_at_top,_rgba(148,163,184,0.2),_transparent_70%)]" />
-      <div className="pointer-events-none absolute right-[-18%] top-32 h-[420px] w-[420px] rounded-full bg-[conic-gradient(from_140deg,_rgba(14,165,233,0.28),_transparent_55%)] blur-3xl" />
-      <div className="pointer-events-none absolute left-[-12%] bottom-[-20%] h-[360px] w-[360px] rounded-full bg-[radial-gradient(circle_at_bottom,_rgba(12,74,110,0.18),_transparent_60%)] blur-3xl" />
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(148,163,184,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(148,163,184,0.06)_1px,transparent_1px)] bg-[size:56px_56px] [mask-image:linear-gradient(to_bottom,rgba(0,0,0,0.45),transparent_85%)]" />
-      <div className="relative mx-auto max-w-7xl px-4 py-10 sm:pt-16">
+      <div className="noise-overlay pointer-events-none absolute inset-0 opacity-90" />
+      <div className="grid-fade pointer-events-none absolute inset-0 opacity-40" />
+      <div className="pointer-events-none absolute right-[-14%] top-20 h-[400px] w-[400px] rounded-full bg-primary/12 blur-3xl" />
+      <div className="pointer-events-none absolute left-[-8%] top-52 h-[340px] w-[340px] rounded-full bg-accent/14 blur-3xl" />
+      <div className="relative shell-container py-10 sm:py-14">
         <motion.div
           variants={fadeInFromTop}
           initial="initial"
           animate="animate"
           transition={createTransition()}
-          className="mb-8 max-w-4xl text-center sm:text-left"
+          className="mb-8"
         >
-          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-border/70 bg-secondary/60 px-4 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
+          <div className="section-kicker mb-4">
             <span className="inline-block h-2 w-2 rounded-full bg-accent" />
-            Cal.com overview
+            Operator workspace
           </div>
-          <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-            Meeting intelligence that drives action
-          </h1>
-          <p className="mt-3 text-sm text-muted-foreground sm:text-base">
-            Focus your operations reviews on signal, not noise. Surface booking
-            risk, host load, and time-slot concentration in a dashboard that
-            feels native to Cal.com while behaving like an operator control
-            room.
-          </p>
+
+          <div className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr] xl:items-end">
+            <div className="max-w-4xl">
+              <h1 className="display-title text-4xl leading-[0.94] text-foreground sm:text-5xl lg:text-6xl">
+                Meeting intelligence that reads like a briefing, not a backlog.
+              </h1>
+              <p className="mt-5 max-w-3xl text-base leading-7 text-muted-foreground sm:text-lg">
+                Focus operations reviews on signal instead of cleanup. The
+                dashboard surfaces risk, host load, timing concentration, and
+                recent movement in a sequence that is easier to scan and easier
+                to explain.
+              </p>
+            </div>
+
+            <div className="panel rounded-[30px] p-5">
+              <p className="text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                Current view
+              </p>
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <div>
+                  <p className="text-sm text-muted-foreground">Date range</p>
+                  <p className="mt-1 text-lg font-semibold text-foreground">{rangeLabel}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Last refreshed</p>
+                  <p className="mt-1 text-lg font-semibold text-foreground">
+                    {dayjs().format("MMM D, YYYY")}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Top event type</p>
+                  <p className="mt-1 text-lg font-semibold text-foreground">
+                    {pulse.topEventType?.[0] ?? getEventTypeLabel(filteredMeetings[0] ?? visibleMeetings[0])}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Acceptance rate</p>
+                  <p className="mt-1 text-lg font-semibold text-foreground">
+                    {pulse.acceptanceRate}%
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </motion.div>
 
         <motion.div
@@ -132,21 +208,101 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
           initial="initial"
           animate="animate"
           transition={createTransition(0.05)}
-          className="mb-8"
+          className="mb-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4"
         >
-          <ExecutivePulse
-            data={visibleMeetings}
-            onFocusAttention={() =>
-              setFilters((current) => ({ ...current, segment: "attention" }))
-            }
-          />
+          {focusCards.map((card) => {
+            const Icon = card.icon
+
+            return (
+              <div key={card.label} className="panel rounded-[28px] p-5">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                    {card.label}
+                  </p>
+                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-primary/14 bg-primary/8 text-primary">
+                    <Icon className="h-4 w-4" />
+                  </div>
+                </div>
+                <p className="mt-4 text-2xl font-semibold text-foreground sm:text-3xl">
+                  {card.value}
+                </p>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                  {card.detail}
+                </p>
+              </div>
+            )
+          })}
         </motion.div>
+
+        <div className="mb-8 grid gap-6 xl:grid-cols-[1.08fr_0.92fr]">
+          <motion.div
+            variants={fadeInFromBottom}
+            initial="initial"
+            animate="animate"
+            transition={createTransition(0.1)}
+            className="min-w-0"
+          >
+            <ExecutivePulse
+              data={visibleMeetings}
+              onFocusAttention={() =>
+                setFilters((current) => ({ ...current, segment: "attention" }))
+              }
+            />
+          </motion.div>
+
+          <motion.div
+            variants={fadeInFromBottom}
+            initial="initial"
+            animate="animate"
+            transition={createTransition(0.15)}
+            className="panel rounded-[32px] p-6"
+          >
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                  Active narrative
+                </p>
+                <h2 className="mt-2 text-2xl font-semibold text-foreground">
+                  What deserves discussion right now
+                </h2>
+              </div>
+              <ArrowUpRight className="h-5 w-5 text-muted-foreground" />
+            </div>
+
+            <div className="mt-5 space-y-3">
+              <div className="rounded-[24px] border border-border/70 bg-background/70 p-4">
+                <p className="text-sm font-medium text-foreground">Risk concentration</p>
+                <p className="mt-1 text-sm leading-6 text-muted-foreground">
+                  {pulse.atRiskCount > 0
+                    ? `${pulse.atRiskCount} bookings in the upcoming window need operator attention.`
+                    : "No at-risk bookings are currently surfaced in the selected range."}
+                </p>
+              </div>
+              <div className="rounded-[24px] border border-border/70 bg-background/70 p-4">
+                <p className="text-sm font-medium text-foreground">Capacity watch</p>
+                <p className="mt-1 text-sm leading-6 text-muted-foreground">
+                  {pulse.busiestHost
+                    ? `${pulse.busiestHost[0]} is carrying the heaviest load in the current slice.`
+                    : "Host distribution will appear here once more meetings are available."}
+                </p>
+              </div>
+              <div className="rounded-[24px] border border-border/70 bg-background/70 p-4">
+                <p className="text-sm font-medium text-foreground">Demand pattern</p>
+                <p className="mt-1 text-sm leading-6 text-muted-foreground">
+                  {pulse.hottestSlot
+                    ? `${pulse.hottestSlot[0]} is the strongest booking window in this view.`
+                    : "Time-slot concentration will appear once enough bookings are synced."}
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        </div>
 
         <motion.div
           variants={fadeInFromBottom}
           initial="initial"
           animate="animate"
-          transition={createTransition(0.1)}
+          transition={createTransition(0.2)}
           className="mb-8"
         >
           <DashboardFilters
@@ -162,7 +318,7 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
           variants={fadeInFromBottom}
           initial="initial"
           animate="animate"
-          transition={createTransition(0.15)}
+          transition={createTransition(0.25)}
           className="mb-8"
         >
           <OverviewStats data={visibleMeetings} />
@@ -172,7 +328,7 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
           variants={fadeInFromBottom}
           initial="initial"
           animate="animate"
-          transition={createTransition(0.2)}
+          transition={createTransition(0.3)}
           className="mb-8"
         >
           <div className="grid grid-cols-1 gap-6 xl:grid-cols-[1.2fr_0.8fr]">
@@ -186,7 +342,7 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
             variants={fadeInFromLeft}
             initial="initial"
             animate="animate"
-            transition={createTransition(0.25)}
+            transition={createTransition(0.35)}
           >
             <MeetingStatusChart data={visibleMeetings} />
           </motion.div>
@@ -195,7 +351,7 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
             variants={fadeInFromRight}
             initial="initial"
             animate="animate"
-            transition={createTransition(0.3)}
+            transition={createTransition(0.4)}
           >
             <DurationAnalysis data={visibleMeetings} />
           </motion.div>
@@ -205,7 +361,7 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
           variants={fadeInFromBottom}
           initial="initial"
           animate="animate"
-          transition={createTransition(0.35)}
+          transition={createTransition(0.45)}
           className="mb-8"
         >
           <MeetingTimeline data={visibleMeetings} />
@@ -216,7 +372,7 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
             variants={fadeInFromLeft}
             initial="initial"
             animate="animate"
-            transition={createTransition(0.4)}
+            transition={createTransition(0.5)}
           >
             <PlatformUsage data={visibleMeetings} />
           </motion.div>
@@ -225,7 +381,7 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
             variants={fadeInFromRight}
             initial="initial"
             animate="animate"
-            transition={createTransition(0.45)}
+            transition={createTransition(0.55)}
           >
             <HostActivity data={visibleMeetings} />
           </motion.div>

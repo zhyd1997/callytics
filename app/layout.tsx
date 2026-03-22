@@ -1,41 +1,53 @@
-import type { Metadata } from "next";
-import type { ReactNode } from "react";
-import { Geist, Geist_Mono } from "next/font/google";
-import { ThemeProvider } from "@/components/theme-provider";
-import { Analytics } from "@vercel/analytics/next";
-import { Toaster } from "@/components/ui/sonner";
-import { AppHeader } from "@/components/AppHeader";
+import type { Metadata } from "next"
+import type { ReactNode } from "react"
+import { Analytics } from "@vercel/analytics/next"
+import { Fraunces, IBM_Plex_Mono, Manrope } from "next/font/google"
 
-import "./globals.css";
+import { AppHeader } from "@/components/AppHeader"
+import { ThemeProvider } from "@/components/theme-provider"
+import { Toaster } from "@/components/ui/sonner"
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+import "./globals.css"
+
+const manrope = Manrope({
+  variable: "--font-manrope",
   subsets: ["latin"],
-});
+})
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
   subsets: ["latin"],
-});
+})
+
+const plexMono = IBM_Plex_Mono({
+  variable: "--font-plex-mono",
+  subsets: ["latin"],
+  weight: ["400", "500"],
+})
 
 export const metadata: Metadata = {
-  title: "Callytics - Analytics Dashboard for Cal.com",
+  metadataBase: new URL("https://callytics.vercel.app"),
+  title: {
+    default: "Callytics",
+    template: "%s | Callytics",
+  },
   description:
-    "Lightweight analytics dashboard providing visual insights into bookings, event types, and workspace performance for Cal.com",
+    "A sharper analytics layer for Cal.com teams that need booking signal, host load, and trend visibility without building a backend.",
+  applicationName: "Callytics",
   appleWebApp: {
     title: "Callytics",
-  }
-};
+  },
+}
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: ReactNode;
+  children: ReactNode
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${manrope.variable} ${fraunces.variable} ${plexMono.variable} antialiased`}
       >
         <ThemeProvider
           attribute="class"
@@ -52,5 +64,5 @@ export default function RootLayout({
         </ThemeProvider>
       </body>
     </html>
-  );
+  )
 }
