@@ -2,7 +2,8 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowRight, CalendarRange, Layers3, ShieldCheck, Sparkles, TrendingUp } from "lucide-react"
+import { ArrowRight, CalendarRange, ShieldCheck, Sparkles, TrendingUp } from "lucide-react"
+import { motion } from "motion/react"
 import { useState } from "react"
 import { toast } from "sonner"
 
@@ -10,33 +11,20 @@ import { Button } from "@/components/ui/button"
 import { authClient } from "@/lib/auth-client"
 import { signIn } from "@/lib/auth/sign-in"
 
-const PROOF_POINTS = [
-  "Spot cancellation spikes before the weekly ops review.",
-  "See which host and event type actually carry the load.",
-  "Bring export-ready talking points into stakeholder syncs.",
-]
+const REVIEW_NOTES = [
+  "Cancellation drift is concentrated in onboarding and intro calls.",
+  "Tuesday afternoon still carries the heaviest scheduling demand.",
+  "Host load is widening instead of staying balanced week over week.",
+] as const
 
-const KPI_CARDS = [
-  {
-    label: "Accepted bookings",
-    value: "74%",
-    detail: "+8 pts vs. prior period",
-  },
-  {
-    label: "Meetings at risk",
-    value: "06",
-    detail: "Pending, cancelled, or recently rescheduled",
-  },
-  {
-    label: "Peak booking slot",
-    value: "2 PM",
-    detail: "Tuesday and Thursday dominate demand",
-  },
-]
+const PULSE_METRICS = [
+  { label: "Meetings reviewed", value: "1.4k", detail: "Synced and grouped automatically" },
+  { label: "Time to first insight", value: "< 3 min", detail: "From login to operator signal" },
+  { label: "Weekly review prep", value: "-61%", detail: "Less spreadsheet assembly" },
+] as const
 
 export function Hero() {
-  const [isConnecting, setIsConnecting] = useState<boolean>(false)
-
+  const [isConnecting, setIsConnecting] = useState(false)
   const { data: session, isPending, error } = authClient.useSession()
 
   const handleCalOAuth = async () => {
@@ -59,79 +47,80 @@ export function Hero() {
   const showConnectCta = !session || isPending || !!error
 
   return (
-    <section className="relative overflow-hidden border-b border-border bg-background">
-      <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute inset-x-0 top-0 h-[620px] bg-[radial-gradient(circle_at_top,_rgba(15,23,42,0.16),_transparent_70%)] dark:bg-[radial-gradient(circle_at_top,_rgba(148,163,184,0.22),_transparent_72%)]" />
-        <div className="absolute right-[-10%] top-24 h-80 w-80 rounded-full bg-[conic-gradient(from_140deg,_rgba(76,154,255,0.24),_transparent_55%)] blur-3xl" />
-        <div className="absolute left-[-5%] bottom-[-12%] h-72 w-72 rounded-full bg-[radial-gradient(circle_at_bottom,_rgba(12,74,110,0.16),_transparent_62%)] blur-3xl" />
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(148,163,184,0.07)_1px,transparent_1px),linear-gradient(to_bottom,rgba(148,163,184,0.07)_1px,transparent_1px)] bg-[size:56px_56px] [mask-image:linear-gradient(to_bottom,rgba(0,0,0,0.32),transparent_85%)]" />
+    <section className="relative overflow-hidden border-b border-border/60">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="noise-overlay absolute inset-0 opacity-90" />
+        <div className="grid-fade absolute inset-0 opacity-55" />
+        <div className="absolute left-[-12%] top-16 h-72 w-72 rounded-full bg-primary/12 blur-3xl" />
+        <div className="absolute right-[-8%] top-10 h-80 w-80 rounded-full bg-accent/18 blur-3xl" />
       </div>
 
-      <div className="container relative mx-auto px-4 py-20 md:py-28">
-        <div className="grid items-start gap-14 lg:grid-cols-[1.05fr_0.95fr]">
-          <div className="text-center lg:text-left">
-            <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-border/60 bg-secondary/70 px-4 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-muted-foreground lg:mx-0">
+      <div className="shell-container relative py-14 sm:py-18 lg:py-24">
+        <div className="grid items-start gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55 }}
+            className="max-w-3xl"
+          >
+            <div className="section-kicker">
               <Sparkles className="h-3.5 w-3.5" />
-              Cal.com analytics, without a custom backend
+              Designed for the weekly ops room
             </div>
 
-            <h1 className="mt-6 text-balance font-sans text-4xl font-semibold tracking-tight text-foreground sm:text-5xl md:text-6xl">
-              Know which{" "}
-              <span className="relative inline-flex h-10 w-24 rotate-[-1deg] shrink-0 items-center justify-center md:h-16 md:w-32">
+            <h1 className="display-title mt-6 text-5xl leading-[0.94] text-foreground sm:text-6xl lg:text-7xl">
+              Turn your
+              <span className="mx-3 inline-flex h-12 w-28 rotate-[-2deg] overflow-hidden rounded-2xl border border-white/30 align-middle shadow-lg sm:h-16 sm:w-36">
                 <Image
                   src="/platforms/cal-logo-light.jpeg"
                   alt="Cal.com logo"
-                  fill
-                  sizes="(min-width: 768px) 8rem, 6rem"
-                  className="object-cover dark:hidden"
+                  width={144}
+                  height={64}
+                  className="h-full w-full object-cover dark:hidden"
                   priority
                 />
                 <Image
                   src="/platforms/cal-logo-dark.jpeg"
                   alt="Cal.com logo"
-                  fill
-                  sizes="(min-width: 768px) 8rem, 6rem"
-                  className="hidden object-cover dark:block"
+                  width={144}
+                  height={64}
+                  className="hidden h-full w-full object-cover dark:block"
                   priority
                 />
-              </span>{" "}
-              bookings need attention before your team asks.
+              </span>
+              booking stream into a control room that explains what changed.
             </h1>
 
-            <p className="mt-6 max-w-2xl text-pretty text-base leading-relaxed text-muted-foreground md:text-lg">
-              Callytics turns Cal.com activity into an operator-friendly review
-              surface. Track booking stability, host pressure, and event-type
-              momentum in a presentation layer built for weekly decisions, not
-              just pretty charts.
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">
+              Callytics is an operator-grade analytics layer for Cal.com teams.
+              Instead of dumping raw booking volume into generic charts, it
+              highlights booking stability, host pressure, timing concentration,
+              and the shifts worth discussing in the next review.
             </p>
 
-            <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-start">
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               {showConnectCta ? (
                 <>
                   <Button
                     size="lg"
-                    className="min-w-[220px] rounded-full text-base font-semibold"
+                    className="rounded-full px-6 text-base"
                     disabled={isConnecting}
                     onClick={handleCalOAuth}
                   >
-                    {isConnecting ? "Connecting..." : "Connect with Cal.com"}
+                    {isConnecting ? "Connecting..." : "Connect Cal.com"}
                     <ArrowRight className="h-4 w-4" />
                   </Button>
                   <Button
                     size="lg"
                     variant="outline"
-                    className="min-w-[220px] rounded-full border-border/70 bg-transparent text-base text-foreground transition-colors hover:bg-secondary/50 hover:text-foreground"
                     asChild
+                    className="rounded-full border-border/70 bg-card/70 px-6 text-base hover:bg-card"
                   >
                     <Link href="/demo">Explore the demo</Link>
                   </Button>
                 </>
               ) : (
-                <Button
-                  size="lg"
-                  className="min-w-[220px] rounded-full text-base font-semibold"
-                  asChild
-                >
+                <Button size="lg" asChild className="rounded-full px-6 text-base">
                   <Link href="/dashboard">
                     Open dashboard
                     <ArrowRight className="h-4 w-4" />
@@ -140,125 +129,136 @@ export function Hero() {
               )}
             </div>
 
-            <div className="mt-10 grid gap-3 text-left sm:grid-cols-3">
-              {PROOF_POINTS.map((point) => (
-                <div
-                  key={point}
-                  className="rounded-2xl border border-border/70 bg-card/70 p-4 shadow-sm backdrop-blur"
+            <div className="mt-8 flex flex-wrap gap-3">
+              <div className="section-kicker">
+                <ShieldCheck className="h-3.5 w-3.5 text-accent" />
+                OAuth-secured access
+              </div>
+              <div className="section-kicker">
+                <CalendarRange className="h-3.5 w-3.5 text-primary" />
+                No custom backend required
+              </div>
+              <div className="section-kicker">
+                <TrendingUp className="h-3.5 w-3.5 text-accent" />
+                Built for story-first reporting
+              </div>
+            </div>
+
+            <div className="mt-10 grid gap-4 sm:grid-cols-3">
+              {PULSE_METRICS.map((metric, index) => (
+                <motion.div
+                  key={metric.label}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.45, delay: 0.08 * index }}
+                  className="panel-muted rounded-[28px] p-5"
                 >
-                  <p className="text-sm leading-6 text-foreground">{point}</p>
-                </div>
+                  <p className="text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                    {metric.label}
+                  </p>
+                  <p className="mt-3 text-3xl font-semibold text-foreground">
+                    {metric.value}
+                  </p>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                    {metric.detail}
+                  </p>
+                </motion.div>
               ))}
             </div>
+          </motion.div>
 
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3 text-sm text-muted-foreground lg:justify-start">
-              <span className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-background/80 px-3 py-1.5">
-                <ShieldCheck className="h-4 w-4 text-accent" />
-                OAuth-secured Cal.com access
-              </span>
-              <span className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-background/80 px-3 py-1.5">
-                <CalendarRange className="h-4 w-4 text-accent" />
-                Built for weekly ops reviews
-              </span>
-              <span className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-background/80 px-3 py-1.5">
-                <Layers3 className="h-4 w-4 text-accent" />
-                KPI exports and stakeholder-ready views
-              </span>
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <div className="surface-primary overflow-hidden rounded-[32px] p-6 text-white shadow-[0_24px_80px_rgba(15,23,42,0.18)]">
-              <div className="flex items-center justify-between gap-4">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.12 }}
+            className="space-y-4"
+          >
+            <div className="surface-primary rounded-[34px] p-6 sm:p-7">
+              <div className="flex items-start justify-between gap-4">
                 <div>
-                  <p className="text-[0.7rem] font-semibold uppercase tracking-[0.24em] text-white/70">
-                    Weekly pulse
+                  <p className="text-[0.68rem] font-semibold uppercase tracking-[0.24em] text-white/65">
+                    Executive pulse
                   </p>
-                  <h2 className="mt-3 text-2xl font-semibold">
-                    Review the signal before the review meeting.
+                  <h2 className="mt-3 max-w-sm text-3xl font-semibold leading-tight">
+                    One briefing surface for capacity, timing, and booking risk.
                   </h2>
                 </div>
-                <div className="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs text-white/80">
+                <span className="rounded-full border border-white/12 bg-white/10 px-3 py-1 text-xs text-white/80">
                   Live preview
-                </div>
+                </span>
               </div>
 
               <div className="mt-6 grid gap-3 sm:grid-cols-3">
-                {KPI_CARDS.map((item) => (
+                {[
+                  { label: "Accepted", value: "74%", change: "+8 pts" },
+                  { label: "At risk", value: "06", change: "next 14 days" },
+                  { label: "Peak slot", value: "2 PM", change: "Tue + Thu" },
+                ].map((item) => (
                   <div
                     key={item.label}
-                    className="rounded-3xl border border-white/12 bg-white/8 p-4 backdrop-blur"
+                    className="rounded-[26px] border border-white/12 bg-white/7 p-4"
                   >
-                    <p className="text-xs uppercase tracking-[0.18em] text-white/65">
+                    <p className="text-xs uppercase tracking-[0.2em] text-white/60">
                       {item.label}
                     </p>
                     <p className="mt-3 text-3xl font-semibold">{item.value}</p>
-                    <p className="mt-2 text-sm text-white/70">{item.detail}</p>
+                    <p className="mt-1 text-sm text-white/70">{item.change}</p>
                   </div>
                 ))}
               </div>
 
-              <div className="mt-6 rounded-3xl border border-white/12 bg-white/6 p-4">
-                <div className="flex items-center justify-between gap-3">
+              <div className="mt-6 rounded-[30px] border border-white/12 bg-black/10 p-5">
+                <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium">Operator checklist</p>
-                    <p className="mt-1 text-sm text-white/70">
-                      What changed, who owns it, and where demand is clustering.
+                    <p className="text-sm font-medium">This week&apos;s review notes</p>
+                    <p className="mt-1 text-sm text-white/68">
+                      Pull forward the points that need discussion, not just observation.
                     </p>
                   </div>
-                  <TrendingUp className="h-5 w-5 text-white/70" />
+                  <div className="rounded-full bg-white/10 px-3 py-1 text-xs text-white/80">
+                    Auto grouped
+                  </div>
                 </div>
 
                 <div className="mt-4 space-y-3">
-                  <div className="rounded-2xl border border-white/10 bg-black/10 px-4 py-3">
-                    <div className="flex items-center justify-between gap-3">
-                      <p className="text-sm">Cancellation rate rose for onboarding bookings</p>
-                      <span className="rounded-full bg-white/12 px-2 py-1 text-xs">Needs follow-up</span>
+                  {REVIEW_NOTES.map((item) => (
+                    <div
+                      key={item}
+                      className="rounded-2xl border border-white/10 bg-white/6 px-4 py-3 text-sm text-white/82"
+                    >
+                      {item}
                     </div>
-                  </div>
-                  <div className="rounded-2xl border border-white/10 bg-black/10 px-4 py-3">
-                    <div className="flex items-center justify-between gap-3">
-                      <p className="text-sm">Tuesday 2 PM remains the strongest slot</p>
-                      <span className="rounded-full bg-white/12 px-2 py-1 text-xs">Trend holding</span>
-                    </div>
-                  </div>
-                  <div className="rounded-2xl border border-white/10 bg-black/10 px-4 py-3">
-                    <div className="flex items-center justify-between gap-3">
-                      <p className="text-sm">Sarah Wilson now carries the highest host load</p>
-                      <span className="rounded-full bg-white/12 px-2 py-1 text-xs">Capacity watch</span>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="surface-secondary rounded-[28px] p-5">
-                <p className="text-[0.7rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-                  Why teams switch
+              <div className="panel rounded-[28px] p-5">
+                <p className="text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                  Why it feels different
                 </p>
-                <p className="mt-3 text-lg font-semibold text-foreground">
-                  Less spreadsheet cleanup, more confident decisions.
+                <p className="mt-3 text-xl font-semibold text-foreground">
+                  Editorial structure instead of dashboard clutter.
                 </p>
                 <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                  Replace stitched-together exports with one review surface that
-                  already understands booking context.
+                  The interface is organized like a briefing: pulse first, controls second,
+                  detail third.
                 </p>
               </div>
-              <div className="surface-secondary rounded-[28px] p-5">
-                <p className="text-[0.7rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-                  What ships
+              <div className="panel rounded-[28px] p-5">
+                <p className="text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                  What ships today
                 </p>
-                <p className="mt-3 text-lg font-semibold text-foreground">
-                  Filters, pulse summaries, and grouped meeting queues.
+                <p className="mt-3 text-xl font-semibold text-foreground">
+                  Filters, charts, meeting queues, and better narrative framing.
                 </p>
                 <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                  Enough fidelity for operators now, with room for more advanced
-                  analytics later.
+                  Enough detail for operators now, without burying them in optional chrome.
                 </p>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

@@ -1,79 +1,94 @@
-import { Button } from "@/components/ui/button"
-import { CheckCircle, ExternalLink, MessageSquare, Video } from "lucide-react"
+import { ExternalLink, Github, Orbit, Workflow, Zap } from "lucide-react"
 
-const FEATURES = [
+import { Button } from "@/components/ui/button"
+
+const CAL_REASONS = [
   {
-    icon: Video,
-    title: "Video Conferencing",
-    description: "Seamless integration with Zoom, Google Meet, and more",
-    iconClassName: "text-accent",
+    icon: Orbit,
+    title: "Flexible scheduling stack",
+    description: "Cal.com handles the booking layer cleanly so Callytics can stay focused on analytics.",
   },
   {
-    icon: MessageSquare,
-    title: "Smart Scheduling",
-    description: "AI-powered availability and automatic time zone detection",
-    iconClassName: "text-primary",
+    icon: Workflow,
+    title: "Open-source leverage",
+    description: "The ecosystem is transparent, extensible, and well suited to teams that want control.",
   },
   {
-    icon: CheckCircle,
-    title: "Full Customization",
-    description: "Brand your booking pages and workflows completely",
-    iconClassName: "text-emerald-500 dark:text-emerald-400",
+    icon: Zap,
+    title: "Operator-friendly workflows",
+    description: "Strong event types, routing, and platform integrations create better downstream analytics.",
   },
 ] as const
 
 export const ReferralSection = () => {
   return (
-    <section className="relative overflow-hidden rounded-3xl border border-border bg-card/60 shadow-sm">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-accent/10 via-card to-background dark:from-accent/20"
-      />
-
-      <div className="relative mx-auto flex max-w-5xl flex-col gap-8 px-6 py-12 text-center sm:px-8 lg:px-12 lg:py-16">
-        <h3 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-          Looking for a Scheduling Solution?
-        </h3>
-        <p className="text-muted-foreground mb-6">
-          I use and recommend Cal.com for all my scheduling needs. It&apos;s open-source, 
-          privacy-focused, and incredibly flexible for any business.
-        </p>
-        
-        <div className="grid gap-4 md:grid-cols-3">
-          {FEATURES.map(({ icon: Icon, title, description, iconClassName }) => (
-            <div key={title} className="rounded-2xl border border-border/60 bg-card/80 p-6 text-center shadow-sm backdrop-blur">
-              <Icon className={`mx-auto mb-3 h-8 w-8 ${iconClassName}`} />
-              <h4 className="font-semibold text-foreground">{title}</h4>
-              <p className="mt-2 text-sm text-muted-foreground">{description}</p>
+    <section id="platform" className="pb-16 sm:pb-22 lg:pb-28">
+      <div className="shell-container">
+        <div className="surface-primary rounded-[36px] p-7 sm:p-8 lg:p-10">
+          <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
+            <div className="max-w-xl">
+              <p className="text-[0.68rem] font-semibold uppercase tracking-[0.24em] text-white/62">
+                Built on Cal.com
+              </p>
+              <h2 className="mt-4 font-serif text-4xl tracking-[-0.05em] text-white sm:text-5xl">
+                Production-ready on top of Cal.com.
+              </h2>
+              <p className="mt-4 text-base leading-7 text-white/74">
+                Callytics is built to plug directly into Cal.com for teams that
+                already need sharper operational visibility. The scheduling
+                system stays where it belongs, and the analytics layer stays
+                focused on signal, narrative, and action.
+              </p>
             </div>
-          ))}
-        </div>
 
-        <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <Button size="lg" className="gap-2 bg-accent text-accent-foreground hover:bg-accent/90 hover:text-accent-foreground" asChild>
-            <a 
-              href="https://cal.link/refer-cal-com" 
-              target="_blank" 
-              rel="noopener noreferrer"
-            >
-              <ExternalLink className="h-4 w-4 mr-2" />
-              Try Cal.com Free
-            </a>
-          </Button>
-          <Button variant="outline" size="lg" className="hover:text-foreground" asChild>
-            <a 
-              href="https://github.com/calcom/cal.com" 
-              target="_blank" 
-              rel="noopener noreferrer"
-            >
-              View on GitHub
-            </a>
-          </Button>
-        </div>
+            <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
+              <Button
+                size="lg"
+                asChild
+                className="rounded-full bg-white text-slate-950 hover:bg-white/92"
+              >
+                <a
+                  href="https://cal.link/refer-cal-com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Try Cal.com
+                  <ExternalLink className="h-4 w-4" />
+                </a>
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                asChild
+                className="rounded-full border-white/18 bg-white/8 text-white hover:bg-white/12 hover:text-white"
+              >
+                <a
+                  href="https://github.com/calcom/cal.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Github className="h-4 w-4" />
+                  Explore source
+                </a>
+              </Button>
+            </div>
+          </div>
 
-        <p className="text-center text-xs text-muted-foreground">
-          * Using my referral link helps support my work and gets you started with Cal.com&apos;s powerful features
-        </p>
+          <div className="mt-8 grid gap-4 md:grid-cols-3">
+            {CAL_REASONS.map(({ icon: Icon, title, description }) => (
+              <div
+                key={title}
+                className="rounded-[28px] border border-white/12 bg-white/8 p-5"
+              >
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/10 text-white">
+                  <Icon className="h-5 w-5" />
+                </div>
+                <h3 className="mt-4 text-lg font-semibold text-white">{title}</h3>
+                <p className="mt-2 text-sm leading-6 text-white/70">{description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   )

@@ -2,39 +2,67 @@
 
 import { motion } from "motion/react"
 
-export function Stats() {
-  const stats = [
-    { label: "Review latency", value: "-62%", description: "less time spent assembling weekly booking reports" },
-    { label: "Time-to-insight", value: "<5m", description: "from login to actionable pulse" },
-    { label: "Operator coverage", value: "1 view", description: "for host load, status drift, and timing patterns" },
-    { label: "Export readiness", value: "100%", description: "presentation-friendly metrics without cleanup" },
-  ]
+const OUTCOMES = [
+  {
+    title: "Signal-first review flow",
+    value: "03",
+    detail: "Top priorities surfaced before the team opens raw meeting lists.",
+  },
+  {
+    title: "Booking stability snapshot",
+    value: "74%",
+    detail: "Accepted bookings benchmarked against cancellations and pending drift.",
+  },
+  {
+    title: "Host capacity visibility",
+    value: "1 view",
+    detail: "See who carries the workload and where uneven scheduling starts to show.",
+  },
+  {
+    title: "Stakeholder-ready language",
+    value: "0",
+    detail: "Extra spreadsheet cleanup steps needed before weekly reporting.",
+  },
+] as const
 
+export function Stats() {
   return (
-    <section className="border-b border-border bg-card/35">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
-        <div className="mb-8 max-w-2xl">
-          <p className="text-[0.7rem] font-semibold uppercase tracking-[0.24em] text-muted-foreground">
-            Built for weekly review rituals
+    <section id="product" className="border-b border-border/60 py-16 sm:py-20">
+      <div className="shell-container">
+        <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
+          <div className="max-w-xl">
+            <div className="section-kicker">What the first screen should answer</div>
+            <h2 className="display-title mt-5 text-4xl leading-tight text-foreground sm:text-5xl">
+              What changed, what needs attention, and who owns the response.
+            </h2>
+          </div>
+
+          <p className="max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
+            The product experience is designed around meeting operations, not raw
+            database fields. The opening view makes weekly review preparation feel
+            like reading a sharp briefing instead of rummaging through exports.
           </p>
-          <h2 className="mt-3 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-            The first screen should answer what changed, what is risky, and who owns it.
-          </h2>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
-          {stats.map((stat, index) => (
+        <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {OUTCOMES.map((item, index) => (
             <motion.div
-              key={stat.label}
-              initial={{ opacity: 0, y: 20 }}
+              key={item.title}
+              initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="surface-secondary flex flex-col rounded-[28px] p-6 text-left"
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.45, delay: index * 0.08 }}
+              className="panel rounded-[30px] p-6"
             >
-              <div className="text-3xl font-semibold text-foreground sm:text-4xl">{stat.value}</div>
-              <div className="mt-3 text-sm font-medium text-foreground">{stat.label}</div>
-              <div className="mt-2 text-sm leading-6 text-muted-foreground">{stat.description}</div>
+              <p className="text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                {item.title}
+              </p>
+              <p className="mt-4 font-serif text-5xl tracking-[-0.05em] text-foreground">
+                {item.value}
+              </p>
+              <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                {item.detail}
+              </p>
             </motion.div>
           ))}
         </div>

@@ -23,6 +23,12 @@ interface DashboardFiltersProps {
   readonly hostOptions: readonly FilterOption[]
   readonly eventTypeOptions: readonly FilterOption[]
   readonly statusOptions: readonly FilterOption[]
+  readonly savedViews: readonly {
+    id: string
+    label: string
+    description: string
+    filters: DashboardFiltersState
+  }[]
 }
 
 const SEGMENTS: readonly { label: string; value: DashboardSegment }[] = [
@@ -48,6 +54,7 @@ export const DashboardFilters = ({
   hostOptions,
   eventTypeOptions,
   statusOptions,
+  savedViews,
 }: DashboardFiltersProps) => {
   return (
     <section className="surface-secondary grid gap-4 rounded-[28px] p-5">
@@ -79,6 +86,31 @@ export const DashboardFilters = ({
             </Button>
           ))}
         </div>
+      </div>
+
+      <div className="grid gap-3 lg:grid-cols-4">
+        {savedViews.map((view) => {
+          const isActive =
+            JSON.stringify(filters) === JSON.stringify(view.filters)
+
+          return (
+            <button
+              key={view.id}
+              type="button"
+              onClick={() => onFiltersChange(view.filters)}
+              className={`rounded-[24px] border p-4 text-left transition ${
+                isActive
+                  ? "border-primary/50 bg-primary/10 shadow-[0_12px_30px_rgba(15,23,42,0.08)]"
+                  : "border-border/70 bg-background/70 hover:border-border hover:bg-card/80"
+              }`}
+            >
+              <p className="text-sm font-medium text-foreground">{view.label}</p>
+              <p className="mt-1 text-sm leading-6 text-muted-foreground">
+                {view.description}
+              </p>
+            </button>
+          )
+        })}
       </div>
 
       <div className="flex flex-wrap gap-2">
