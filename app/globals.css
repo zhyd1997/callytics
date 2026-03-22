@@ -187,11 +187,13 @@
   }
 
   .surface-secondary {
-    @apply panel;
+    @apply border border-border/70 bg-card/78 backdrop-blur-xl;
+    box-shadow: 0 22px 80px rgba(26, 36, 74, 0.08);
   }
 
   .surface-tertiary {
-    @apply panel-muted;
+    @apply border border-border/60 bg-card/58 backdrop-blur-lg;
+    box-shadow: 0 14px 48px rgba(26, 36, 74, 0.06);
   }
 }
 
