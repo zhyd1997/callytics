@@ -23,7 +23,7 @@ export const ExecutivePulse = ({
 
   const actionLabel =
     pulse.atRiskCount > 0
-      ? `${pulse.atRiskCount} meetings need attention in the next 14 days`
+      ? `${pulse.atRiskCount} meetings need attention in the current view`
       : "No immediate booking risk detected"
 
   return (

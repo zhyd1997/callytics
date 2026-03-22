@@ -162,8 +162,8 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
     },
     {
       label: "At-risk bookings",
-      value: pulse.atRiskCount.toString().padStart(2, "0"),
-      detail: "Needs attention in the next 14 days",
+      value: pulse.atRiskCount.toString(),
+      detail: "Needs attention in the current slice",
       icon: Filter,
     },
     {
@@ -218,7 +218,7 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
 
   const actionItems = [
     pulse.atRiskCount > 0
-      ? `${pulse.atRiskCount} bookings need manual review in the next 14 days.`
+      ? `${pulse.atRiskCount} bookings need manual review in the current slice.`
       : "No immediate booking risk detected in the current slice.",
     pulse.busiestHost
       ? `${pulse.busiestHost[0]} is carrying the highest meeting load right now.`
@@ -363,7 +363,7 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
                 <p className="text-sm font-medium text-foreground">Risk concentration</p>
                 <p className="mt-1 text-sm leading-6 text-muted-foreground">
                   {pulse.atRiskCount > 0
-                    ? `${pulse.atRiskCount} bookings in the upcoming window need operator attention.`
+                    ? `${pulse.atRiskCount} bookings in the current slice need operator attention.`
                     : "No at-risk bookings are currently surfaced in the selected range."}
                 </p>
               </div>

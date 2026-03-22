@@ -1,40 +1,57 @@
 "use client"
 
 import dayjs from "dayjs"
-import { Clock, Coffee, Moon, Sunrise } from "lucide-react"
+import { Activity, Clock3 } from "lucide-react"
 import { motion } from "motion/react"
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { createTransition, fadeInFromBottom } from "@/lib/constants/animations"
 import type { MeetingRecord } from "@/lib/types/meeting"
 
-import { AnimatedNumber } from "./AnimatedNumber"
 import { WidgetEmptyState } from "./WidgetEmptyState"
 
 interface MeetingTimesProps {
   readonly data: readonly MeetingRecord[]
 }
 
-type TimeCategory = "morning" | "afternoon" | "evening" | "night"
-
-interface TimeCategoryData {
+interface TimeSlotRow {
   readonly label: string
-  readonly timeRange: string
   readonly count: number
   readonly percentage: number
-  readonly icon: typeof Sunrise
-  readonly iconColor: string
-  readonly iconBg: string
-  readonly progressClassName: string
 }
 
-const getTimeCategory = (startTime: string): TimeCategory => {
-  const hour = dayjs(startTime).hour()
+interface HourCell {
+  readonly hour: number
+  readonly label: string
+  readonly count: number
+  readonly intensityClassName: string
+}
 
-  if (hour >= 6 && hour < 12) return "morning"
-  if (hour >= 12 && hour < 17) return "afternoon"
-  if (hour >= 17 && hour < 21) return "evening"
-  return "night"
+const HOUR_LABELS = Array.from({ length: 24 }, (_, hour) => ({
+  hour,
+  label: dayjs().hour(hour).minute(0).format("h A"),
+}))
+
+const getIntensityClassName = (count: number, maxCount: number) => {
+  if (maxCount === 0 || count === 0) {
+    return "bg-border/40"
+  }
+
+  const ratio = count / maxCount
+
+  if (ratio >= 0.85) {
+    return "bg-accent"
+  }
+
+  if (ratio >= 0.6) {
+    return "bg-primary"
+  }
+
+  if (ratio >= 0.35) {
+    return "bg-primary/60"
+  }
+
+  return "bg-primary/28"
 }
 
 export function MeetingTimes({ data }: MeetingTimesProps) {
@@ -42,8 +59,8 @@ export function MeetingTimes({ data }: MeetingTimesProps) {
     return (
       <Card className="surface-tertiary h-full">
         <CardHeader>
-          <CardTitle>Meeting Times</CardTitle>
-          <CardDescription>Time-of-day concentration appears once bookings are visible.</CardDescription>
+          <CardTitle>Meeting Rhythm</CardTitle>
+          <CardDescription>Start-time patterns appear once bookings are visible.</CardDescription>
         </CardHeader>
         <CardContent className="pt-0">
           <WidgetEmptyState
@@ -55,113 +72,225 @@ export function MeetingTimes({ data }: MeetingTimesProps) {
     )
   }
 
-  const timeCategories = data.reduce((acc, meeting) => {
-    const category = getTimeCategory(meeting.start)
-    acc[category] = (acc[category] || 0) + 1
+  const slotCounts = data.reduce<Record<string, number>>((acc, meeting) => {
+    const slotLabel = dayjs(meeting.start).format("h:mm A")
+    acc[slotLabel] = (acc[slotLabel] || 0) + 1
     return acc
-  }, {} as Record<TimeCategory, number>)
+  }, {})
+
+  const hourCounts = data.reduce<Record<number, number>>((acc, meeting) => {
+    const hour = dayjs(meeting.start).hour()
+    acc[hour] = (acc[hour] || 0) + 1
+    return acc
+  }, {})
 
   const totalMeetings = data.length
+  const slotRows: TimeSlotRow[] = Object.entries(slotCounts)
+    .map(([label, count]) => ({
+      label,
+      count,
+      percentage: Math.round((count / totalMeetings) * 100),
+    }))
+    .sort((a, b) => {
+      if (b.count !== a.count) {
+        return b.count - a.count
+      }
 
-  const categoryData: Record<TimeCategory, TimeCategoryData> = {
-    morning: {
-      label: "Morning",
-      timeRange: "6AM - 12PM",
-      count: timeCategories.morning || 0,
-      percentage: totalMeetings > 0 ? Math.round(((timeCategories.morning || 0) / totalMeetings) * 100) : 0,
-      icon: Sunrise,
-      iconColor: "text-accent-foreground",
-      iconBg: "bg-accent/20 border border-accent/28",
-      progressClassName: "bg-accent",
-    },
-    afternoon: {
-      label: "Afternoon",
-      timeRange: "12PM - 5PM",
-      count: timeCategories.afternoon || 0,
-      percentage: totalMeetings > 0 ? Math.round(((timeCategories.afternoon || 0) / totalMeetings) * 100) : 0,
-      icon: Coffee,
-      iconColor: "text-chart-2",
-      iconBg: "bg-chart-2/14 border border-chart-2/24",
-      progressClassName: "bg-chart-2",
-    },
-    evening: {
-      label: "Evening",
-      timeRange: "5PM - 9PM",
-      count: timeCategories.evening || 0,
-      percentage: totalMeetings > 0 ? Math.round(((timeCategories.evening || 0) / totalMeetings) * 100) : 0,
-      icon: Moon,
-      iconColor: "text-chart-3",
-      iconBg: "bg-chart-3/14 border border-chart-3/24",
-      progressClassName: "bg-chart-3",
-    },
-    night: {
-      label: "Night",
-      timeRange: "9PM - 6AM",
-      count: timeCategories.night || 0,
-      percentage: totalMeetings > 0 ? Math.round(((timeCategories.night || 0) / totalMeetings) * 100) : 0,
-      icon: Clock,
-      iconColor: "text-slate-600 dark:text-slate-300",
-      iconBg: "bg-slate-500/10 border border-slate-500/20",
-      progressClassName: "bg-slate-500",
-    },
-  }
+      return dayjs(`2000-01-01 ${a.label}`).valueOf() - dayjs(`2000-01-01 ${b.label}`).valueOf()
+    })
+    .slice(0, 5)
 
-  const categories: TimeCategory[] = ["morning", "afternoon", "evening", "night"]
+  const maxHourCount = Math.max(...Object.values(hourCounts), 0)
+  const hourlyCells: HourCell[] = HOUR_LABELS.map(({ hour, label }) => ({
+    hour,
+    label,
+    count: hourCounts[hour] || 0,
+    intensityClassName: getIntensityClassName(hourCounts[hour] || 0, maxHourCount),
+  }))
+
+  const peakSlot = slotRows[0]
+  const earlyWindowCount = hourlyCells
+    .filter((cell) => cell.hour >= 6 && cell.hour < 12)
+    .reduce((total, cell) => total + cell.count, 0)
+  const coreWindowCount = hourlyCells
+    .filter((cell) => cell.hour >= 12 && cell.hour < 18)
+    .reduce((total, cell) => total + cell.count, 0)
+  const lateWindowCount = hourlyCells
+    .filter((cell) => cell.hour >= 18 || cell.hour < 6)
+    .reduce((total, cell) => total + cell.count, 0)
+
+  const windows = [
+    {
+      label: "Early",
+      range: "6 AM - 12 PM",
+      count: earlyWindowCount,
+    },
+    {
+      label: "Core",
+      range: "12 PM - 6 PM",
+      count: coreWindowCount,
+    },
+    {
+      label: "Late",
+      range: "6 PM - 6 AM",
+      count: lateWindowCount,
+    },
+  ]
+
+  const strongestWindow = [...windows].sort((a, b) => b.count - a.count)[0]
 
   return (
     <Card className="surface-tertiary h-full">
       <CardHeader>
-        <CardTitle>Meeting Times</CardTitle>
-        <CardDescription>
-          Distribution across the day so teams can spot timing concentration quickly.
-        </CardDescription>
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <CardTitle>Meeting Rhythm</CardTitle>
+            <CardDescription>
+              Exact start-time clusters reveal where scheduling pressure actually builds.
+            </CardDescription>
+          </div>
+          <div className="rounded-2xl border border-primary/14 bg-primary/8 p-3 text-primary">
+            <Clock3 className="h-5 w-5" />
+          </div>
+        </div>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          {categories.map((category, index) => {
-            const categoryInfo = categoryData[category]
-            const Icon = categoryInfo.icon
+      <CardContent className="space-y-5">
+        <motion.div
+          variants={fadeInFromBottom}
+          initial="initial"
+          animate="animate"
+          transition={createTransition()}
+          className="rounded-[26px] border border-border/70 bg-background/75 p-5"
+        >
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                Peak slot
+              </p>
+              <p className="mt-2 text-3xl font-semibold text-foreground">
+                {peakSlot?.label ?? "N/A"}
+              </p>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                {peakSlot
+                  ? `${peakSlot.count} bookings start at this exact time in the current slice.`
+                  : "No repeated start times are visible yet."}
+              </p>
+            </div>
+            <div className="rounded-2xl border border-accent/20 bg-accent/12 px-3 py-2 text-right">
+              <p className="text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                Strongest window
+              </p>
+              <p className="mt-1 text-sm font-semibold text-foreground">
+                {strongestWindow?.label ?? "N/A"}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {strongestWindow?.range ?? "No dominant window"}
+              </p>
+            </div>
+          </div>
+        </motion.div>
 
-            return (
-              <motion.div
-                key={category}
-                variants={fadeInFromBottom}
-                initial="initial"
-                animate="animate"
-                transition={createTransition(index * 0.1)}
-                className="flex items-center gap-4 rounded-2xl border border-border/70 bg-background/70 p-3"
-              >
-                <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${categoryInfo.iconBg}`}>
-                  <Icon className={`h-5 w-5 ${categoryInfo.iconColor}`} />
+        <motion.div
+          variants={fadeInFromBottom}
+          initial="initial"
+          animate="animate"
+          transition={createTransition(0.08)}
+          className="rounded-[26px] border border-border/70 bg-background/75 p-5"
+        >
+          <div className="mb-4 flex items-center gap-2">
+            <Activity className="h-4 w-4 text-primary" />
+            <p className="text-sm font-medium text-foreground">24-hour rhythm</p>
+          </div>
+          <div className="grid grid-cols-12 gap-2 sm:grid-cols-24">
+            {hourlyCells.map((cell) => (
+              <div key={cell.hour} className="space-y-2">
+                <div
+                  className={`h-20 rounded-2xl border border-white/6 transition-transform duration-300 hover:-translate-y-0.5 ${cell.intensityClassName}`}
+                  title={`${cell.label}: ${cell.count} bookings`}
+                />
+                <div className="text-center">
+                  <p className="text-[0.64rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+                    {dayjs().hour(cell.hour).format("ha")}
+                  </p>
+                  <p className="mt-1 text-[0.72rem] text-muted-foreground">{cell.count}</p>
                 </div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
 
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between mb-1">
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-sm sm:text-base">{categoryInfo.label}</p>
-                      <p className="text-xs text-muted-foreground">{categoryInfo.timeRange}</p>
-                    </div>
-                    <div className="text-right ml-4">
-                      <p className="font-semibold text-sm sm:text-base">
-                        <AnimatedNumber value={categoryInfo.count} duration={1.5} />
+        <div className="grid gap-4 lg:grid-cols-[1.05fr_0.95fr]">
+          <motion.div
+            variants={fadeInFromBottom}
+            initial="initial"
+            animate="animate"
+            transition={createTransition(0.16)}
+            className="rounded-[26px] border border-border/70 bg-background/75 p-5"
+          >
+            <p className="text-sm font-medium text-foreground">Top repeated start times</p>
+            <div className="mt-4 space-y-3">
+              {slotRows.map((slot, index) => (
+                <div key={slot.label} className="rounded-2xl border border-border/70 bg-card/70 p-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <p className="font-medium text-foreground">{slot.label}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {slot.count} bookings in the current slice
                       </p>
-                      <p className="text-xs text-muted-foreground">
-                        <AnimatedNumber value={categoryInfo.percentage} duration={1.5} />%
-                      </p>
                     </div>
+                    <p className="text-sm font-semibold text-muted-foreground">{slot.percentage}%</p>
                   </div>
-                  <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+                  <div className="mt-3 h-2 overflow-hidden rounded-full bg-primary/10">
                     <motion.div
                       initial={{ width: 0 }}
-                      animate={{ width: `${categoryInfo.percentage}%` }}
-                      transition={{ duration: 0.8, delay: index * 0.1 }}
-                      className={`h-full rounded-full ${categoryInfo.progressClassName}`}
+                      animate={{ width: `${slot.percentage}%` }}
+                      transition={{ duration: 0.45, delay: index * 0.06 }}
+                      className="h-full rounded-full bg-primary"
                     />
                   </div>
                 </div>
-              </motion.div>
-            )
-          })}
+              ))}
+            </div>
+          </motion.div>
+
+          <motion.div
+            variants={fadeInFromBottom}
+            initial="initial"
+            animate="animate"
+            transition={createTransition(0.22)}
+            className="rounded-[26px] border border-border/70 bg-background/75 p-5"
+          >
+            <p className="text-sm font-medium text-foreground">Window balance</p>
+            <div className="mt-4 space-y-3">
+              {windows.map((window) => {
+                const percentage =
+                  totalMeetings > 0 ? Math.round((window.count / totalMeetings) * 100) : 0
+
+                return (
+                  <div
+                    key={window.label}
+                    className="rounded-2xl border border-border/70 bg-card/70 p-4"
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <p className="font-medium text-foreground">{window.label}</p>
+                        <p className="text-sm text-muted-foreground">{window.range}</p>
+                      </div>
+                      <p className="text-sm font-semibold text-foreground">{window.count}</p>
+                    </div>
+                    <div className="mt-3 h-2 overflow-hidden rounded-full bg-accent/12">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: `${percentage}%` }}
+                        transition={{ duration: 0.45 }}
+                        className="h-full rounded-full bg-accent"
+                      />
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </motion.div>
         </div>
       </CardContent>
     </Card>
