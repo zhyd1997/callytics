@@ -187,6 +187,14 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
     all: "All time",
   }[filters.range]
 
+  const fallbackEventMeeting = pulse.topEventType
+    ? null
+    : (filteredMeetings[0] ?? visibleMeetings[0] ?? null)
+
+  const topEventLabel =
+    pulse.topEventType?.[0] ??
+    (fallbackEventMeeting ? getEventTypeLabel(fallbackEventMeeting) : "No event")
+
   const atRiskMeetings = useMemo(() => {
     return visibleMeetings
       .filter((meeting) => {
@@ -270,7 +278,7 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
                 <div>
                   <p className="text-sm text-muted-foreground">Top event type</p>
                   <p className="mt-1 text-lg font-semibold text-foreground">
-                    {pulse.topEventType?.[0] ?? getEventTypeLabel(filteredMeetings[0] ?? visibleMeetings[0])}
+                    {topEventLabel}
                   </p>
                 </div>
                 <div>
