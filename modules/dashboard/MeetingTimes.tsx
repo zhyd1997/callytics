@@ -1,7 +1,7 @@
 "use client"
 
 import dayjs from "dayjs"
-import { Clock3, Sparkline } from "lucide-react"
+import { Activity, Clock3 } from "lucide-react"
 import { motion } from "motion/react"
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -198,7 +198,7 @@ export function MeetingTimes({ data }: MeetingTimesProps) {
           className="rounded-[26px] border border-border/70 bg-background/75 p-5"
         >
           <div className="mb-4 flex items-center gap-2">
-            <Sparkline className="h-4 w-4 text-primary" />
+            <Activity className="h-4 w-4 text-primary" />
             <p className="text-sm font-medium text-foreground">24-hour rhythm</p>
           </div>
           <div className="grid grid-cols-12 gap-2 sm:grid-cols-24">
