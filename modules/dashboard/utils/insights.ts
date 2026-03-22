@@ -112,13 +112,7 @@ export const filterMeetings = (
 }
 
 export const getDashboardPulse = (meetings: readonly MeetingRecord[]) => {
-  const now = dayjs()
-  const upcomingWindow = meetings.filter((meeting) => {
-    const start = dayjs(meeting.start)
-    return start.isAfter(now) && start.isBefore(now.add(14, "day"))
-  })
-
-  const atRisk = upcomingWindow.filter((meeting) => {
+  const atRisk = meetings.filter((meeting) => {
     return ATTENTION_STATUSES.has(meeting.status) || Boolean(meeting.reschedulingReason)
   })
 
@@ -134,8 +128,8 @@ export const getDashboardPulse = (meetings: readonly MeetingRecord[]) => {
       hostCounts.set(host.name, (hostCounts.get(host.name) ?? 0) + 1)
     })
 
-    const hour = dayjs(meeting.start).format("h A")
-    slotCounts.set(hour, (slotCounts.get(hour) ?? 0) + 1)
+    const startTime = dayjs(meeting.start).format("h:mm A")
+    slotCounts.set(startTime, (slotCounts.get(startTime) ?? 0) + 1)
 
     const eventType = getEventTypeLabel(meeting)
     eventTypeCounts.set(eventType, (eventTypeCounts.get(eventType) ?? 0) + 1)
