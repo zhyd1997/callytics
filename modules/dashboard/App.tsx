@@ -1,646 +1,440 @@
-"use client"
+import { Bell, ChevronDown, Clock3, Search, Sparkles } from "lucide-react"
 
-import type { FC } from "react"
-import { useMemo, useState } from "react"
-import dayjs from "dayjs"
-import {
-  AlertTriangle,
-  ArrowUpRight,
-  CalendarDays,
-  CheckCircle2,
-  Clock3,
-  Filter,
-  Users,
-} from "lucide-react"
-import { motion } from "motion/react"
-
-import { MEETING_DATA } from "@/constants/meetings"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
 import type { MeetingCollection, MeetingRecord } from "@/lib/types/meeting"
-import { removeSelfMeetings } from "@/lib/utils/meetings"
-import {
-  createTransition,
-  fadeInFromBottom,
-  fadeInFromLeft,
-  fadeInFromRight,
-  fadeInFromTop,
-} from "@/lib/constants/animations"
-
-import { DashboardFilters } from "./DashboardFilters"
-import { DurationAnalysis } from "./DurationAnalysis"
-import { ExecutivePulse } from "./ExecutivePulse"
-import { HostActivity } from "./HostActivity"
-import { MeetingStatusChart } from "./MeetingStatusChart"
-import { MeetingTimeline } from "./MeetingTimeline"
-import { MeetingTimes } from "./MeetingTimes"
-import { OverviewStats } from "./OverviewStats"
-import { PlatformUsage } from "./PlatformUsage"
-import { RecentMeetings } from "./RecentMeetings"
-import {
-  filterMeetings,
-  getDashboardPulse,
-  getEventTypeLabel,
-  type DashboardFiltersState,
-} from "./utils/insights"
 
 interface DashboardAppProps {
   readonly initialMeetings?: MeetingCollection
 }
 
-const DEFAULT_FILTERS: DashboardFiltersState = {
-  segment: "all",
-  range: "30d",
-  status: "all",
-  host: "all",
-  eventType: "all",
-  query: "",
+type InsightMetric = {
+  readonly label: string
+  readonly value: string
+  readonly trend: string
 }
 
-const SAVED_VIEWS = [
+const OVERVIEW_METRICS: readonly InsightMetric[] = [
+  { label: "Meetings this week", value: "28", trend: "+9% vs prior week" },
+  { label: "Action items open", value: "41", trend: "12 due in 48 hours" },
+  { label: "Decisions captured", value: "19", trend: "+4 from last week" },
+  { label: "Avg meeting duration", value: "46 min", trend: "Down 3 min" },
+  { label: "Follow-ups pending", value: "13", trend: "5 blocked by dependencies" },
+] as const
+
+const recurringTopics = [
+  { topic: "Pricing strategy", count: 17, share: 88 },
+  { topic: "Enterprise onboarding", count: 14, share: 74 },
+  { topic: "API reliability", count: 11, share: 61 },
+  { topic: "Q2 staffing", count: 9, share: 48 },
+] as const
+
+const participationTrend = [62, 66, 70, 68, 74, 77, 79] as const
+const energyTrend = [52, 56, 63, 61, 66, 64, 69] as const
+
+const decisionsThisWeek = [
+  "Approved pilot with Northbank for usage-based pricing",
+  "Moved customer migration deadline to April 22",
+  "Adopted transcript confidence threshold at 92%",
+  "Consolidated weekly product + sales decision review",
+] as const
+
+const unresolvedPoints = [
+  "Legal review pending for data residency request",
+  "Open question on recording retention beyond 180 days",
+  "Owner still missing for CRM sync failure analysis",
+] as const
+
+const activeSpeakers = [
+  { name: "Nora Patel", role: "Product", share: 22 },
+  { name: "Jules Carter", role: "Sales", share: 17 },
+  { name: "Mina Okafor", role: "Ops", share: 15 },
+  { name: "Eli Moreno", role: "Success", share: 13 },
+] as const
+
+const frequentEntities = [
+  "Northbank",
+  "Mercury Rail",
+  "Project Lantern",
+  "Workspace migration",
+  "Security questionnaire",
+] as const
+
+const knowledgePatterns = [
   {
-    id: "ops-review",
-    label: "Ops review",
-    description: "Balanced briefing for weekly reviews",
-    filters: DEFAULT_FILTERS,
+    title: "Decision velocity rises when pre-reads are circulated ≥24h before meetings",
+    scope: "Seen in 12 product and GTM reviews",
   },
   {
-    id: "risk-watch",
-    label: "Risk watch",
-    description: "Focus on unstable bookings first",
-    filters: {
-      ...DEFAULT_FILTERS,
-      segment: "attention" as const,
-      range: "30d" as const,
-    },
+    title: "Action item closure drops in cross-functional meetings with >9 attendees",
+    scope: "Observed across Product, Sales, and Support",
   },
   {
-    id: "capacity",
-    label: "Capacity",
-    description: "Upcoming meetings and host load",
-    filters: {
-      ...DEFAULT_FILTERS,
-      segment: "upcoming" as const,
-      range: "30d" as const,
-      status: "accepted",
-    },
-  },
-  {
-    id: "history",
-    label: "History",
-    description: "Completed and recently changed work",
-    filters: {
-      ...DEFAULT_FILTERS,
-      segment: "completed" as const,
-      range: "90d" as const,
-    },
+    title: "Sentiment recovers by +14 points when follow-up owners are named during live calls",
+    scope: "Pattern consistent over last 6 weeks",
   },
 ] as const
 
-export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
-  const meetingData = useMemo<MeetingCollection>(() => {
-    return initialMeetings ?? MEETING_DATA.data
-  }, [initialMeetings])
+const formatDate = (value: string): string => {
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) {
+    return "Date TBD"
+  }
 
-  const filteredMeetings = useMemo<MeetingRecord[]>(() => {
-    return removeSelfMeetings(meetingData)
-  }, [meetingData])
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(date)
+}
 
-  const [filters, setFilters] = useState<DashboardFiltersState>(DEFAULT_FILTERS)
+const getMeetingRows = (meetings: MeetingCollection | undefined): readonly MeetingRecord[] => {
+  if (!meetings || meetings.length === 0) {
+    return []
+  }
 
-  const visibleMeetings = useMemo(() => {
-    return filterMeetings(filteredMeetings, filters)
-  }, [filteredMeetings, filters])
+  return [...meetings]
+    .sort((a, b) => new Date(b.start).getTime() - new Date(a.start).getTime())
+    .slice(0, 7)
+}
 
-  const pulse = useMemo(() => {
-    return getDashboardPulse(visibleMeetings)
-  }, [visibleMeetings])
+export const App = ({ initialMeetings }: DashboardAppProps) => {
+  const meetingRows = getMeetingRows(initialMeetings)
 
-  const hostOptions = useMemo(() => {
-    const hosts = filteredMeetings.flatMap((meeting) => meeting.hosts)
-    const uniqueHosts = [...new Map(hosts.map((host) => [host.email, host])).values()]
-
-    return [
-      { label: "All hosts", value: "all" },
-      ...uniqueHosts
-        .sort((a, b) => a.name.localeCompare(b.name))
-        .map((host) => ({ label: host.name, value: host.email })),
-    ]
-  }, [filteredMeetings])
-
-  const eventTypeOptions = useMemo(() => {
-    const eventTypes = [
-      ...new Set(filteredMeetings.map((meeting) => getEventTypeLabel(meeting))),
-    ]
-
-    return [
-      { label: "All event types", value: "all" },
-      ...eventTypes
-        .sort((a, b) => a.localeCompare(b))
-        .map((eventType) => ({ label: eventType, value: eventType })),
-    ]
-  }, [filteredMeetings])
-
-  const statusOptions = useMemo(() => {
-    const statuses = [...new Set(filteredMeetings.map((meeting) => meeting.status))]
-
-    return [
-      { label: "All statuses", value: "all" },
-      ...statuses
-        .sort((a, b) => a.localeCompare(b))
-        .map((status) => ({
-          label: status.charAt(0).toUpperCase() + status.slice(1),
-          value: status,
-        })),
-    ]
-  }, [filteredMeetings])
-
-  const focusCards = [
-    {
-      label: "Visible meetings",
-      value: visibleMeetings.length.toString(),
-      detail: `${filteredMeetings.length} total synced records`,
-      icon: CalendarDays,
-    },
-    {
-      label: "At-risk bookings",
-      value: pulse.atRiskCount.toString(),
-      detail: "Needs attention in the current slice",
-      icon: Filter,
-    },
-    {
-      label: "Busiest host",
-      value: pulse.busiestHost?.[0] ?? "Unassigned",
-      detail: pulse.busiestHost ? `${pulse.busiestHost[1]} meetings in range` : "No host activity yet",
-      icon: Users,
-    },
-    {
-      label: "Peak slot",
-      value: pulse.hottestSlot?.[0] ?? "N/A",
-      detail: pulse.hottestSlot ? `${pulse.hottestSlot[1]} bookings clustered` : "Waiting for enough data",
-      icon: Clock3,
-    },
-  ] as const
-
-  const rangeLabel = {
-    "7d": "Last 7 days",
-    "30d": "Last 30 days",
-    "90d": "Last 90 days",
-    all: "All time",
-  }[filters.range]
-
-  const fallbackEventMeeting = pulse.topEventType
-    ? null
-    : (filteredMeetings[0] ?? visibleMeetings[0] ?? null)
-
-  const topEventLabel =
-    pulse.topEventType?.[0] ??
-    (fallbackEventMeeting ? getEventTypeLabel(fallbackEventMeeting) : "No event")
-
-  const atRiskMeetings = useMemo(() => {
-    return visibleMeetings
-      .filter((meeting) => {
-        return (
-          meeting.status === "cancelled" ||
-          meeting.status === "pending" ||
-          meeting.status === "unconfirmed" ||
-          meeting.status === "rejected" ||
-          Boolean(meeting.reschedulingReason)
-        )
-      })
-      .slice(0, 4)
-  }, [visibleMeetings])
-
-  const upcomingMeetings = useMemo(() => {
-    return visibleMeetings
-      .filter((meeting) => dayjs(meeting.start).isAfter(dayjs()))
-      .sort((a, b) => dayjs(a.start).valueOf() - dayjs(b.start).valueOf())
-      .slice(0, 4)
-  }, [visibleMeetings])
-
-  const actionItems = [
-    pulse.atRiskCount > 0
-      ? `${pulse.atRiskCount} bookings need manual review in the current slice.`
-      : "No immediate booking risk detected in the current slice.",
-    pulse.busiestHost
-      ? `${pulse.busiestHost[0]} is carrying the highest meeting load right now.`
-      : "Host load will appear when more synced bookings are available.",
-    pulse.hottestSlot
-      ? `${pulse.hottestSlot[0]} remains the busiest booking window in this range.`
-      : "Time-slot concentration has not emerged in this slice yet.",
-  ]
+  const selectedMeeting = meetingRows[0]
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-background text-foreground transition-colors duration-300">
-      <div className="noise-overlay pointer-events-none absolute inset-0 opacity-90" />
-      <div className="grid-fade pointer-events-none absolute inset-0 opacity-40" />
-      <div className="pointer-events-none absolute right-[-14%] top-20 h-[400px] w-[400px] rounded-full bg-primary/12 blur-3xl" />
-      <div className="pointer-events-none absolute left-[-8%] top-52 h-[340px] w-[340px] rounded-full bg-accent/14 blur-3xl" />
-      <div className="relative shell-container py-10 sm:py-14">
-        <motion.div
-          variants={fadeInFromTop}
-          initial="initial"
-          animate="animate"
-          transition={createTransition()}
-          className="mb-8"
-        >
-          <div className="section-kicker mb-4">
-            <span className="inline-block h-2 w-2 rounded-full bg-accent" />
-            Operator workspace
-          </div>
+    <div className="min-h-screen bg-zinc-100 text-zinc-900">
+      <div className="mx-auto flex w-full max-w-[1600px]">
+        <aside className="hidden min-h-screen w-72 border-r border-zinc-300/80 bg-zinc-50/90 p-6 lg:block">
+          <p className="font-serif text-2xl tracking-tight">Callytics</p>
+          <p className="mt-1 text-xs uppercase tracking-[0.2em] text-zinc-500">Meeting intelligence</p>
 
-          <div className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr] xl:items-end">
-            <div className="max-w-4xl">
-              <h1 className="display-title text-4xl leading-[0.94] text-foreground sm:text-5xl lg:text-6xl">
-                Meeting intelligence that reads like a briefing, not a backlog.
+          <nav className="mt-10 space-y-2 text-sm">
+            {[
+              "Overview",
+              "Meetings",
+              "Insights",
+              "Decisions",
+              "Knowledge",
+              "Teams",
+              "Reports",
+            ].map((item) => (
+              <button
+                key={item}
+                type="button"
+                className="flex w-full items-center justify-between rounded-xl border border-transparent px-3 py-2 text-left text-zinc-600 transition hover:border-zinc-300 hover:bg-white hover:text-zinc-900"
+              >
+                <span>{item}</span>
+                {item === "Overview" ? <span className="text-zinc-400">•</span> : null}
+              </button>
+            ))}
+          </nav>
+
+          <div className="mt-10 rounded-2xl border border-zinc-300/80 bg-white p-4 shadow-[0_12px_32px_rgba(24,24,27,0.06)]">
+            <p className="text-xs uppercase tracking-[0.16em] text-zinc-500">Knowledge snapshot</p>
+            <p className="mt-3 font-serif text-lg leading-snug">
+              3 recurring risks now linked across Product, Success, and Legal.
+            </p>
+          </div>
+        </aside>
+
+        <div className="flex-1">
+          <header className="sticky top-0 z-30 border-b border-zinc-300/70 bg-zinc-100/90 backdrop-blur">
+            <div className="flex flex-wrap items-center gap-3 px-5 py-4 sm:px-8">
+              <button
+                type="button"
+                className="inline-flex items-center gap-2 rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm"
+              >
+                Meridian Labs Workspace
+                <ChevronDown className="h-4 w-4 text-zinc-500" />
+              </button>
+
+              <div className="relative min-w-[230px] flex-1">
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+                <Input
+                  aria-label="Search meetings"
+                  placeholder="Search transcript snippets, decisions, people..."
+                  className="h-10 border-zinc-300 bg-white pl-9"
+                />
+              </div>
+
+              <button
+                type="button"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-300 bg-white"
+                aria-label="Notifications"
+              >
+                <Bell className="h-4 w-4 text-zinc-600" />
+              </button>
+
+              <Avatar className="h-10 w-10 border border-zinc-300">
+                <AvatarFallback className="bg-zinc-900 text-xs font-semibold text-white">NP</AvatarFallback>
+              </Avatar>
+            </div>
+          </header>
+
+          <main className="space-y-7 px-5 py-6 sm:px-8 sm:py-8">
+            <section className="rounded-3xl border border-zinc-300/80 bg-white p-6 shadow-[0_14px_40px_rgba(24,24,27,0.06)] sm:p-8">
+              <p className="text-xs uppercase tracking-[0.22em] text-zinc-500">Executive dashboard</p>
+              <h1 className="mt-3 max-w-4xl font-serif text-4xl leading-tight tracking-tight sm:text-5xl">
+                Meeting intelligence with editorial clarity.
               </h1>
-              <p className="mt-5 max-w-3xl text-base leading-7 text-muted-foreground sm:text-lg">
-                Focus operations reviews on signal instead of cleanup. The
-                dashboard surfaces risk, host load, timing concentration, and
-                recent movement in a sequence that is easier to scan and easier
-                to explain.
+              <p className="mt-4 max-w-3xl text-sm leading-relaxed text-zinc-600 sm:text-base">
+                Structured insights across transcripts, notes, and recordings. Follow patterns, decisions, unresolved
+                topics, and momentum without digging through raw calls.
               </p>
-            </div>
+            </section>
 
-            <div className="panel rounded-[30px] p-5">
-              <p className="text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-                Current view
-              </p>
-              <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                <div>
-                  <p className="text-sm text-muted-foreground">Date range</p>
-                  <p className="mt-1 text-lg font-semibold text-foreground">{rangeLabel}</p>
+            <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+              {OVERVIEW_METRICS.map((metric) => (
+                <article
+                  key={metric.label}
+                  className="rounded-2xl border border-zinc-300/80 bg-white p-4 shadow-[0_8px_22px_rgba(24,24,27,0.05)]"
+                >
+                  <p className="text-xs uppercase tracking-[0.16em] text-zinc-500">{metric.label}</p>
+                  <p className="mt-3 font-serif text-3xl tracking-tight">{metric.value}</p>
+                  <p className="mt-2 text-xs text-zinc-500">{metric.trend}</p>
+                </article>
+              ))}
+            </section>
+
+            <section className="grid gap-4 xl:grid-cols-3">
+              <article className="rounded-2xl border border-zinc-300/80 bg-white p-5 shadow-[0_8px_22px_rgba(24,24,27,0.05)] xl:col-span-2">
+                <div className="mb-5 flex items-center justify-between">
+                  <h2 className="font-serif text-2xl">Top recurring topics</h2>
+                  <Badge variant="outline" className="border-zinc-300 text-zinc-600">
+                    Last 30 days
+                  </Badge>
                 </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Last refreshed</p>
-                  <p className="mt-1 text-lg font-semibold text-foreground">
-                    {dayjs().format("MMM D, YYYY")}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Top event type</p>
-                  <p className="mt-1 text-lg font-semibold text-foreground">
-                    {topEventLabel}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Acceptance rate</p>
-                  <p className="mt-1 text-lg font-semibold text-foreground">
-                    {pulse.acceptanceRate}%
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-
-        <motion.div
-          variants={fadeInFromBottom}
-          initial="initial"
-          animate="animate"
-          transition={createTransition(0.05)}
-          className="mb-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4"
-        >
-          {focusCards.map((card) => {
-            const Icon = card.icon
-
-            return (
-              <div key={card.label} className="panel rounded-[28px] p-5">
-                <div className="flex items-center justify-between gap-3">
-                  <p className="text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-                    {card.label}
-                  </p>
-                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-primary/14 bg-primary/8 text-primary">
-                    <Icon className="h-4 w-4" />
-                  </div>
-                </div>
-                <p className="mt-4 text-2xl font-semibold text-foreground sm:text-3xl">
-                  {card.value}
-                </p>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                  {card.detail}
-                </p>
-              </div>
-            )
-          })}
-        </motion.div>
-
-        <div className="mb-8 grid gap-6 xl:grid-cols-[1.08fr_0.92fr]">
-          <motion.div
-            variants={fadeInFromBottom}
-            initial="initial"
-            animate="animate"
-            transition={createTransition(0.1)}
-            className="min-w-0"
-          >
-            <ExecutivePulse
-              data={visibleMeetings}
-              onFocusAttention={() =>
-                setFilters((current) => ({ ...current, segment: "attention" }))
-              }
-            />
-          </motion.div>
-
-          <motion.div
-            variants={fadeInFromBottom}
-            initial="initial"
-            animate="animate"
-            transition={createTransition(0.15)}
-            className="panel rounded-[32px] p-6"
-          >
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <p className="text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-                  Active narrative
-                </p>
-                <h2 className="mt-2 text-2xl font-semibold text-foreground">
-                  What deserves discussion right now
-                </h2>
-              </div>
-              <ArrowUpRight className="h-5 w-5 text-muted-foreground" />
-            </div>
-
-            <div className="mt-5 space-y-3">
-              <div className="rounded-[24px] border border-border/70 bg-background/70 p-4">
-                <p className="text-sm font-medium text-foreground">Risk concentration</p>
-                <p className="mt-1 text-sm leading-6 text-muted-foreground">
-                  {pulse.atRiskCount > 0
-                    ? `${pulse.atRiskCount} bookings in the current slice need operator attention.`
-                    : "No at-risk bookings are currently surfaced in the selected range."}
-                </p>
-              </div>
-              <div className="rounded-[24px] border border-border/70 bg-background/70 p-4">
-                <p className="text-sm font-medium text-foreground">Capacity watch</p>
-                <p className="mt-1 text-sm leading-6 text-muted-foreground">
-                  {pulse.busiestHost
-                    ? `${pulse.busiestHost[0]} is carrying the heaviest load in the current slice.`
-                    : "Host distribution will appear here once more meetings are available."}
-                </p>
-              </div>
-              <div className="rounded-[24px] border border-border/70 bg-background/70 p-4">
-                <p className="text-sm font-medium text-foreground">Demand pattern</p>
-                <p className="mt-1 text-sm leading-6 text-muted-foreground">
-                  {pulse.hottestSlot
-                    ? `${pulse.hottestSlot[0]} is the strongest booking window in this view.`
-                    : "Time-slot concentration will appear once enough bookings are synced."}
-                </p>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-
-        <motion.div
-          variants={fadeInFromBottom}
-          initial="initial"
-          animate="animate"
-          transition={createTransition(0.2)}
-          className="mb-8"
-        >
-          <DashboardFilters
-            filters={filters}
-            onFiltersChange={setFilters}
-            hostOptions={hostOptions}
-            eventTypeOptions={eventTypeOptions}
-            statusOptions={statusOptions}
-            savedViews={SAVED_VIEWS}
-          />
-        </motion.div>
-
-        <div className="mb-8 grid gap-6 xl:grid-cols-[0.82fr_1.18fr]">
-          <motion.aside
-            variants={fadeInFromLeft}
-            initial="initial"
-            animate="animate"
-            transition={createTransition(0.23)}
-            className="panel rounded-[32px] p-6"
-          >
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <p className="text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-                  Triage rail
-                </p>
-                <h2 className="mt-2 text-2xl font-semibold text-foreground">
-                  What needs attention first
-                </h2>
-              </div>
-              <AlertTriangle className="h-5 w-5 text-accent" />
-            </div>
-
-            <div className="mt-5 space-y-5">
-              <div>
-                <p className="text-sm font-medium text-foreground">At-risk bookings</p>
-                <div className="mt-3 space-y-3">
-                  {atRiskMeetings.length > 0 ? (
-                    atRiskMeetings.map((meeting) => (
-                      <div
-                        key={meeting.id}
-                        className="rounded-[24px] border border-border/70 bg-background/70 p-4"
-                      >
-                        <p className="line-clamp-1 text-sm font-medium text-foreground">
-                          {meeting.title}
-                        </p>
-                        <p className="mt-1 text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                          {meeting.reschedulingReason ? "Rescheduled" : meeting.status}
-                        </p>
-                        <p className="mt-2 text-sm text-muted-foreground">
-                          {dayjs(meeting.start).format("MMM D, h:mm A")}
-                        </p>
+                <div className="space-y-4">
+                  {recurringTopics.map((topic) => (
+                    <div key={topic.topic} className="space-y-2">
+                      <div className="flex items-center justify-between text-sm">
+                        <p>{topic.topic}</p>
+                        <p className="text-zinc-500">{topic.count} mentions</p>
                       </div>
-                    ))
-                  ) : (
-                    <div className="rounded-[24px] border border-dashed border-border/70 bg-background/60 p-4 text-sm text-muted-foreground">
-                      No unstable bookings in this view.
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div>
-                <p className="text-sm font-medium text-foreground">Recommended actions</p>
-                <div className="mt-3 space-y-3">
-                  {actionItems.map((item) => (
-                    <div
-                      key={item}
-                      className="flex gap-3 rounded-[24px] border border-border/70 bg-background/70 p-4"
-                    >
-                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                      <p className="text-sm leading-6 text-muted-foreground">{item}</p>
+                      <div className="h-2 rounded-full bg-zinc-200">
+                        <div className="h-2 rounded-full bg-zinc-800" style={{ width: `${topic.share}%` }} />
+                      </div>
                     </div>
                   ))}
                 </div>
-              </div>
-            </div>
-          </motion.aside>
+              </article>
 
-          <motion.section
-            variants={fadeInFromRight}
-            initial="initial"
-            animate="animate"
-            transition={createTransition(0.26)}
-            className="panel rounded-[32px] p-6"
-          >
-            <div className="grid gap-5 lg:grid-cols-[1.1fr_0.9fr]">
-              <div>
-                <p className="text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-                  Action workspace
-                </p>
-                <h2 className="mt-2 text-2xl font-semibold text-foreground">
-                  Guided review for the current slice
-                </h2>
-                <p className="mt-3 text-sm leading-7 text-muted-foreground">
-                  Use this workspace to move through the current period in the
-                  right order: immediate risk, upcoming work, then broader
-                  patterns.
-                </p>
-              </div>
+              <article className="rounded-2xl border border-zinc-300/80 bg-white p-5 shadow-[0_8px_22px_rgba(24,24,27,0.05)]">
+                <h2 className="font-serif text-2xl">Decisions made this week</h2>
+                <ul className="mt-4 space-y-3 text-sm text-zinc-700">
+                  {decisionsThisWeek.map((decision) => (
+                    <li key={decision} className="rounded-xl border border-zinc-200 bg-zinc-50 p-3">
+                      {decision}
+                    </li>
+                  ))}
+                </ul>
+              </article>
+            </section>
 
-              <div className="rounded-[24px] border border-border/70 bg-background/70 p-4">
-                <p className="text-sm font-medium text-foreground">Current briefing</p>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                  {pulse.atRiskCount > 0
-                    ? `Start with the ${pulse.atRiskCount} unstable bookings, then confirm whether ${pulse.busiestHost?.[0] ?? "the lead host"} needs capacity relief.`
-                    : `Current booking flow looks stable. Use the upcoming queue to check concentration around ${pulse.hottestSlot?.[0] ?? "peak demand windows"}.`}
-                </p>
-              </div>
-            </div>
+            <section className="grid gap-4 xl:grid-cols-12">
+              <article className="rounded-2xl border border-zinc-300/80 bg-white p-5 shadow-[0_8px_22px_rgba(24,24,27,0.05)] xl:col-span-4">
+                <h2 className="font-serif text-2xl">Unresolved discussion points</h2>
+                <ul className="mt-4 space-y-3 text-sm text-zinc-700">
+                  {unresolvedPoints.map((point) => (
+                    <li key={point} className="rounded-xl border border-zinc-200 bg-zinc-50 p-3">
+                      {point}
+                    </li>
+                  ))}
+                </ul>
+              </article>
 
-            <div className="mt-5 grid gap-4 lg:grid-cols-2">
-              <div className="rounded-[28px] border border-border/70 bg-background/70 p-5">
-                <div className="flex items-center justify-between gap-3">
-                  <p className="text-sm font-medium text-foreground">Next meetings</p>
-                  <CalendarDays className="h-4 w-4 text-muted-foreground" />
-                </div>
-                <div className="mt-4 space-y-3">
-                  {upcomingMeetings.length > 0 ? (
-                    upcomingMeetings.map((meeting) => (
-                      <div
-                        key={meeting.id}
-                        className="rounded-[20px] border border-border/70 bg-card/70 p-4"
-                      >
-                        <p className="line-clamp-1 text-sm font-medium text-foreground">
-                          {meeting.title}
-                        </p>
-                        <p className="mt-1 text-sm text-muted-foreground">
-                          {dayjs(meeting.start).format("MMM D, h:mm A")}
-                        </p>
-                        <p className="mt-2 text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                          {meeting.hosts[0]?.name ?? "Unknown host"}
-                        </p>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="rounded-[20px] border border-dashed border-border/70 bg-card/60 p-4 text-sm text-muted-foreground">
-                      No upcoming meetings in the current slice.
+              <article className="rounded-2xl border border-zinc-300/80 bg-white p-5 shadow-[0_8px_22px_rgba(24,24,27,0.05)] xl:col-span-4">
+                <h2 className="font-serif text-2xl">Team participation trend</h2>
+                <p className="mt-1 text-xs uppercase tracking-[0.16em] text-zinc-500">Speaking share index</p>
+                <div className="mt-5 flex h-36 items-end gap-2">
+                  {participationTrend.map((value, index) => (
+                    <div key={value} className="flex flex-1 flex-col items-center gap-2">
+                      <div className="w-full rounded-t-sm bg-zinc-800/90" style={{ height: `${value}%` }} />
+                      <span className="text-[10px] text-zinc-500">W{index + 1}</span>
                     </div>
-                  )}
+                  ))}
                 </div>
+              </article>
+
+              <article className="rounded-2xl border border-zinc-300/80 bg-white p-5 shadow-[0_8px_22px_rgba(24,24,27,0.05)] xl:col-span-4">
+                <h2 className="font-serif text-2xl">Sentiment / energy trend</h2>
+                <div className="mt-4 space-y-3">
+                  {energyTrend.map((value, index) => (
+                    <div key={value} className="grid grid-cols-[40px_1fr_42px] items-center gap-3 text-xs">
+                      <span className="text-zinc-500">W{index + 1}</span>
+                      <div className="h-2 rounded-full bg-zinc-200">
+                        <div className="h-2 rounded-full bg-zinc-700" style={{ width: `${value}%` }} />
+                      </div>
+                      <span className="text-right text-zinc-500">{value}</span>
+                    </div>
+                  ))}
+                </div>
+              </article>
+            </section>
+
+            <section className="grid gap-4 xl:grid-cols-2">
+              <article className="rounded-2xl border border-zinc-300/80 bg-white p-5 shadow-[0_8px_22px_rgba(24,24,27,0.05)]">
+                <h2 className="font-serif text-2xl">Most active speakers</h2>
+                <ul className="mt-4 space-y-3">
+                  {activeSpeakers.map((speaker) => (
+                    <li key={speaker.name} className="rounded-xl border border-zinc-200 p-3">
+                      <div className="flex items-center justify-between">
+                        <p className="text-sm font-medium">{speaker.name}</p>
+                        <p className="text-xs text-zinc-500">{speaker.share}%</p>
+                      </div>
+                      <p className="text-xs text-zinc-500">{speaker.role}</p>
+                    </li>
+                  ))}
+                </ul>
+              </article>
+
+              <article className="rounded-2xl border border-zinc-300/80 bg-white p-5 shadow-[0_8px_22px_rgba(24,24,27,0.05)]">
+                <h2 className="font-serif text-2xl">Frequently mentioned customers or projects</h2>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {frequentEntities.map((entity) => (
+                    <Badge key={entity} variant="outline" className="rounded-full border-zinc-300 bg-zinc-50 px-3 py-1 text-zinc-700">
+                      {entity}
+                    </Badge>
+                  ))}
+                </div>
+              </article>
+            </section>
+
+            <section className="overflow-hidden rounded-2xl border border-zinc-300/80 bg-white shadow-[0_8px_22px_rgba(24,24,27,0.05)]">
+              <div className="border-b border-zinc-200 px-5 py-4">
+                <h2 className="font-serif text-2xl">Meeting list</h2>
               </div>
-
-              <div className="rounded-[28px] border border-border/70 bg-background/70 p-5">
-                <div className="flex items-center justify-between gap-3">
-                  <p className="text-sm font-medium text-foreground">Focus metrics</p>
-                  <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
-                </div>
-                <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                  <div className="rounded-[20px] border border-border/70 bg-card/70 p-4">
-                    <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                      Acceptance
-                    </p>
-                    <p className="mt-2 text-2xl font-semibold text-foreground">
-                      {pulse.acceptanceRate}%
-                    </p>
-                  </div>
-                  <div className="rounded-[20px] border border-border/70 bg-card/70 p-4">
-                    <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                      Cancellation
-                    </p>
-                    <p className="mt-2 text-2xl font-semibold text-foreground">
-                      {pulse.cancellationRate}%
-                    </p>
-                  </div>
-                  <div className="rounded-[20px] border border-border/70 bg-card/70 p-4 sm:col-span-2">
-                    <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                      Dominant event type
-                    </p>
-                    <p className="mt-2 text-lg font-semibold text-foreground">
-                      {pulse.topEventType?.[0] ?? "General"}
-                    </p>
-                  </div>
-                </div>
+              <div className="overflow-x-auto">
+                <table className="min-w-full text-left text-sm">
+                  <thead className="bg-zinc-50 text-xs uppercase tracking-[0.14em] text-zinc-500">
+                    <tr>
+                      <th className="px-5 py-3 font-medium">Title</th>
+                      <th className="px-5 py-3 font-medium">Date</th>
+                      <th className="px-5 py-3 font-medium">Participants</th>
+                      <th className="px-5 py-3 font-medium">Summary status</th>
+                      <th className="px-5 py-3 font-medium">Action items</th>
+                      <th className="px-5 py-3 font-medium">Tags</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {meetingRows.map((meeting) => (
+                      <tr key={meeting.id} className="border-t border-zinc-200 align-top">
+                        <td className="px-5 py-4">
+                          <p className="font-medium text-zinc-800">{meeting.title}</p>
+                        </td>
+                        <td className="px-5 py-4 text-zinc-600">{formatDate(meeting.start)}</td>
+                        <td className="px-5 py-4 text-zinc-600">{meeting.attendees.length + meeting.hosts.length}</td>
+                        <td className="px-5 py-4">
+                          <Badge variant="outline" className="border-zinc-300 bg-zinc-50 text-zinc-700">
+                            {meeting.status}
+                          </Badge>
+                        </td>
+                        <td className="px-5 py-4 text-zinc-600">{Math.max(1, Math.round(meeting.duration / 15))}</td>
+                        <td className="px-5 py-4 text-zinc-600">
+                          {meeting.eventType?.slug ? `${meeting.eventType.slug}, transcript` : "meeting, transcript"}
+                        </td>
+                      </tr>
+                    ))}
+                    {meetingRows.length === 0 ? (
+                      <tr>
+                        <td colSpan={6} className="px-5 py-8 text-center text-zinc-500">
+                          Connect meetings to populate this list.
+                        </td>
+                      </tr>
+                    ) : null}
+                  </tbody>
+                </table>
               </div>
-            </div>
-          </motion.section>
-        </div>
+            </section>
 
-        <motion.div
-          variants={fadeInFromBottom}
-          initial="initial"
-          animate="animate"
-          transition={createTransition(0.25)}
-          className="mb-8"
-        >
-          <OverviewStats data={visibleMeetings} />
-        </motion.div>
+            <section className="grid gap-4 xl:grid-cols-12">
+              <article className="rounded-2xl border border-zinc-300/80 bg-white p-5 shadow-[0_8px_22px_rgba(24,24,27,0.05)] xl:col-span-8">
+                <h2 className="font-serif text-2xl">Meeting details</h2>
+                <p className="mt-1 text-sm text-zinc-500">{selectedMeeting ? selectedMeeting.title : "No meeting selected"}</p>
 
-        <motion.div
-          variants={fadeInFromBottom}
-          initial="initial"
-          animate="animate"
-          transition={createTransition(0.3)}
-          className="mb-8"
-        >
-          <div className="grid grid-cols-1 gap-6 xl:grid-cols-[1.2fr_0.8fr]">
-            <RecentMeetings data={visibleMeetings} />
-            <MeetingTimes data={visibleMeetings} />
-          </div>
-        </motion.div>
+                <div className="mt-5 grid gap-4 md:grid-cols-2">
+                  <div className="space-y-4 rounded-xl border border-zinc-200 bg-zinc-50 p-4">
+                    <section>
+                      <h3 className="text-xs uppercase tracking-[0.16em] text-zinc-500">Summary</h3>
+                      <p className="mt-2 text-sm text-zinc-700">
+                        Team reviewed transcript reliability, customer onboarding blockers, and ownership for follow-up
+                        actions before next steering meeting.
+                      </p>
+                    </section>
+                    <section>
+                      <h3 className="text-xs uppercase tracking-[0.16em] text-zinc-500">Key decisions</h3>
+                      <ul className="mt-2 list-disc space-y-1 pl-4 text-sm text-zinc-700">
+                        <li>Ship automated insight digest every Monday.</li>
+                        <li>Escalate unresolved legal topics to executive review.</li>
+                      </ul>
+                    </section>
+                    <section>
+                      <h3 className="text-xs uppercase tracking-[0.16em] text-zinc-500">Action items</h3>
+                      <ul className="mt-2 space-y-2 text-sm text-zinc-700">
+                        <li>• Mina: finalize sentiment calibration notes (Fri)</li>
+                        <li>• Jules: align enterprise rollout messaging (Mon)</li>
+                      </ul>
+                    </section>
+                  </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          <motion.div
-            variants={fadeInFromLeft}
-            initial="initial"
-            animate="animate"
-            transition={createTransition(0.35)}
-          >
-            <MeetingStatusChart data={visibleMeetings} />
-          </motion.div>
+                  <div className="space-y-4 rounded-xl border border-zinc-200 bg-zinc-50 p-4">
+                    <section>
+                      <h3 className="text-xs uppercase tracking-[0.16em] text-zinc-500">Themes</h3>
+                      <p className="mt-2 text-sm text-zinc-700">Onboarding friction · Data governance · Decision ownership</p>
+                    </section>
+                    <section>
+                      <h3 className="text-xs uppercase tracking-[0.16em] text-zinc-500">Risks</h3>
+                      <p className="mt-2 text-sm text-zinc-700">Delayed compliance response could block two enterprise renewals.</p>
+                    </section>
+                    <section>
+                      <h3 className="text-xs uppercase tracking-[0.16em] text-zinc-500">Follow-ups</h3>
+                      <p className="mt-2 text-sm text-zinc-700">Next checkpoint set for March 31 with Product, Legal, and Sales leaders.</p>
+                    </section>
+                    <section>
+                      <h3 className="text-xs uppercase tracking-[0.16em] text-zinc-500">Transcript highlights</h3>
+                      <p className="mt-2 text-sm text-zinc-700">
+                        “We need a single owner for migration risk by end of day.”
+                      </p>
+                    </section>
+                  </div>
+                </div>
 
-          <motion.div
-            variants={fadeInFromRight}
-            initial="initial"
-            animate="animate"
-            transition={createTransition(0.4)}
-          >
-            <DurationAnalysis data={visibleMeetings} />
-          </motion.div>
-        </div>
+                <div className="mt-4 rounded-xl border border-zinc-200 bg-zinc-50 p-4">
+                  <div className="mb-3 flex items-center justify-between">
+                    <h3 className="text-xs uppercase tracking-[0.16em] text-zinc-500">Searchable timeline</h3>
+                    <Search className="h-4 w-4 text-zinc-400" />
+                  </div>
+                  <div className="space-y-2 text-sm text-zinc-700">
+                    <p className="flex items-center gap-2"><Clock3 className="h-3.5 w-3.5" /> 00:08:21 — Decision framing on onboarding scope</p>
+                    <p className="flex items-center gap-2"><Clock3 className="h-3.5 w-3.5" /> 00:22:14 — Action item ownership clarified</p>
+                    <p className="flex items-center gap-2"><Clock3 className="h-3.5 w-3.5" /> 00:37:52 — Compliance risk escalated</p>
+                  </div>
+                </div>
+              </article>
 
-        <motion.div
-          variants={fadeInFromBottom}
-          initial="initial"
-          animate="animate"
-          transition={createTransition(0.45)}
-          className="mb-8"
-        >
-          <MeetingTimeline data={visibleMeetings} />
-        </motion.div>
+              <article className="rounded-2xl border border-zinc-300/80 bg-white p-5 shadow-[0_8px_22px_rgba(24,24,27,0.05)] xl:col-span-4">
+                <div className="flex items-center justify-between">
+                  <h2 className="font-serif text-2xl">Knowledge</h2>
+                  <Sparkles className="h-4 w-4 text-zinc-500" />
+                </div>
+                <p className="mt-1 text-sm text-zinc-500">
+                  Aggregate recurring insights over time, linked by person, topic, team, and project.
+                </p>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <motion.div
-            variants={fadeInFromLeft}
-            initial="initial"
-            animate="animate"
-            transition={createTransition(0.5)}
-          >
-            <PlatformUsage data={visibleMeetings} />
-          </motion.div>
-
-          <motion.div
-            variants={fadeInFromRight}
-            initial="initial"
-            animate="animate"
-            transition={createTransition(0.55)}
-          >
-            <HostActivity data={visibleMeetings} />
-          </motion.div>
+                <div className="mt-4 space-y-3">
+                  {knowledgePatterns.map((pattern) => (
+                    <article key={pattern.title} className="rounded-xl border border-zinc-200 bg-zinc-50 p-3">
+                      <p className="text-sm text-zinc-800">{pattern.title}</p>
+                      <p className="mt-1 text-xs text-zinc-500">{pattern.scope}</p>
+                    </article>
+                  ))}
+                </div>
+              </article>
+            </section>
+          </main>
         </div>
       </div>
     </div>
