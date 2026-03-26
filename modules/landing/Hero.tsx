@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowRight, CalendarRange, ShieldCheck, Sparkles, TrendingUp } from "lucide-react"
+import { ArrowRight, CalendarRange, Feather, ShieldCheck, TrendingUp } from "lucide-react"
 import { motion } from "motion/react"
 import { useState } from "react"
 import { toast } from "sonner"
@@ -12,9 +12,9 @@ import { authClient } from "@/lib/auth-client"
 import { signIn } from "@/lib/auth/sign-in"
 
 const REVIEW_NOTES = [
-  "Cancellation drift is concentrated in onboarding and intro calls.",
-  "Tuesday afternoon still carries the heaviest scheduling demand.",
-  "Host load is widening instead of staying balanced week over week.",
+  "Cancellation drift is clustered in onboarding calls.",
+  "Tuesday afternoon still holds the heaviest demand.",
+  "Host load is widening week over week.",
 ] as const
 
 const PULSE_METRICS = [
@@ -49,10 +49,8 @@ export function Hero() {
   return (
     <section className="relative overflow-hidden border-b border-border/60">
       <div className="pointer-events-none absolute inset-0">
-        <div className="noise-overlay absolute inset-0 opacity-90" />
-        <div className="grid-fade absolute inset-0 opacity-55" />
-        <div className="absolute left-[-12%] top-16 h-72 w-72 rounded-full bg-primary/12 blur-3xl" />
-        <div className="absolute right-[-8%] top-10 h-80 w-80 rounded-full bg-accent/18 blur-3xl" />
+        <div className="noise-overlay absolute inset-0 opacity-70" />
+        <div className="etching-grid absolute inset-0 opacity-35" />
       </div>
 
       <div className="shell-container relative py-14 sm:py-18 lg:py-24">
@@ -64,8 +62,8 @@ export function Hero() {
             className="max-w-3xl"
           >
             <div className="section-kicker">
-              <Sparkles className="h-3.5 w-3.5" />
-              Designed for the weekly ops room
+              <Feather className="h-3.5 w-3.5" />
+              Minimal brief-first interface
             </div>
 
             <h1 className="display-title mt-6 text-5xl leading-[0.94] text-foreground sm:text-6xl lg:text-7xl">
@@ -88,14 +86,14 @@ export function Hero() {
                   priority
                 />
               </span>
-              booking stream into a control room that explains what changed.
+              booking stream into a calm briefing room that explains what changed.
             </h1>
 
             <p className="mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">
               Callytics is an operator-grade analytics layer for Cal.com teams.
-              Instead of dumping raw booking volume into generic charts, it
-              highlights booking stability, host pressure, timing concentration,
-              and the shifts worth discussing in the next review.
+              The visual language is intentionally restrained: elegant serif
+              headlines, monochrome surfaces, and hand-drawn accents that make
+              the dashboard feel both classic and modern.
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -173,17 +171,17 @@ export function Hero() {
             transition={{ duration: 0.6, delay: 0.12 }}
             className="space-y-4"
           >
-            <div className="surface-primary rounded-[34px] p-6 sm:p-7">
+            <div className="hand-drawn-card p-6 sm:p-7">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <p className="text-[0.68rem] font-semibold uppercase tracking-[0.24em] text-white/65">
+                  <p className="text-[0.68rem] font-semibold uppercase tracking-[0.24em] text-muted-foreground">
                     Executive pulse
                   </p>
-                  <h2 className="mt-3 max-w-sm text-3xl font-semibold leading-tight">
-                    One briefing surface for capacity, timing, and booking risk.
+                  <h2 className="mt-3 max-w-sm font-serif text-3xl font-semibold leading-tight text-foreground">
+                    A single editorial surface for capacity and booking risk.
                   </h2>
                 </div>
-                <span className="rounded-full border border-white/12 bg-white/10 px-3 py-1 text-xs text-white/80">
+                <span className="ink-outline px-3 py-1 text-xs text-muted-foreground">
                   Live preview
                 </span>
               </div>
@@ -196,26 +194,26 @@ export function Hero() {
                 ].map((item) => (
                   <div
                     key={item.label}
-                    className="rounded-[26px] border border-white/12 bg-white/7 p-4"
+                    className="rounded-[26px] border border-border/70 bg-card p-4"
                   >
-                    <p className="text-xs uppercase tracking-[0.2em] text-white/60">
+                    <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
                       {item.label}
                     </p>
-                    <p className="mt-3 text-3xl font-semibold">{item.value}</p>
-                    <p className="mt-1 text-sm text-white/70">{item.change}</p>
+                    <p className="mt-3 font-serif text-3xl font-semibold text-foreground">{item.value}</p>
+                    <p className="mt-1 text-sm text-muted-foreground">{item.change}</p>
                   </div>
                 ))}
               </div>
 
-              <div className="mt-6 rounded-[30px] border border-white/12 bg-black/10 p-5">
+              <div className="mt-6 rounded-[30px] border border-border/70 bg-muted/40 p-5">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium">This week&apos;s review notes</p>
-                    <p className="mt-1 text-sm text-white/68">
+                    <p className="text-sm font-medium text-foreground">This week&apos;s review notes</p>
+                    <p className="mt-1 text-sm text-muted-foreground">
                       Pull forward the points that need discussion, not just observation.
                     </p>
                   </div>
-                  <div className="rounded-full bg-white/10 px-3 py-1 text-xs text-white/80">
+                  <div className="ink-outline px-3 py-1 text-xs text-muted-foreground">
                     Auto grouped
                   </div>
                 </div>
@@ -224,7 +222,7 @@ export function Hero() {
                   {REVIEW_NOTES.map((item) => (
                     <div
                       key={item}
-                      className="rounded-2xl border border-white/10 bg-white/6 px-4 py-3 text-sm text-white/82"
+                      className="rounded-2xl border border-border/70 bg-card px-4 py-3 text-sm text-foreground/85"
                     >
                       {item}
                     </div>
@@ -234,27 +232,27 @@ export function Hero() {
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="panel rounded-[28px] p-5">
+              <div className="hand-drawn-card p-5">
                 <p className="text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-                  Why it feels different
+                  Vintage illustration
                 </p>
                 <p className="mt-3 text-xl font-semibold text-foreground">
-                  Editorial structure instead of dashboard clutter.
+                  Hand-drawn texture over sterile chrome.
                 </p>
                 <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                  The interface is organized like a briefing: pulse first, controls second,
-                  detail third.
+                  Ink-style borders and etched geometry add personality while
+                  keeping the interface disciplined.
                 </p>
               </div>
-              <div className="panel rounded-[28px] p-5">
+              <div className="hand-drawn-card p-5">
                 <p className="text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-                  What ships today
+                  Modern performance
                 </p>
                 <p className="mt-3 text-xl font-semibold text-foreground">
-                  Filters, charts, meeting queues, and better narrative framing.
+                  Clear hierarchy, fast scan, and quiet contrast.
                 </p>
                 <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                  Enough detail for operators now, without burying them in optional chrome.
+                  Enough detail for operators now, without burying them in noisy color.
                 </p>
               </div>
             </div>

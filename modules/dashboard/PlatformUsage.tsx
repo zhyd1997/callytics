@@ -50,7 +50,7 @@ const CustomTooltip = (props: CustomTooltipPropsType) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload as CustomTooltipPayload;
     return (
-      <div className="rounded-lg border border-primary/20 bg-card/90 p-3 shadow-[0_8px_30px_rgba(249,115,22,0.15)] backdrop-blur">
+      <div className="rounded-lg border border-border/70 bg-card/95 p-3 shadow-[0_8px_24px_rgba(10,10,10,0.12)] backdrop-blur">
         <p className="font-medium text-sm">{label}</p>
         <p className="text-sm text-muted-foreground">
           {data.count} meetings ({data.percentage}%)
@@ -119,9 +119,9 @@ export function PlatformUsage({ data }: PlatformUsageProps) {
       'Google Meet': 'var(--color-chart-2)',
       'Zoom': 'var(--color-chart-3)',
       'Cal.com Video': 'var(--color-accent)',
-      'Other': '#f87171',
+      'Other': 'var(--color-chart-4)',
     };
-    return colors[platform as keyof typeof colors] || '#6B7280';
+    return colors[platform as keyof typeof colors] || 'var(--color-chart-3)';
   };
 
   const mostUsedPlatform = chartData[0];
@@ -171,7 +171,7 @@ export function PlatformUsage({ data }: PlatformUsageProps) {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.1 }}
-                className="flex items-center justify-between rounded-lg border border-primary/20 bg-primary/5 p-3 backdrop-blur"
+                className="flex items-center justify-between rounded-lg border border-border/70 bg-card/80 p-3 backdrop-blur"
               >
                 <div className="flex items-center gap-3">
                   <div 
@@ -213,7 +213,7 @@ export function PlatformUsage({ data }: PlatformUsageProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.5 }}
-          className="mt-4 rounded-lg border border-primary/20 bg-primary/5 p-3 backdrop-blur"
+          className="mt-4 rounded-lg border border-border/70 bg-card/80 p-3 backdrop-blur"
         >
           <p className="text-sm text-muted-foreground mb-1">Most Used Platform</p>
           <p className="font-semibold">

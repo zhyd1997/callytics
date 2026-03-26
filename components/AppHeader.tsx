@@ -80,7 +80,7 @@ export function AppHeader() {
             ))}
           {isDashboardRoute && (
             <div className="section-kicker">
-              <span className="h-2 w-2 rounded-full bg-accent" />
+              <span className="h-2 w-2 rounded-full bg-foreground/55" />
               Operator workspace
             </div>
           )}
@@ -120,7 +120,7 @@ export function AppHeader() {
             <Button
               onClick={handleLogout}
               variant="outline"
-              className="rounded-full border-primary/30 bg-primary/10 text-primary hover:border-primary/50 hover:bg-primary/15 hover:text-foreground"
+              className="rounded-full border-border/70 bg-card/70 text-foreground hover:border-border hover:bg-card"
             >
               <LogOut className="h-4 w-4" />
               <span className="hidden sm:inline">Sign out</span>

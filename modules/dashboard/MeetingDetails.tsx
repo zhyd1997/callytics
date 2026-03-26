@@ -128,7 +128,7 @@ export function MeetingDetails({ meeting }: MeetingDetailsProps) {
               href={meeting.meetingUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs text-primary hover:underline break-all mt-1 block"
+              className="mt-1 block break-all text-xs text-foreground/80 hover:underline"
             >
               {meeting.meetingUrl}
             </a>

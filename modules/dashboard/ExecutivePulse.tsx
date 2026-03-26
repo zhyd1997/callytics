@@ -28,7 +28,7 @@ export const ExecutivePulse = ({
 
   return (
     <section className="surface-primary relative overflow-hidden rounded-[32px] p-6 sm:p-8">
-      <div className="pointer-events-none absolute right-0 top-0 h-44 w-44 rounded-full bg-[radial-gradient(circle,_rgba(76,154,255,0.22),_transparent_70%)] blur-3xl" />
+      <div className="pointer-events-none absolute right-0 top-0 h-44 w-44 rounded-full bg-[radial-gradient(circle,_rgba(15,15,15,0.12),_transparent_70%)] blur-3xl" />
       <div className="grid gap-6 xl:grid-cols-[1.35fr_1fr]">
         <div>
           <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.24em] text-white/80">
@@ -47,7 +47,7 @@ export const ExecutivePulse = ({
           <div className="mt-6 flex flex-wrap items-center gap-3">
             <Button
               size="lg"
-              className="rounded-full bg-accent text-accent-foreground hover:bg-accent/90"
+              className="rounded-full"
               onClick={onFocusAttention}
             >
               Review at-risk meetings

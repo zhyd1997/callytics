@@ -32,14 +32,14 @@ const STATUS_META: Record<
   },
   completed: {
     label: "Completed",
-    tone: "bg-accent",
-    track: "bg-accent/16",
+    tone: "bg-foreground/70",
+    track: "bg-muted",
     icon: CheckCircle2,
   },
   past: {
     label: "Past",
-    tone: "bg-accent",
-    track: "bg-accent/16",
+    tone: "bg-foreground/70",
+    track: "bg-muted",
     icon: CheckCircle2,
   },
   cancelled: {
@@ -73,7 +73,7 @@ const getStatusMeta = (status: string) => {
     STATUS_META[status] ?? {
       label: status.charAt(0).toUpperCase() + status.slice(1),
       tone: "bg-primary",
-      track: "bg-primary/12",
+      track: "bg-muted",
       icon: Clock3,
     }
   )

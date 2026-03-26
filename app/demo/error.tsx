@@ -36,7 +36,7 @@ export default function DemoError({ error, reset }: ErrorProps) {
             ) : null}
           </div>
           <div className="flex flex-col gap-3 sm:flex-row">
-            <Button onClick={reset} className="gap-2 bg-accent text-accent-foreground hover:bg-accent/90">
+            <Button onClick={reset} className="gap-2">
               <RefreshCcw className="h-4 w-4" aria-hidden />
               Try again
             </Button>
