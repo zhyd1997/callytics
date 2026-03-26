@@ -212,7 +212,8 @@
   }
 
   .hand-drawn-card {
-    @apply panel relative overflow-hidden rounded-[32px];
+    @apply relative overflow-hidden rounded-[32px] border border-border/70 bg-card/78 backdrop-blur-xl;
+    box-shadow: 0 18px 42px rgba(20, 20, 20, 0.08);
   }
 
   .hand-drawn-card::before {
