@@ -61,8 +61,8 @@ export function OverviewStats({ data }: OverviewStatsProps) {
       decimals: 0,
       icon: Target,
       eyebrow: "Volume",
-      iconColor: "text-primary",
-      iconBg: "bg-accent/18 border border-accent/28",
+      iconColor: "text-foreground",
+      iconBg: "bg-muted/70 border border-border/70",
       detail: `${thisWeekMeetings} this week`,
     },
     {
@@ -72,8 +72,8 @@ export function OverviewStats({ data }: OverviewStatsProps) {
       decimals: 0,
       icon: AlertTriangle,
       eyebrow: "Needs review",
-      iconColor: "text-amber-700 dark:text-amber-300",
-      iconBg: "bg-amber-500/12 border border-amber-500/24",
+      iconColor: "text-foreground",
+      iconBg: "bg-muted/70 border border-border/70",
       detail:
         pulse.atRiskCount > 0
           ? "Cancelled, pending, rejected, or rescheduled bookings"
@@ -86,8 +86,8 @@ export function OverviewStats({ data }: OverviewStatsProps) {
       decimals: 1,
       icon: Clock3,
       eyebrow: "Conversion",
-      iconColor: "text-chart-5",
-      iconBg: "bg-chart-5/12 border border-chart-5/24",
+      iconColor: "text-foreground",
+      iconBg: "bg-muted/70 border border-border/70",
       detail: `${pulse.cancellationRate}% cancellation rate`,
     },
     {
@@ -97,8 +97,8 @@ export function OverviewStats({ data }: OverviewStatsProps) {
       decimals: 0,
       icon: Users,
       eyebrow: "Reach",
-      iconColor: "text-chart-4",
-      iconBg: "bg-chart-4/12 border border-chart-4/24",
+      iconColor: "text-foreground",
+      iconBg: "bg-muted/70 border border-border/70",
       detail: `${totalHours.toFixed(1)} hours booked`,
     },
   ]
@@ -114,7 +114,7 @@ export function OverviewStats({ data }: OverviewStatsProps) {
           className="h-full"
         >
           <Card className="surface-secondary relative h-full overflow-hidden">
-            <span className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(76,154,255,0.08),_transparent_70%)] opacity-70" />
+            <span className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(15,15,15,0.06),_transparent_70%)] opacity-70" />
             <CardContent className="relative z-[1] p-5 sm:p-6">
               <div className="flex items-start justify-between gap-4">
                 <div className="min-w-0">

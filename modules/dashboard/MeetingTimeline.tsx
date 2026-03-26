@@ -43,20 +43,20 @@ const CustomTooltip = ({ active, payload, label }: TooltipPropsType) => {
   }
 
   return (
-    <div className="rounded-2xl border border-primary/20 bg-card/92 p-4 shadow-[0_10px_36px_rgba(76,154,255,0.16)] backdrop-blur">
+    <div className="rounded-2xl border border-border/70 bg-card/92 p-4 shadow-[0_10px_30px_rgba(10,10,10,0.12)] backdrop-blur">
       <p className="text-sm font-medium text-foreground">{label}</p>
       <div className="mt-3 space-y-1.5 text-sm text-muted-foreground">
         <p>
           <span className="text-chart-5">●</span> Accepted: {row.accepted}
         </p>
         <p>
-          <span className="text-rose-500">●</span> At risk: {row.atRisk}
+          <span className="text-chart-4">●</span> At risk: {row.atRisk}
         </p>
         <p>
-          <span className="text-accent">●</span> Completed: {row.completed}
+          <span className="text-foreground/70">●</span> Completed: {row.completed}
         </p>
         <p>
-          <span className="text-primary">●</span> Total: {row.total}
+          <span className="text-foreground/75">●</span> Total: {row.total}
         </p>
       </div>
     </div>
@@ -140,9 +140,9 @@ export function MeetingTimeline({ data }: MeetingTimelineProps) {
               Weekly flow separates healthy booking volume from instability so drift shows up earlier.
             </CardDescription>
           </div>
-          <div className="flex items-center gap-2 rounded-full border border-primary/14 bg-primary/8 px-3 py-1.5">
-            <TrendingUp className={`h-4 w-4 ${trendDelta >= 0 ? "text-primary" : "text-rose-500"}`} />
-            <span className={`text-sm font-medium ${trendDelta >= 0 ? "text-primary" : "text-rose-500"}`}>
+          <div className="flex items-center gap-2 rounded-full border border-border/70 bg-card/80 px-3 py-1.5">
+            <TrendingUp className="h-4 w-4 text-foreground/70" />
+            <span className="text-sm font-medium text-foreground/80">
               {trendDelta >= 0 ? "+" : ""}
               {trendDelta} volume
             </span>
@@ -164,12 +164,12 @@ export function MeetingTimeline({ data }: MeetingTimelineProps) {
                   <stop offset="95%" stopColor="var(--color-chart-5)" stopOpacity={0.05} />
                 </linearGradient>
                 <linearGradient id="riskFill" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#f87171" stopOpacity={0.34} />
-                  <stop offset="95%" stopColor="#f87171" stopOpacity={0.05} />
+                  <stop offset="5%" stopColor="var(--color-chart-4)" stopOpacity={0.34} />
+                  <stop offset="95%" stopColor="var(--color-chart-4)" stopOpacity={0.05} />
                 </linearGradient>
                 <linearGradient id="completedFill" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="var(--color-accent)" stopOpacity={0.28} />
-                  <stop offset="95%" stopColor="var(--color-accent)" stopOpacity={0.04} />
+                  <stop offset="5%" stopColor="var(--color-chart-2)" stopOpacity={0.28} />
+                  <stop offset="95%" stopColor="var(--color-chart-2)" stopOpacity={0.04} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" opacity={0.18} vertical={false} />
@@ -193,7 +193,7 @@ export function MeetingTimeline({ data }: MeetingTimelineProps) {
                 type="monotone"
                 dataKey="atRisk"
                 name="At risk"
-                stroke="#f87171"
+                stroke="var(--color-chart-4)"
                 strokeWidth={2.5}
                 fill="url(#riskFill)"
               />
@@ -201,7 +201,7 @@ export function MeetingTimeline({ data }: MeetingTimelineProps) {
                 type="monotone"
                 dataKey="completed"
                 name="Completed"
-                stroke="var(--color-accent)"
+                stroke="var(--color-chart-2)"
                 strokeWidth={2.5}
                 fill="url(#completedFill)"
               />
@@ -214,7 +214,7 @@ export function MeetingTimeline({ data }: MeetingTimelineProps) {
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.28, delay: 0.06 }}
-            className="rounded-2xl border border-chart-5/18 bg-chart-5/7 p-4"
+            className="rounded-2xl border border-border/70 bg-card/70 p-4"
           >
             <p className="text-sm text-muted-foreground">Accepted flow</p>
             <p className="mt-2 text-2xl font-semibold text-foreground">{acceptedTotal}</p>
@@ -225,7 +225,7 @@ export function MeetingTimeline({ data }: MeetingTimelineProps) {
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.28, delay: 0.12 }}
-            className="rounded-2xl border border-rose-500/18 bg-rose-500/7 p-4"
+            className="rounded-2xl border border-border/70 bg-card/70 p-4"
           >
             <p className="text-sm text-muted-foreground">At-risk flow</p>
             <p className="mt-2 text-2xl font-semibold text-foreground">{atRiskTotal}</p>
@@ -238,7 +238,7 @@ export function MeetingTimeline({ data }: MeetingTimelineProps) {
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.28, delay: 0.18 }}
-            className="rounded-2xl border border-accent/18 bg-accent/8 p-4"
+            className="rounded-2xl border border-border/70 bg-card/70 p-4"
           >
             <p className="text-sm text-muted-foreground">Completed flow</p>
             <p className="mt-2 text-2xl font-semibold text-foreground">{completedTotal}</p>
@@ -249,7 +249,7 @@ export function MeetingTimeline({ data }: MeetingTimelineProps) {
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.28, delay: 0.24 }}
-            className="rounded-2xl border border-primary/14 bg-primary/7 p-4"
+            className="rounded-2xl border border-border/70 bg-card/70 p-4"
           >
             <p className="text-sm text-muted-foreground">Average weekly volume</p>
             <p className="mt-2 text-2xl font-semibold text-foreground">{averageVolume.toFixed(1)}</p>

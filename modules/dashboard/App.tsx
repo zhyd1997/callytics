@@ -232,8 +232,8 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
     <div className="relative min-h-screen overflow-hidden bg-background text-foreground transition-colors duration-300">
       <div className="noise-overlay pointer-events-none absolute inset-0 opacity-90" />
       <div className="grid-fade pointer-events-none absolute inset-0 opacity-40" />
-      <div className="pointer-events-none absolute right-[-14%] top-20 h-[400px] w-[400px] rounded-full bg-primary/12 blur-3xl" />
-      <div className="pointer-events-none absolute left-[-8%] top-52 h-[340px] w-[340px] rounded-full bg-accent/14 blur-3xl" />
+      <div className="pointer-events-none absolute right-[-14%] top-20 h-[400px] w-[400px] rounded-full bg-foreground/8 blur-3xl" />
+      <div className="pointer-events-none absolute left-[-8%] top-52 h-[340px] w-[340px] rounded-full bg-foreground/10 blur-3xl" />
       <div className="relative shell-container py-10 sm:py-14">
         <motion.div
           variants={fadeInFromTop}
@@ -243,7 +243,7 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
           className="mb-8"
         >
           <div className="section-kicker mb-4">
-            <span className="inline-block h-2 w-2 rounded-full bg-accent" />
+            <span className="inline-block h-2 w-2 rounded-full bg-foreground/55" />
             Operator workspace
           </div>
 
@@ -308,7 +308,7 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
                   <p className="text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
                     {card.label}
                   </p>
-                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-primary/14 bg-primary/8 text-primary">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-border/70 bg-card text-foreground">
                     <Icon className="h-4 w-4" />
                   </div>
                 </div>
@@ -421,7 +421,7 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
                   What needs attention first
                 </h2>
               </div>
-              <AlertTriangle className="h-5 w-5 text-accent" />
+              <AlertTriangle className="h-5 w-5 text-foreground/70" />
             </div>
 
             <div className="mt-5 space-y-5">
@@ -461,7 +461,7 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
                       key={item}
                       className="flex gap-3 rounded-[24px] border border-border/70 bg-background/70 p-4"
                     >
-                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-foreground/70" />
                       <p className="text-sm leading-6 text-muted-foreground">{item}</p>
                     </div>
                   ))}

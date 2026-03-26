@@ -40,18 +40,18 @@ const getIntensityClassName = (count: number, maxCount: number) => {
   const ratio = count / maxCount
 
   if (ratio >= 0.85) {
-    return "bg-accent"
+    return "bg-foreground/75"
   }
 
   if (ratio >= 0.6) {
-    return "bg-primary"
+    return "bg-foreground/60"
   }
 
   if (ratio >= 0.35) {
-    return "bg-primary/60"
+    return "bg-foreground/45"
   }
 
-  return "bg-primary/28"
+  return "bg-foreground/28"
 }
 
 export function MeetingTimes({ data }: MeetingTimesProps) {
@@ -149,7 +149,7 @@ export function MeetingTimes({ data }: MeetingTimesProps) {
               Exact start-time clusters reveal where scheduling pressure actually builds.
             </CardDescription>
           </div>
-          <div className="rounded-2xl border border-primary/14 bg-primary/8 p-3 text-primary">
+          <div className="rounded-2xl border border-border/70 bg-card p-3 text-foreground">
             <Clock3 className="h-5 w-5" />
           </div>
         </div>
@@ -176,7 +176,7 @@ export function MeetingTimes({ data }: MeetingTimesProps) {
                   : "No repeated start times are visible yet."}
               </p>
             </div>
-            <div className="rounded-2xl border border-accent/20 bg-accent/12 px-3 py-2 text-right">
+            <div className="rounded-2xl border border-border/70 bg-muted/60 px-3 py-2 text-right">
               <p className="text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
                 Strongest window
               </p>
@@ -198,7 +198,7 @@ export function MeetingTimes({ data }: MeetingTimesProps) {
           className="rounded-[26px] border border-border/70 bg-background/75 p-5"
         >
           <div className="mb-4 flex items-center gap-2">
-            <Activity className="h-4 w-4 text-primary" />
+            <Activity className="h-4 w-4 text-foreground/70" />
             <p className="text-sm font-medium text-foreground">24-hour rhythm</p>
           </div>
           <div className="grid grid-cols-12 gap-2 sm:grid-cols-24">
@@ -240,12 +240,12 @@ export function MeetingTimes({ data }: MeetingTimesProps) {
                     </div>
                     <p className="text-sm font-semibold text-muted-foreground">{slot.percentage}%</p>
                   </div>
-                  <div className="mt-3 h-2 overflow-hidden rounded-full bg-primary/10">
+                  <div className="mt-3 h-2 overflow-hidden rounded-full bg-muted">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${slot.percentage}%` }}
                       transition={{ duration: 0.45, delay: index * 0.06 }}
-                      className="h-full rounded-full bg-primary"
+                      className="h-full rounded-full bg-foreground/70"
                     />
                   </div>
                 </div>
@@ -278,12 +278,12 @@ export function MeetingTimes({ data }: MeetingTimesProps) {
                       </div>
                       <p className="text-sm font-semibold text-foreground">{window.count}</p>
                     </div>
-                    <div className="mt-3 h-2 overflow-hidden rounded-full bg-accent/12">
+                    <div className="mt-3 h-2 overflow-hidden rounded-full bg-muted">
                       <motion.div
                         initial={{ width: 0 }}
                         animate={{ width: `${percentage}%` }}
                         transition={{ duration: 0.45 }}
-                        className="h-full rounded-full bg-accent"
+                        className="h-full rounded-full bg-foreground/55"
                       />
                     </div>
                   </div>

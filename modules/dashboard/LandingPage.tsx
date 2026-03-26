@@ -34,7 +34,7 @@ export function LandingPage({ onLogin }: LandingPageProps) {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen flex flex-col bg-background">
       {/* Header */}
       <header className="container mx-auto px-4 py-6 max-w-6xl">
         <motion.div
@@ -44,8 +44,8 @@ export function LandingPage({ onLogin }: LandingPageProps) {
           className="flex items-center justify-between"
         >
           <div className="flex items-center gap-3">
-            <div className="bg-primary/10 p-2 rounded-lg">
-              <Calendar className="w-6 h-6 text-primary" />
+            <div className="rounded-lg bg-muted p-2">
+              <Calendar className="h-6 w-6 text-foreground/80" />
             </div>
             <h2 className="text-xl">Callytics</h2>
           </div>
@@ -165,7 +165,7 @@ export function LandingPage({ onLogin }: LandingPageProps) {
               href="https://github.com/zhyd1997/callytics"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 text-sm hover:text-primary transition-colors"
+              className="flex items-center gap-2 text-sm transition-colors hover:text-foreground"
             >
               <Github className="w-5 h-5" />
               <span>View on GitHub</span>

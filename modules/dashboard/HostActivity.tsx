@@ -101,7 +101,7 @@ export function HostActivity({ data }: HostActivityProps) {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.3, delay: index * 0.1 }}
-              className="flex items-center justify-between rounded-lg border border-primary/20 bg-primary/5 p-3 transition-colors hover:border-primary/40 hover:bg-primary/10"
+              className="flex items-center justify-between rounded-lg border border-border/70 bg-card/70 p-3 transition-colors hover:border-border hover:bg-card"
             >
               <div className="flex items-center gap-3">
                 <Avatar className="h-10 w-10">
@@ -129,7 +129,7 @@ export function HostActivity({ data }: HostActivityProps) {
                 <div className="text-center">
                   <Badge 
                     variant={getSuccessRate(host.acceptedMeetings, host.totalMeetings) >= 80 ? "default" : "secondary"}
-                    className="text-xs"
+                    className="text-xs border-border/70 bg-card text-foreground"
                   >
                     {getSuccessRate(host.acceptedMeetings, host.totalMeetings)}%
                   </Badge>
@@ -146,10 +146,10 @@ export function HostActivity({ data }: HostActivityProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.6 }}
-            className="flex min-w-[200px] w-full flex-shrink-0 items-center gap-3 rounded-lg border border-primary/30 bg-primary/10 p-3 text-primary shadow-[0_0_25px_rgba(249,115,22,0.18)] backdrop-blur sm:w-auto sm:max-w-[200px]"
+            className="flex min-w-[200px] w-full flex-shrink-0 items-center gap-3 rounded-lg border border-border/70 bg-card p-3 text-foreground shadow-[0_0_20px_rgba(15,15,15,0.08)] backdrop-blur sm:w-auto sm:max-w-[200px]"
           >
-            <div className="flex-shrink-0 rounded-lg border border-primary/20 bg-primary/15 p-2">
-              <Users className="h-4 w-4 text-primary" />
+            <div className="flex-shrink-0 rounded-lg border border-border/70 bg-muted/60 p-2">
+              <Users className="h-4 w-4 text-foreground" />
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-sm text-muted-foreground">Total Hosts</p>
@@ -161,10 +161,10 @@ export function HostActivity({ data }: HostActivityProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.7 }}
-            className="flex min-w-[200px] flex-1 items-center gap-3 rounded-lg border border-[#facc15]/40 bg-[#facc15]/15 p-3 text-[#f59e0b] shadow-[0_0_25px_rgba(250,204,21,0.22)] backdrop-blur"
+            className="flex min-w-[200px] flex-1 items-center gap-3 rounded-lg border border-border/70 bg-card p-3 text-foreground shadow-[0_0_20px_rgba(15,15,15,0.08)] backdrop-blur"
           >
-            <div className="flex-shrink-0 rounded-lg border border-[#facc15]/30 bg-[#facc15]/25 p-2">
-              <Calendar className="h-4 w-4 text-[#f59e0b]" />
+            <div className="flex-shrink-0 rounded-lg border border-border/70 bg-muted/60 p-2">
+              <Calendar className="h-4 w-4 text-foreground" />
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-sm text-muted-foreground">Most Active</p>
@@ -178,10 +178,10 @@ export function HostActivity({ data }: HostActivityProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.8 }}
-            className="flex min-w-[200px] w-full items-center gap-3 rounded-lg border border-[#a855f7]/40 bg-[#a855f7]/20 p-3 text-[#c084fc] shadow-[0_0_25px_rgba(168,85,247,0.25)] backdrop-blur"
+            className="flex min-w-[200px] w-full items-center gap-3 rounded-lg border border-border/70 bg-card p-3 text-foreground shadow-[0_0_20px_rgba(15,15,15,0.08)] backdrop-blur"
           >
-            <div className="flex-shrink-0 rounded-lg border border-[#a855f7]/30 bg-[#a855f7]/25 p-2">
-              <Clock className="h-4 w-4 text-[#c084fc]" />
+            <div className="flex-shrink-0 rounded-lg border border-border/70 bg-muted/60 p-2">
+              <Clock className="h-4 w-4 text-foreground" />
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-sm text-muted-foreground">Total Hours</p>

@@ -30,7 +30,7 @@ const CustomTooltip = (props: CustomTooltipPropsType) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload as CustomTooltipPayload;
     return (
-      <div className="rounded-lg border border-primary/20 bg-card/90 p-3 shadow-[0_8px_30px_rgba(249,115,22,0.15)] backdrop-blur">
+      <div className="rounded-lg border border-border/70 bg-card/95 p-3 shadow-[0_8px_24px_rgba(10,10,10,0.12)] backdrop-blur">
         <p className="font-medium mb-2">{label}</p>
         <div className="space-y-1">
           <p className="text-sm">
@@ -40,7 +40,7 @@ const CustomTooltip = (props: CustomTooltipPropsType) => {
             <span style={{ color: 'var(--color-chart-1)' }}>●</span> Accepted: {data.accepted}
           </p>
           <p className="text-sm">
-            <span style={{ color: '#f87171' }}>●</span> Cancelled: {data.cancelled}
+            <span style={{ color: 'var(--color-chart-4)' }}>●</span> Cancelled: {data.cancelled}
           </p>
         </div>
       </div>
@@ -133,7 +133,7 @@ export function DurationAnalysis({ data }: DurationAnalysisProps) {
               <YAxis tick={{ fontSize: 12 }} />
               <Tooltip content={<CustomTooltip />} />
               <Bar dataKey="accepted" stackId="a" fill="var(--color-chart-1)" radius={[0, 0, 0, 0]} />
-              <Bar dataKey="cancelled" stackId="a" fill="#f87171" radius={[2, 2, 0, 0]} />
+              <Bar dataKey="cancelled" stackId="a" fill="var(--color-chart-4)" radius={[2, 2, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </motion.div>
@@ -144,7 +144,7 @@ export function DurationAnalysis({ data }: DurationAnalysisProps) {
             initial="initial"
             animate="animate"
             transition={createTransition(0.1)}
-            className="rounded-lg border border-primary/20 bg-primary/5 p-3 backdrop-blur"
+            className="rounded-lg border border-border/70 bg-card/80 p-3 backdrop-blur"
           >
             <p className="text-sm text-muted-foreground">Average Duration</p>
             <p className="text-lg font-semibold">{averageDuration.toFixed(0)} minutes</p>
@@ -155,7 +155,7 @@ export function DurationAnalysis({ data }: DurationAnalysisProps) {
             initial="initial"
             animate="animate"
             transition={createTransition(0.2)}
-            className="rounded-lg border border-primary/20 bg-primary/5 p-3 backdrop-blur"
+            className="rounded-lg border border-border/70 bg-card/80 p-3 backdrop-blur"
           >
             <p className="text-sm text-muted-foreground">Most Common</p>
             <p className="text-lg font-semibold">

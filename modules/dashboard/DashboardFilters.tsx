@@ -100,7 +100,7 @@ export const DashboardFilters = ({
               onClick={() => onFiltersChange(view.filters)}
               className={`rounded-[24px] border p-4 text-left transition ${
                 isActive
-                  ? "border-primary/50 bg-primary/10 shadow-[0_12px_30px_rgba(15,23,42,0.08)]"
+                  ? "border-border bg-card shadow-[0_12px_24px_rgba(10,10,10,0.08)]"
                   : "border-border/70 bg-background/70 hover:border-border hover:bg-card/80"
               }`}
             >
@@ -121,7 +121,7 @@ export const DashboardFilters = ({
             onClick={() => onFiltersChange({ ...filters, segment: segment.value })}
             className={`rounded-full border px-3 py-2 text-sm transition ${
               filters.segment === segment.value
-                ? "border-primary/60 bg-primary/12 text-foreground shadow-[0_12px_30px_rgba(15,23,42,0.08)]"
+                ? "border-border bg-card text-foreground shadow-[0_12px_24px_rgba(10,10,10,0.08)]"
                 : "border-border/70 bg-background/70 text-muted-foreground hover:border-border hover:text-foreground"
             }`}
           >
