@@ -150,11 +150,21 @@
     @apply font-serif text-balance tracking-[-0.05em] leading-[0.92];
   }
 
-  .texture-grain {
+  .texture-grain,
+  .panel,
+  .panel-muted,
+  .surface-primary,
+  .surface-secondary,
+  .surface-tertiary {
     position: relative;
   }
 
-  .texture-grain::before {
+  .texture-grain::before,
+  .panel::before,
+  .panel-muted::before,
+  .surface-primary::before,
+  .surface-secondary::before,
+  .surface-tertiary::before {
     content: "";
     position: absolute;
     inset: 0;
@@ -165,12 +175,12 @@
   }
 
   .panel {
-    @apply border border-border/70 bg-card/78 backdrop-blur-xl texture-grain;
+    @apply border border-border/70 bg-card/78 backdrop-blur-xl;
     box-shadow: 0 22px 80px rgba(26, 36, 74, 0.06);
   }
 
   .panel-muted {
-    @apply border border-border/50 bg-card/52 backdrop-blur-lg texture-grain;
+    @apply border border-border/50 bg-card/52 backdrop-blur-lg;
     box-shadow: 0 14px 48px rgba(26, 36, 74, 0.04);
   }
 
@@ -190,7 +200,7 @@
   }
 
   .surface-primary {
-    @apply border text-white backdrop-blur-2xl texture-grain;
+    @apply border text-white backdrop-blur-2xl;
     background:
       radial-gradient(circle at 0% 0%, rgba(255, 190, 104, 0.22), transparent 45%),
       radial-gradient(circle at 100% 100%, rgba(109, 140, 255, 0.16), transparent 50%),
@@ -200,12 +210,12 @@
   }
 
   .surface-secondary {
-    @apply border border-border/65 bg-card/82 backdrop-blur-xl texture-grain;
+    @apply border border-border/65 bg-card/82 backdrop-blur-xl;
     box-shadow: 0 24px 85px rgba(26, 36, 74, 0.06);
   }
 
   .surface-tertiary {
-    @apply border border-border/55 bg-card/62 backdrop-blur-lg texture-grain;
+    @apply border border-border/55 bg-card/62 backdrop-blur-lg;
     box-shadow: 0 16px 52px rgba(26, 36, 74, 0.05);
   }
 }
