@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowRight, CalendarRange, ShieldCheck, Sparkles, TrendingUp } from "lucide-react"
+import { ArrowRight, CalendarRange, ShieldCheck, Sparkles } from "lucide-react"
 import { motion } from "motion/react"
 import { useState } from "react"
 import { toast } from "sonner"
@@ -68,15 +68,15 @@ export function Hero() {
               Designed for the weekly ops room
             </div>
 
-            <h1 className="display-title mt-6 text-5xl leading-[0.94] text-foreground sm:text-6xl lg:text-7xl">
+            <h1 className="display-title mt-6 text-6xl text-foreground sm:text-7xl lg:text-8xl">
               Turn your
-              <span className="mx-3 inline-flex h-12 w-28 rotate-[-2deg] overflow-hidden rounded-2xl border border-white/30 align-middle shadow-lg sm:h-16 sm:w-36">
+              <span className="mx-4 inline-flex h-14 w-32 rotate-[-2deg] items-center justify-center overflow-hidden rounded-[20px] border border-white/20 bg-white/5 p-1 align-middle shadow-2xl backdrop-blur-sm sm:h-20 sm:w-44 lg:h-24 lg:w-52">
                 <Image
                   src="/platforms/cal-logo-light.jpeg"
                   alt="Cal.com logo"
                   width={144}
                   height={64}
-                  className="h-full w-full object-cover dark:hidden"
+                  className="h-full w-full rounded-[14px] object-cover dark:hidden"
                   priority
                 />
                 <Image
@@ -84,26 +84,25 @@ export function Hero() {
                   alt="Cal.com logo"
                   width={144}
                   height={64}
-                  className="hidden h-full w-full object-cover dark:block"
+                  className="hidden h-full w-full rounded-[14px] object-cover dark:block"
                   priority
                 />
               </span>
-              booking stream into a control room that explains what changed.
+              booking stream into a control room.
             </h1>
 
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">
+            <p className="mt-8 max-w-2xl text-lg leading-relaxed text-muted-foreground/90 sm:text-xl">
               Callytics is an operator-grade analytics layer for Cal.com teams.
               Instead of dumping raw booking volume into generic charts, it
-              highlights booking stability, host pressure, timing concentration,
-              and the shifts worth discussing in the next review.
+              highlights stability, pressure, and the shifts worth discussing.
             </p>
 
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
               {showConnectCta ? (
                 <>
                   <Button
                     size="lg"
-                    className="rounded-full px-6 text-base"
+                    className="h-14 rounded-full px-8 text-base font-semibold shadow-xl shadow-primary/20"
                     disabled={isConnecting}
                     onClick={handleCalOAuth}
                   >
@@ -114,13 +113,13 @@ export function Hero() {
                     size="lg"
                     variant="outline"
                     asChild
-                    className="rounded-full border-border/70 bg-card/70 px-6 text-base hover:bg-card"
+                    className="h-14 rounded-full border-border/60 bg-background/50 px-8 text-base font-medium backdrop-blur-sm hover:bg-card"
                   >
                     <Link href="/demo">Explore the demo</Link>
                   </Button>
                 </>
               ) : (
-                <Button size="lg" asChild className="rounded-full px-6 text-base">
+                <Button size="lg" asChild className="h-14 rounded-full px-8 text-base font-semibold shadow-xl shadow-primary/20">
                   <Link href="/dashboard">
                     Open dashboard
                     <ArrowRight className="h-4 w-4" />
@@ -129,37 +128,34 @@ export function Hero() {
               )}
             </div>
 
-            <div className="mt-8 flex flex-wrap gap-3">
-              <div className="section-kicker">
+            <div className="mt-12 flex flex-wrap gap-4">
+              <div className="flex items-center gap-2.5 rounded-full border border-border/50 bg-card/40 px-4 py-1.5 text-[0.68rem] font-bold uppercase tracking-[0.2em] text-muted-foreground/80 backdrop-blur-sm">
                 <ShieldCheck className="h-3.5 w-3.5 text-accent" />
-                OAuth-secured access
+                OAuth-secured
               </div>
-              <div className="section-kicker">
+              <div className="flex items-center gap-2.5 rounded-full border border-border/50 bg-card/40 px-4 py-1.5 text-[0.68rem] font-bold uppercase tracking-[0.2em] text-muted-foreground/80 backdrop-blur-sm">
                 <CalendarRange className="h-3.5 w-3.5 text-primary" />
-                No custom backend required
-              </div>
-              <div className="section-kicker">
-                <TrendingUp className="h-3.5 w-3.5 text-accent" />
-                Built for story-first reporting
+                Zero-config
               </div>
             </div>
 
-            <div className="mt-10 grid gap-4 sm:grid-cols-3">
+            <div className="mt-14 grid gap-5 sm:grid-cols-3">
               {PULSE_METRICS.map((metric, index) => (
                 <motion.div
                   key={metric.label}
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.45, delay: 0.08 * index }}
-                  className="panel-muted rounded-[28px] p-5"
+                  transition={{ duration: 0.5, delay: 0.1 * index }}
+                  className="group relative overflow-hidden rounded-[32px] border border-border/50 bg-card/40 p-6 backdrop-blur-md transition-all hover:border-border/80 hover:bg-card/60"
                 >
-                  <p className="text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                  <div className="absolute -right-4 -top-4 h-16 w-16 rounded-full bg-primary/5 blur-2xl transition-all group-hover:bg-primary/10" />
+                  <p className="text-[0.62rem] font-bold uppercase tracking-[0.26em] text-muted-foreground/70">
                     {metric.label}
                   </p>
-                  <p className="mt-3 text-3xl font-semibold text-foreground">
+                  <p className="mt-4 font-serif text-4xl tracking-tighter text-foreground">
                     {metric.value}
                   </p>
-                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground/80">
                     {metric.detail}
                   </p>
                 </motion.div>
