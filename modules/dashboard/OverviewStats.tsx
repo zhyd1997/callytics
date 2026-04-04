@@ -101,23 +101,23 @@ export function OverviewStats({ data }: OverviewStatsProps) {
   ]
 
   return (
-    <div className="grid auto-rows-fr gap-5 md:grid-cols-2 xl:grid-cols-4">
+    <div className="grid auto-rows-fr gap-3 grid-cols-2 sm:gap-4 md:gap-5 xl:grid-cols-4">
       {stats.map((stat, index) => (
         <motion.div
           key={stat.title}
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: index * 0.08 }}
+          transition={{ duration: 0.4, delay: index * 0.06 }}
           className="h-full"
         >
-          <Card className="surface-secondary relative h-full overflow-hidden border-border/40 transition-all hover:border-border/80">
-            <CardContent className="relative z-[1] p-6">
-              <div className="flex items-start justify-between gap-4">
+          <Card className="surface-secondary relative h-full overflow-hidden border-border/35 transition-all hover:border-border/60">
+            <CardContent className="relative z-[1] p-4 sm:p-5 lg:p-6">
+              <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="text-[0.62rem] font-bold uppercase tracking-[0.24em] text-muted-foreground/70">
+                  <p className="text-[0.58rem] font-bold uppercase tracking-[0.2em] text-muted-foreground/60 sm:text-[0.62rem]">
                     {stat.eyebrow}
                   </p>
-                  <p className="mt-4 font-serif text-4xl text-foreground">
+                  <p className="mt-2 font-serif text-2xl text-foreground sm:mt-3 sm:text-3xl lg:mt-4 lg:text-4xl">
                     <AnimatedNumber
                       value={stat.numericValue}
                       decimals={stat.decimals}
@@ -125,16 +125,16 @@ export function OverviewStats({ data }: OverviewStatsProps) {
                     />
                     {stat.suffix}
                   </p>
-                  <p className="mt-2 text-sm text-muted-foreground">
+                  <p className="mt-1.5 text-xs text-muted-foreground sm:mt-2 sm:text-sm">
                     {stat.title}
                   </p>
-                  <div className="mt-4 h-px w-8 bg-border/60" />
-                  <p className="mt-4 text-[0.65rem] font-medium uppercase tracking-wider text-muted-foreground/60">
+                  <div className="mt-2 h-px w-6 bg-border/50 sm:mt-3 sm:w-8" />
+                  <p className="mt-2 text-[0.6rem] font-medium uppercase tracking-wider text-muted-foreground/50 sm:mt-3 sm:text-[0.65rem]">
                     {stat.detail}
                   </p>
                 </div>
-                <div className={`rounded-2xl p-2.5 ${stat.iconBg}`}>
-                  <stat.icon className={`h-4 w-4 ${stat.iconColor}`} />
+                <div className={`rounded-xl p-2 sm:rounded-2xl sm:p-2.5 ${stat.iconBg}`}>
+                  <stat.icon className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${stat.iconColor}`} />
                 </div>
               </div>
             </CardContent>

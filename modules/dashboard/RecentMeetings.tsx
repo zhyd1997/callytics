@@ -192,7 +192,7 @@ export function RecentMeetings({ data }: RecentMeetingsProps) {
                   initial={{ opacity: 0, y: 18 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.25, delay: index * 0.08 }}
-                  className="rounded-3xl border border-border/80 bg-background/65 p-4"
+                  className="rounded-2xl border border-border/60 bg-background/60 p-3 sm:rounded-3xl sm:p-4"
                 >
                   <div className="mb-4 flex items-start gap-3">
                     <div className="rounded-xl border border-border/70 bg-secondary/70 p-2 text-muted-foreground">
@@ -255,13 +255,13 @@ export function RecentMeetings({ data }: RecentMeetingsProps) {
                             ) : null}
                           </div>
 
-                          <div className="flex flex-col items-end gap-2">
+                          <div className="flex shrink-0 flex-col items-end gap-1.5 sm:gap-2">
                             {meeting.meetingUrl ? (
                               <Button
                                 asChild
                                 variant="outline"
                                 size="sm"
-                                className="rounded-full border-border/70 bg-background/70"
+                                className="h-8 rounded-full border-border/50 bg-background/60 text-xs sm:h-auto sm:text-sm"
                               >
                                 <a
                                   href={meeting.meetingUrl}
@@ -269,14 +269,14 @@ export function RecentMeetings({ data }: RecentMeetingsProps) {
                                   rel="noreferrer"
                                 >
                                   Open
-                                  <ExternalLink className="h-3.5 w-3.5" />
+                                  <ExternalLink className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                                 </a>
                               </Button>
                             ) : null}
                             <Button
                               variant="ghost"
                               size="sm"
-                              className="rounded-full text-muted-foreground"
+                              className="hidden rounded-full text-muted-foreground sm:inline-flex"
                               onClick={() => copyPrimaryAttendee(meeting)}
                             >
                               <Copy className="h-3.5 w-3.5" />

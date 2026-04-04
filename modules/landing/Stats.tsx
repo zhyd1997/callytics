@@ -27,12 +27,12 @@ const OUTCOMES = [
 
 export function Stats() {
   return (
-    <section id="product" className="border-b border-border/60 py-16 sm:py-20">
+    <section id="product" className="border-b border-border/40 py-12 sm:py-16 lg:py-20">
       <div className="shell-container">
-        <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
+        <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-end lg:gap-8">
           <div className="max-w-xl">
             <div className="section-kicker">What the first screen should answer</div>
-            <h2 className="display-title mt-5 text-4xl leading-tight text-foreground sm:text-5xl">
+            <h2 className="display-title mt-4 text-3xl leading-tight text-foreground sm:mt-5 sm:text-4xl lg:text-5xl">
               What changed, what needs attention, and who owns the response.
             </h2>
           </div>
@@ -44,23 +44,23 @@ export function Stats() {
           </p>
         </div>
 
-        <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <div className="mt-8 grid gap-3 sm:grid-cols-2 sm:gap-4 sm:mt-10 xl:grid-cols-4">
           {OUTCOMES.map((item, index) => (
             <motion.div
               key={item.title}
-              initial={{ opacity: 0, y: 16 }}
+              initial={{ opacity: 0, y: 14 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{ duration: 0.45, delay: index * 0.08 }}
-              className="panel rounded-[30px] p-6"
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.4, delay: index * 0.06 }}
+              className="panel rounded-2xl p-5 sm:rounded-[30px] sm:p-6"
             >
-              <p className="text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+              <p className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                 {item.title}
               </p>
-              <p className="mt-4 font-serif text-5xl tracking-[-0.05em] text-foreground">
+              <p className="mt-3 font-serif text-4xl tracking-[-0.04em] text-foreground sm:mt-4 sm:text-5xl">
                 {item.value}
               </p>
-              <p className="mt-3 text-sm leading-6 text-muted-foreground">
+              <p className="mt-2 text-sm leading-6 text-muted-foreground sm:mt-3">
                 {item.detail}
               </p>
             </motion.div>

@@ -143,7 +143,7 @@ export function MeetingStatusChart({ data }: MeetingStatusChartProps) {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-5">
-        <div className="rounded-[28px] border border-border/70 bg-background/75 p-5">
+        <div className="rounded-xl border border-border/50 bg-background/70 p-4 sm:rounded-2xl sm:p-5">
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
