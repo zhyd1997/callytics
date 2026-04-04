@@ -14,7 +14,7 @@ const FEATURES = [
     icon: Layers3,
     title: "Opinionated triage",
     description:
-      "Group meetings by attention level, momentum, and recent change so users don’t have to invent the workflow themselves.",
+      "Group meetings by attention level, momentum, and recent change so users don't have to invent the workflow themselves.",
   },
   {
     icon: BarChart3,
@@ -44,41 +44,41 @@ const FEATURES = [
 
 export function Features() {
   return (
-    <section id="insights" className="py-16 sm:py-22 lg:py-28">
+    <section id="insights" className="py-12 sm:py-16 lg:py-24">
       <div className="shell-container">
-        <div className="grid gap-8 lg:grid-cols-[0.82fr_1.18fr]">
+        <div className="grid gap-6 lg:grid-cols-[0.82fr_1.18fr] lg:gap-8">
           <div className="max-w-lg">
             <div className="section-kicker">Interface principles</div>
-            <h2 className="display-title mt-5 text-4xl leading-tight text-foreground sm:text-5xl">
+            <h2 className="display-title mt-4 text-3xl leading-tight text-foreground sm:mt-5 sm:text-4xl lg:text-5xl">
               A calmer dashboard with sharper hierarchy.
             </h2>
-            <p className="mt-5 text-base leading-7 text-muted-foreground sm:text-lg">
+            <p className="mt-4 text-base leading-7 text-muted-foreground sm:mt-5 sm:text-lg">
               The redesign leans into an editorial control-room aesthetic:
               stronger typography, restrained density, richer surfaces, and a
               clearer path from signal to action.
             </p>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-3">
             {FEATURES.map((feature, index) => {
               const Icon = feature.icon
 
               return (
                 <motion.div
                   key={feature.title}
-                  initial={{ opacity: 0, y: 18 }}
+                  initial={{ opacity: 0, y: 16 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-60px" }}
-                  transition={{ duration: 0.42, delay: index * 0.06 }}
-                  className="panel group rounded-[28px] p-6 transition-transform hover:-translate-y-1"
+                  viewport={{ once: true, margin: "-40px" }}
+                  transition={{ duration: 0.4, delay: index * 0.05 }}
+                  className="panel group rounded-2xl p-5 transition-transform hover:-translate-y-0.5 sm:rounded-[28px] sm:p-6"
                 >
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-primary/14 bg-primary/8 text-primary transition-colors group-hover:border-accent/30 group-hover:bg-accent/10 group-hover:text-accent">
-                    <Icon className="h-5 w-5" />
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-primary/12 bg-primary/6 text-primary transition-colors group-hover:border-accent/25 group-hover:bg-accent/8 group-hover:text-accent sm:h-12 sm:w-12 sm:rounded-2xl">
+                    <Icon className="h-[18px] w-[18px] sm:h-5 sm:w-5" />
                   </div>
-                  <h3 className="mt-5 text-xl font-semibold text-foreground">
+                  <h3 className="mt-4 text-lg font-semibold text-foreground sm:mt-5 sm:text-xl">
                     {feature.title}
                   </h3>
-                  <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground sm:mt-3">
                     {feature.description}
                   </p>
                 </motion.div>

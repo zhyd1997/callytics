@@ -3,74 +3,112 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ─── Xihu Lake · Longjing Tea ─────────────────────────────────────
+   Palette drawn from the mist over West Lake, the pale jade of fresh
+   Longjing leaves, warm parchment, and ink-washed stone.
+   ─────────────────────────────────────────────────────────────────── */
+
 :root {
-  --background: oklch(0.975 0.008 85);
-  --foreground: oklch(0.24 0.03 260);
-  --card: oklch(0.99 0.006 85);
+  /* Warm parchment / rice-paper background */
+  --background: oklch(0.975 0.008 95);
+  --foreground: oklch(0.22 0.02 155);
+
+  /* Card: slightly warmer cream */
+  --card: oklch(0.985 0.008 90);
   --card-foreground: var(--foreground);
-  --popover: oklch(0.992 0.006 85);
+
+  --popover: oklch(0.99 0.006 90);
   --popover-foreground: var(--foreground);
-  --primary: oklch(0.32 0.08 255);
-  --primary-foreground: oklch(0.985 0.004 85);
-  --secondary: oklch(0.94 0.016 85);
+
+  /* Primary: deep tea-green (Dragon Well steep) */
+  --primary: oklch(0.38 0.08 155);
+  --primary-foreground: oklch(0.98 0.006 95);
+
+  /* Secondary: warm stone */
+  --secondary: oklch(0.93 0.012 85);
   --secondary-foreground: var(--foreground);
-  --muted: oklch(0.94 0.012 85);
-  --muted-foreground: oklch(0.52 0.025 255);
-  --accent: oklch(0.78 0.14 82);
-  --accent-foreground: oklch(0.22 0.03 255);
-  --destructive: oklch(0.58 0.18 25);
-  --destructive-foreground: oklch(0.99 0.002 255);
-  --border: oklch(0.87 0.014 85);
-  --input: oklch(0.91 0.014 85);
+
+  /* Muted: misty grey-green */
+  --muted: oklch(0.93 0.01 140);
+  --muted-foreground: oklch(0.48 0.03 155);
+
+  /* Accent: fresh Longjing leaf jade */
+  --accent: oklch(0.72 0.12 148);
+  --accent-foreground: oklch(0.18 0.03 155);
+
+  /* Destructive: faded cinnabar (朱砂) */
+  --destructive: oklch(0.56 0.14 25);
+  --destructive-foreground: oklch(0.99 0.002 85);
+
+  /* Border: misty bamboo */
+  --border: oklch(0.88 0.012 100);
+  --input: oklch(0.92 0.01 100);
   --ring: var(--accent);
-  --chart-1: oklch(0.7 0.15 255);
-  --chart-2: oklch(0.76 0.14 82);
-  --chart-3: oklch(0.66 0.12 200);
-  --chart-4: oklch(0.58 0.11 25);
-  --chart-5: oklch(0.62 0.11 145);
+
+  /* Chart palette – tea ceremony tones */
+  --chart-1: oklch(0.55 0.10 155);  /* deep tea green */
+  --chart-2: oklch(0.72 0.10 148);  /* jade */
+  --chart-3: oklch(0.62 0.08 85);   /* warm bamboo */
+  --chart-4: oklch(0.50 0.10 25);   /* cinnabar */
+  --chart-5: oklch(0.65 0.06 200);  /* lake mist blue */
+
   --radius: 1rem;
-  --sidebar: oklch(0.962 0.012 85);
+
+  --sidebar: oklch(0.965 0.01 95);
   --sidebar-foreground: var(--foreground);
   --sidebar-primary: var(--primary);
   --sidebar-primary-foreground: var(--primary-foreground);
-  --sidebar-accent: oklch(0.94 0.014 85);
+  --sidebar-accent: oklch(0.94 0.012 140);
   --sidebar-accent-foreground: var(--foreground);
   --sidebar-border: var(--border);
   --sidebar-ring: var(--ring);
 }
 
 .dark {
-  --background: oklch(0.18 0.02 260);
-  --foreground: oklch(0.93 0.01 85);
-  --card: oklch(0.225 0.018 260);
-  --card-foreground: oklch(0.95 0.01 85);
-  --popover: oklch(0.22 0.018 260);
-  --popover-foreground: oklch(0.95 0.01 85);
-  --primary: oklch(0.8 0.11 83);
-  --primary-foreground: oklch(0.2 0.03 260);
-  --secondary: oklch(0.27 0.016 260);
-  --secondary-foreground: oklch(0.92 0.01 85);
-  --muted: oklch(0.24 0.014 260);
-  --muted-foreground: oklch(0.74 0.02 255);
-  --accent: oklch(0.74 0.13 82);
-  --accent-foreground: oklch(0.15 0.02 260);
-  --destructive: oklch(0.54 0.17 25);
-  --destructive-foreground: oklch(0.96 0.01 255);
-  --border: oklch(0.34 0.014 260);
-  --input: oklch(0.31 0.014 260);
+  /* Ink-washed night sky */
+  --background: oklch(0.17 0.015 155);
+  --foreground: oklch(0.92 0.01 95);
+
+  --card: oklch(0.21 0.014 155);
+  --card-foreground: oklch(0.94 0.008 95);
+
+  --popover: oklch(0.20 0.014 155);
+  --popover-foreground: oklch(0.94 0.008 95);
+
+  /* Primary: luminous jade in moonlight */
+  --primary: oklch(0.76 0.10 148);
+  --primary-foreground: oklch(0.18 0.03 155);
+
+  --secondary: oklch(0.26 0.012 155);
+  --secondary-foreground: oklch(0.92 0.008 95);
+
+  --muted: oklch(0.23 0.01 155);
+  --muted-foreground: oklch(0.70 0.02 148);
+
+  /* Accent: glowing tea-green */
+  --accent: oklch(0.70 0.11 148);
+  --accent-foreground: oklch(0.14 0.02 155);
+
+  --destructive: oklch(0.52 0.14 25);
+  --destructive-foreground: oklch(0.96 0.008 85);
+
+  --border: oklch(0.32 0.012 155);
+  --input: oklch(0.28 0.012 155);
   --ring: var(--accent);
-  --chart-1: oklch(0.78 0.13 255);
-  --chart-2: oklch(0.75 0.14 82);
-  --chart-3: oklch(0.72 0.11 200);
-  --chart-4: oklch(0.68 0.12 25);
-  --chart-5: oklch(0.71 0.11 145);
-  --sidebar: oklch(0.19 0.016 260);
-  --sidebar-foreground: oklch(0.92 0.01 85);
-  --sidebar-primary: oklch(0.8 0.11 83);
-  --sidebar-primary-foreground: oklch(0.2 0.03 260);
-  --sidebar-accent: oklch(0.26 0.014 260);
-  --sidebar-accent-foreground: oklch(0.9 0.01 85);
-  --sidebar-border: oklch(0.34 0.014 260);
+
+  --chart-1: oklch(0.70 0.10 155);
+  --chart-2: oklch(0.72 0.11 148);
+  --chart-3: oklch(0.68 0.08 85);
+  --chart-4: oklch(0.62 0.10 25);
+  --chart-5: oklch(0.68 0.06 200);
+
+  --sidebar: oklch(0.18 0.012 155);
+  --sidebar-foreground: oklch(0.92 0.008 95);
+  --sidebar-primary: oklch(0.76 0.10 148);
+  --sidebar-primary-foreground: oklch(0.18 0.03 155);
+  --sidebar-accent: oklch(0.24 0.012 155);
+  --sidebar-accent-foreground: oklch(0.90 0.008 95);
+  --sidebar-border: oklch(0.32 0.012 155);
   --sidebar-ring: var(--ring);
 }
 
@@ -125,14 +163,15 @@
   }
   body {
     @apply bg-background text-foreground transition-colors duration-300;
+    /* Misty lake gradient – soft warm fog rising from water */
     background-image:
-      radial-gradient(circle at top left, color-mix(in oklab, var(--accent) 18%, transparent), transparent 34%),
-      radial-gradient(circle at top right, color-mix(in oklab, var(--primary) 14%, transparent), transparent 38%),
-      linear-gradient(to bottom, color-mix(in oklab, var(--background) 96%, white 4%), var(--background));
+      radial-gradient(ellipse at 20% 0%, color-mix(in oklab, var(--accent) 10%, transparent), transparent 50%),
+      radial-gradient(ellipse at 80% 5%, color-mix(in oklab, var(--primary) 8%, transparent), transparent 45%),
+      linear-gradient(175deg, color-mix(in oklab, var(--background) 97%, white 3%), var(--background));
   }
 
   ::selection {
-    background: color-mix(in oklab, var(--accent) 45%, transparent);
+    background: color-mix(in oklab, var(--accent) 35%, transparent);
     color: var(--foreground);
   }
 }
@@ -143,11 +182,11 @@
   }
 
   .section-kicker {
-    @apply inline-flex items-center gap-2 rounded-full border border-border/70 bg-card/75 px-3 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.24em] text-muted-foreground backdrop-blur;
+    @apply inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/70 px-3 py-1.5 text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground backdrop-blur-sm;
   }
 
   .display-title {
-    @apply font-serif text-balance tracking-[-0.05em] leading-[0.92];
+    @apply font-serif text-balance tracking-[-0.04em] leading-[0.94];
   }
 
   .texture-grain,
@@ -159,6 +198,7 @@
     position: relative;
   }
 
+  /* Subtle rice-paper texture */
   .texture-grain::before,
   .panel::before,
   .panel-muted::before,
@@ -170,57 +210,69 @@
     inset: 0;
     z-index: 10;
     pointer-events: none;
-    opacity: 0.045;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.035;
+    border-radius: inherit;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
   }
 
   .panel {
-    @apply border border-border/70 bg-card/78 backdrop-blur-xl;
-    box-shadow: 0 22px 80px rgba(26, 36, 74, 0.06);
+    @apply border border-border/60 bg-card/75 backdrop-blur-xl;
+
+    box-shadow:
+      0 1px 2px rgba(30, 60, 40, 0.04),
+      0 16px 60px rgba(30, 60, 40, 0.05);
   }
 
   .panel-muted {
-    @apply border border-border/50 bg-card/52 backdrop-blur-lg;
-    box-shadow: 0 14px 48px rgba(26, 36, 74, 0.04);
+    @apply border border-border/45 bg-card/50 backdrop-blur-lg;
+
+    box-shadow: 0 10px 40px rgba(30, 60, 40, 0.03);
   }
 
   .grid-fade {
     background-image:
-      linear-gradient(to right, color-mix(in oklab, var(--border) 32%, transparent) 1px, transparent 1px),
-      linear-gradient(to bottom, color-mix(in oklab, var(--border) 32%, transparent) 1px, transparent 1px);
-    background-size: 64px 64px;
-    mask-image: radial-gradient(circle at top left, rgba(0, 0, 0, 1) 0%, transparent 100%);
+      linear-gradient(to right, color-mix(in oklab, var(--border) 24%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in oklab, var(--border) 24%, transparent) 1px, transparent 1px);
+    background-size: 72px 72px;
+    mask-image: radial-gradient(ellipse at 30% 0%, rgba(0, 0, 0, 0.8) 0%, transparent 70%);
   }
 
   .noise-overlay {
     background-image:
-      radial-gradient(circle at 15% 15%, color-mix(in oklab, var(--accent) 15%, transparent), transparent 25%),
-      radial-gradient(circle at 85% 5%, color-mix(in oklab, var(--primary) 12%, transparent), transparent 28%),
-      linear-gradient(to bottom right, color-mix(in oklab, var(--card) 92%, transparent), color-mix(in oklab, var(--background) 88%, transparent));
+      radial-gradient(ellipse at 15% 10%, color-mix(in oklab, var(--accent) 10%, transparent), transparent 35%),
+      radial-gradient(ellipse at 85% 5%, color-mix(in oklab, var(--primary) 8%, transparent), transparent 30%),
+      linear-gradient(to bottom right, color-mix(in oklab, var(--card) 92%, transparent), color-mix(in oklab, var(--background) 90%, transparent));
   }
 
+  /* Deep tea surface – steeped Longjing in a dark vessel */
   .surface-primary {
     @apply border text-white backdrop-blur-2xl;
+
     background:
-      radial-gradient(circle at 0% 0%, rgba(255, 190, 104, 0.22), transparent 45%),
-      radial-gradient(circle at 100% 100%, rgba(109, 140, 255, 0.16), transparent 50%),
-      linear-gradient(165deg, #181d36 0%, #0a0d1d 100%);
-    border-color: rgba(255, 225, 179, 0.12);
-    box-shadow: 0 40px 100px rgba(8, 11, 26, 0.45);
+      radial-gradient(ellipse at 0% 0%, rgba(120, 180, 130, 0.18), transparent 50%),
+      radial-gradient(ellipse at 100% 100%, rgba(80, 140, 110, 0.12), transparent 55%),
+      linear-gradient(165deg, #1a2a20 0%, #0d1a14 100%);
+    border-color: rgba(140, 200, 150, 0.10);
+
+    box-shadow:
+      0 1px 2px rgba(10, 30, 20, 0.2),
+      0 32px 80px rgba(10, 30, 20, 0.35);
   }
 
   .surface-secondary {
-    @apply border border-border/65 bg-card/82 backdrop-blur-xl;
-    box-shadow: 0 24px 85px rgba(26, 36, 74, 0.06);
+    @apply border border-border/55 bg-card/80 backdrop-blur-xl;
+
+    box-shadow: 0 18px 70px rgba(30, 60, 40, 0.05);
   }
 
   .surface-tertiary {
-    @apply border border-border/55 bg-card/62 backdrop-blur-lg;
-    box-shadow: 0 16px 52px rgba(26, 36, 74, 0.05);
+    @apply border border-border/45 bg-card/60 backdrop-blur-lg;
+
+    box-shadow: 0 12px 44px rgba(30, 60, 40, 0.04);
   }
 }
 
-/* Cal.com inspired motion treatments */
+/* Gentle mist-drift animation – like fog over the lake */
 @keyframes gradient-flow {
   0% {
     background-position: 0% 50%;
@@ -230,5 +282,16 @@
   }
   100% {
     background-position: 0% 50%;
+  }
+}
+
+@keyframes mist-drift {
+  0%, 100% {
+    opacity: 0.4;
+    transform: translateX(0) translateY(0);
+  }
+  50% {
+    opacity: 0.6;
+    transform: translateX(8px) translateY(-4px);
   }
 }

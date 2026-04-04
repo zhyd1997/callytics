@@ -30,7 +30,6 @@ export function HostActivity({ data }: HostActivityProps) {
     );
   }
 
-  // Aggregate host statistics
   const hostStats = data.reduce((acc, meeting) => {
     meeting.hosts.forEach(host => {
       if (!acc[host.email]) {
@@ -43,17 +42,17 @@ export function HostActivity({ data }: HostActivityProps) {
           totalDuration: 0,
         };
       }
-      
+
       acc[host.email].totalMeetings += 1;
       acc[host.email].totalDuration += meeting.duration;
-      
+
       if (meeting.status === 'accepted') {
         acc[host.email].acceptedMeetings += 1;
       } else if (meeting.status === 'cancelled') {
         acc[host.email].cancelledMeetings += 1;
       }
     });
-    
+
     return acc;
   }, {} as Record<string, {
     name: string;
@@ -66,7 +65,7 @@ export function HostActivity({ data }: HostActivityProps) {
 
   const sortedHosts = Object.values(hostStats)
     .sort((a, b) => b.totalMeetings - a.totalMeetings)
-    .slice(0, 6); // Show top 6 hosts
+    .slice(0, 6);
 
   const getInitials = (name: string) => {
     return name
@@ -94,99 +93,87 @@ export function HostActivity({ data }: HostActivityProps) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4 mb-6">
+        <div className="space-y-2 mb-4 sm:space-y-3 sm:mb-6">
           {sortedHosts.map((host, index) => (
             <motion.div
               key={host.email}
-              initial={{ opacity: 0, x: -20 }}
+              initial={{ opacity: 0, x: -16 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.3, delay: index * 0.1 }}
-              className="flex items-center justify-between rounded-lg border border-primary/20 bg-primary/5 p-3 transition-colors hover:border-primary/40 hover:bg-primary/10"
+              transition={{ duration: 0.3, delay: index * 0.08 }}
+              className="flex items-center justify-between gap-3 rounded-xl border border-primary/15 bg-primary/4 p-2.5 transition-colors hover:border-primary/30 hover:bg-primary/8 sm:rounded-2xl sm:p-3"
             >
-              <div className="flex items-center gap-3">
-                <Avatar className="h-10 w-10">
-                  <AvatarFallback className="text-sm">
+              <div className="flex items-center gap-2.5 min-w-0 sm:gap-3">
+                <Avatar className="h-8 w-8 shrink-0 sm:h-10 sm:w-10">
+                  <AvatarFallback className="text-xs sm:text-sm">
                     {getInitials(host.name)}
                   </AvatarFallback>
                 </Avatar>
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium truncate">{host.name}</p>
-                  <p className="text-sm text-muted-foreground truncate">
-                    {host.email}
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium truncate">{host.name}</p>
+                  <p className="text-xs text-muted-foreground truncate sm:text-sm">
+                    <span className="sm:hidden">{host.totalMeetings} mtgs</span>
+                    <span className="hidden sm:inline">{host.email}</span>
                   </p>
                 </div>
               </div>
-              
-              <div className="flex items-center gap-4 text-sm">
-                <div className="text-center hidden sm:block">
+
+              <div className="flex items-center gap-3 shrink-0 text-sm sm:gap-4">
+                <div className="hidden text-center sm:block">
                   <p className="font-semibold">{host.totalMeetings}</p>
-                  <p className="text-muted-foreground">meetings</p>
+                  <p className="text-xs text-muted-foreground">meetings</p>
                 </div>
-                <div className="text-center hidden sm:block">
+                <div className="hidden text-center md:block">
                   <p className="font-semibold">{(host.totalDuration / 60).toFixed(1)}h</p>
-                  <p className="text-muted-foreground">total</p>
+                  <p className="text-xs text-muted-foreground">total</p>
                 </div>
                 <div className="text-center">
-                  <Badge 
+                  <Badge
                     variant={getSuccessRate(host.acceptedMeetings, host.totalMeetings) >= 80 ? "default" : "secondary"}
                     className="text-xs"
                   >
                     {getSuccessRate(host.acceptedMeetings, host.totalMeetings)}%
                   </Badge>
-                  <p className="text-xs text-muted-foreground mt-1">success</p>
+                  <p className="text-[0.6rem] text-muted-foreground mt-0.5 sm:text-xs sm:mt-1">success</p>
                 </div>
               </div>
             </motion.div>
           ))}
         </div>
 
-        {/* Summary Stats */}
-        <div className="flex flex-wrap gap-4">
+        <div className="grid grid-cols-3 gap-2 sm:gap-3">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.5 }}
+            className="rounded-xl border border-primary/20 bg-primary/6 p-2.5 sm:rounded-2xl sm:p-3"
+          >
+            <Users className="h-3.5 w-3.5 text-primary sm:h-4 sm:w-4" />
+            <p className="mt-1.5 text-xs text-muted-foreground sm:mt-2 sm:text-sm">Total Hosts</p>
+            <p className="text-sm font-semibold sm:text-base">{totalHosts}</p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.6 }}
-            className="flex min-w-[200px] w-full flex-shrink-0 items-center gap-3 rounded-lg border border-primary/30 bg-primary/10 p-3 text-primary shadow-[0_0_25px_rgba(249,115,22,0.18)] backdrop-blur sm:w-auto sm:max-w-[200px]"
+            className="rounded-xl border border-accent/20 bg-accent/6 p-2.5 sm:rounded-2xl sm:p-3"
           >
-            <div className="flex-shrink-0 rounded-lg border border-primary/20 bg-primary/15 p-2">
-              <Users className="h-4 w-4 text-primary" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-sm text-muted-foreground">Total Hosts</p>
-              <p className="font-semibold">{totalHosts}</p>
-            </div>
+            <Calendar className="h-3.5 w-3.5 text-accent sm:h-4 sm:w-4" />
+            <p className="mt-1.5 text-xs text-muted-foreground sm:mt-2 sm:text-sm">Most Active</p>
+            <p className="text-xs font-semibold truncate sm:text-sm" title={mostActiveHost?.name}>
+              {mostActiveHost?.name}
+            </p>
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.7 }}
-            className="flex min-w-[200px] flex-1 items-center gap-3 rounded-lg border border-[#facc15]/40 bg-[#facc15]/15 p-3 text-[#f59e0b] shadow-[0_0_25px_rgba(250,204,21,0.22)] backdrop-blur"
+            className="rounded-xl border border-chart-5/20 bg-chart-5/6 p-2.5 sm:rounded-2xl sm:p-3"
           >
-            <div className="flex-shrink-0 rounded-lg border border-[#facc15]/30 bg-[#facc15]/25 p-2">
-              <Calendar className="h-4 w-4 text-[#f59e0b]" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-sm text-muted-foreground">Most Active</p>
-              <p className="font-semibold text-xs sm:text-sm truncate" title={mostActiveHost?.name}>
-                {mostActiveHost?.name}
-              </p>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.8 }}
-            className="flex min-w-[200px] w-full items-center gap-3 rounded-lg border border-[#a855f7]/40 bg-[#a855f7]/20 p-3 text-[#c084fc] shadow-[0_0_25px_rgba(168,85,247,0.25)] backdrop-blur"
-          >
-            <div className="flex-shrink-0 rounded-lg border border-[#a855f7]/30 bg-[#a855f7]/25 p-2">
-              <Clock className="h-4 w-4 text-[#c084fc]" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-sm text-muted-foreground">Total Hours</p>
-              <p className="font-semibold">{totalHostHours.toFixed(1)}h</p>
-            </div>
+            <Clock className="h-3.5 w-3.5 text-chart-5 sm:h-4 sm:w-4" />
+            <p className="mt-1.5 text-xs text-muted-foreground sm:mt-2 sm:text-sm">Total Hours</p>
+            <p className="text-sm font-semibold sm:text-base">{totalHostHours.toFixed(1)}h</p>
           </motion.div>
         </div>
       </CardContent>

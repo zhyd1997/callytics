@@ -192,69 +192,73 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-background text-foreground transition-colors duration-300">
-      <div className="noise-overlay pointer-events-none absolute inset-0 opacity-90" />
-      <div className="grid-fade pointer-events-none absolute inset-0 opacity-40" />
-      <div className="pointer-events-none absolute right-[-14%] top-20 h-[400px] w-[400px] rounded-full bg-primary/12 blur-3xl" />
-      <div className="pointer-events-none absolute left-[-8%] top-52 h-[340px] w-[340px] rounded-full bg-accent/14 blur-3xl" />
-      <div className="relative shell-container py-10 sm:py-14">
+      <div className="noise-overlay pointer-events-none absolute inset-0 opacity-80" />
+      <div className="grid-fade pointer-events-none absolute inset-0 opacity-30" />
+      <div className="pointer-events-none absolute right-[-14%] top-20 h-60 w-60 rounded-full bg-accent/8 blur-3xl sm:h-96 sm:w-96" />
+      <div className="pointer-events-none absolute left-[-8%] top-52 h-52 w-52 rounded-full bg-primary/6 blur-3xl sm:h-80 sm:w-80" />
+
+      <div className="relative shell-container py-6 sm:py-10 lg:py-14">
+        {/* Header section */}
         <motion.div
           variants={fadeInFromTop}
           initial="initial"
           animate="animate"
           transition={createTransition()}
-          className="mb-12"
+          className="mb-8 sm:mb-12"
         >
-          <div className="flex items-center gap-3 mb-6">
-            <div className="flex items-center gap-2 rounded-full border border-accent/20 bg-accent/5 px-3 py-1 text-[0.62rem] font-bold uppercase tracking-[0.2em] text-accent">
+          <div className="flex items-center gap-3 mb-4 sm:mb-6">
+            <div className="flex items-center gap-2 rounded-full border border-accent/18 bg-accent/5 px-3 py-1 text-[0.6rem] font-bold uppercase tracking-[0.2em] text-accent">
               <span className="h-1.5 w-1.5 rounded-full bg-accent" />
               Live Briefing
             </div>
-            <div className="h-px flex-1 bg-border/40" />
-            <div className="text-[0.62rem] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">
+            <div className="h-px flex-1 bg-border/30" />
+            <div className="hidden text-[0.6rem] font-bold uppercase tracking-[0.18em] text-muted-foreground/50 sm:block">
               {dayjs().format("MMMM D, YYYY")}
             </div>
           </div>
 
-          <div className="grid gap-8 xl:grid-cols-[1.1fr_0.9fr] xl:items-end">
+          {/* Title area – stacked on mobile, side-by-side on xl */}
+          <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr] xl:items-end xl:gap-8">
             <div className="max-w-4xl">
-              <h1 className="display-title text-5xl text-foreground sm:text-6xl lg:text-7xl">
+              <h1 className="display-title text-3xl text-foreground sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl">
                 Intelligence that reads like a briefing.
               </h1>
-              <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground/90">
+              <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground/85 sm:mt-6 sm:text-lg">
                 Focus operations reviews on signal instead of cleanup. We surface
                 risk, host load, and timing concentration in a sequence that
                 is easier to scan and explain.
               </p>
             </div>
 
-            <div className="group relative overflow-hidden rounded-[32px] border border-border/50 bg-card/40 p-6 backdrop-blur-md">
-              <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-accent/5 blur-3xl transition-all group-hover:bg-accent/10" />
-              <p className="text-[0.62rem] font-bold uppercase tracking-[0.24em] text-muted-foreground/70">
+            <div className="group relative overflow-hidden rounded-2xl border border-border/40 bg-card/35 p-5 backdrop-blur-md sm:rounded-[32px] sm:p-6">
+              <div className="absolute -right-6 -top-6 h-20 w-20 rounded-full bg-accent/5 blur-3xl transition-all group-hover:bg-accent/8" />
+              <p className="text-[0.6rem] font-bold uppercase tracking-[0.22em] text-muted-foreground/60">
                 Executive Overview
               </p>
-              <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                <div className="rounded-2xl border border-border/40 bg-background/40 p-4">
-                  <p className="text-[0.62rem] font-bold uppercase tracking-[0.18em] text-muted-foreground/60">Date Range</p>
-                  <p className="mt-1 text-xl font-serif tracking-tight text-foreground">{rangeLabel}</p>
+              <div className="mt-4 grid gap-3 sm:mt-6 sm:grid-cols-2 sm:gap-4">
+                <div className="rounded-xl border border-border/35 bg-background/35 p-3 sm:rounded-2xl sm:p-4">
+                  <p className="text-[0.58rem] font-bold uppercase tracking-[0.16em] text-muted-foreground/50">Date Range</p>
+                  <p className="mt-1 font-serif text-lg tracking-tight text-foreground sm:text-xl">{rangeLabel}</p>
                 </div>
-                <div className="rounded-2xl border border-border/40 bg-background/40 p-4">
-                  <p className="text-[0.62rem] font-bold uppercase tracking-[0.18em] text-muted-foreground/60">Acceptance</p>
-                  <p className="mt-1 text-xl font-serif tracking-tight text-foreground">{pulse.acceptanceRate}%</p>
+                <div className="rounded-xl border border-border/35 bg-background/35 p-3 sm:rounded-2xl sm:p-4">
+                  <p className="text-[0.58rem] font-bold uppercase tracking-[0.16em] text-muted-foreground/50">Acceptance</p>
+                  <p className="mt-1 font-serif text-lg tracking-tight text-foreground sm:text-xl">{pulse.acceptanceRate}%</p>
                 </div>
               </div>
             </div>
           </div>
         </motion.div>
 
-        <div className="grid grid-cols-1 gap-8 xl:grid-cols-[280px_1fr]">
+        {/* Filters + sidebar: stacked on mobile, side-by-side on xl */}
+        <div className="grid grid-cols-1 gap-6 xl:grid-cols-[280px_1fr] xl:gap-8">
           <motion.aside
             variants={fadeInFromLeft}
             initial="initial"
             animate="animate"
             transition={createTransition(0.1)}
-            className="space-y-8"
+            className="space-y-6 sm:space-y-8"
           >
-            <div className="sticky top-28 space-y-8">
+            <div className="xl:sticky xl:top-24 space-y-6 sm:space-y-8">
               <DashboardFilters
                 filters={filters}
                 onFiltersChange={setFilters}
@@ -264,16 +268,16 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
                 savedViews={SAVED_VIEWS}
               />
 
-              <div className="rounded-[32px] border border-border/50 bg-card/30 p-6 backdrop-blur-md">
-                <p className="text-[0.62rem] font-bold uppercase tracking-[0.24em] text-muted-foreground/70">Triage Status</p>
-                <div className="mt-6 space-y-4">
+              <div className="rounded-2xl border border-border/40 bg-card/25 p-5 backdrop-blur-md sm:rounded-[32px] sm:p-6">
+                <p className="text-[0.6rem] font-bold uppercase tracking-[0.22em] text-muted-foreground/60">Triage Status</p>
+                <div className="mt-4 space-y-3 sm:mt-6 sm:space-y-4">
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">At-risk</span>
                     <span className={`font-serif text-lg ${pulse.atRiskCount > 0 ? 'text-accent' : 'text-foreground'}`}>
                       {pulse.atRiskCount}
                     </span>
                   </div>
-                  <div className="h-px bg-border/40" />
+                  <div className="h-px bg-border/30" />
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">Hosts</span>
                     <span className="font-serif text-lg text-foreground">{hostOptions.length - 1}</span>
@@ -283,7 +287,7 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
             </div>
           </motion.aside>
 
-          <div className="space-y-10">
+          <div className="space-y-6 sm:space-y-8 lg:space-y-10">
             <motion.div
               variants={fadeInFromBottom}
               initial="initial"
@@ -298,34 +302,35 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
               />
             </motion.div>
 
+            {/* Narrative + Actions: stacked on mobile, 2-col on md+ */}
             <motion.div
               variants={fadeInFromBottom}
               initial="initial"
               animate="animate"
               transition={createTransition(0.2)}
-              className="grid gap-6 md:grid-cols-2"
+              className="grid gap-4 sm:gap-6 md:grid-cols-2"
             >
-              <div className="panel group rounded-[32px] p-7 transition-all hover:bg-card/90">
-                <div className="flex items-center justify-between gap-3 mb-6">
+              <div className="panel group rounded-2xl p-5 transition-all hover:bg-card/85 sm:rounded-[32px] sm:p-7">
+                <div className="flex items-center justify-between gap-3 mb-4 sm:mb-6">
                   <div>
-                    <p className="text-[0.62rem] font-bold uppercase tracking-[0.24em] text-muted-foreground/70">Narrative</p>
-                    <h2 className="mt-2 text-2xl font-serif tracking-tight text-foreground">Active analysis</h2>
+                    <p className="text-[0.6rem] font-bold uppercase tracking-[0.22em] text-muted-foreground/60">Narrative</p>
+                    <h2 className="mt-1.5 text-xl font-serif tracking-tight text-foreground sm:mt-2 sm:text-2xl">Active analysis</h2>
                   </div>
-                  <div className="rounded-2xl bg-primary/10 p-2 text-primary">
-                    <ArrowUpRight className="h-5 w-5" />
+                  <div className="rounded-xl bg-primary/8 p-2 text-primary sm:rounded-2xl">
+                    <ArrowUpRight className="h-4 w-4 sm:h-5 sm:w-5" />
                   </div>
                 </div>
-                <div className="space-y-4">
-                  <div className="rounded-2xl border border-border/50 bg-background/50 p-4 transition-colors group-hover:border-border/80">
-                    <p className="text-[0.62rem] font-bold uppercase tracking-[0.18em] text-accent">Risk watch</p>
+                <div className="space-y-3 sm:space-y-4">
+                  <div className="rounded-xl border border-border/40 bg-background/40 p-3 transition-colors group-hover:border-border/60 sm:rounded-2xl sm:p-4">
+                    <p className="text-[0.58rem] font-bold uppercase tracking-[0.16em] text-accent">Risk watch</p>
                     <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
                       {pulse.atRiskCount > 0
                         ? `${pulse.atRiskCount} bookings need operator attention right now.`
                         : "No unstable bookings are currently surfaced."}
                     </p>
                   </div>
-                  <div className="rounded-2xl border border-border/50 bg-background/50 p-4 transition-colors group-hover:border-border/80">
-                    <p className="text-[0.62rem] font-bold uppercase tracking-[0.18em] text-primary">Capacity</p>
+                  <div className="rounded-xl border border-border/40 bg-background/40 p-3 transition-colors group-hover:border-border/60 sm:rounded-2xl sm:p-4">
+                    <p className="text-[0.58rem] font-bold uppercase tracking-[0.16em] text-primary">Capacity</p>
                     <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
                       {pulse.busiestHost
                         ? `${pulse.busiestHost[0]} is carrying the peak meeting load.`
@@ -335,20 +340,20 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
                 </div>
               </div>
 
-              <div className="panel group rounded-[32px] p-7 transition-all hover:bg-card/90">
-                <div className="flex items-center justify-between gap-3 mb-6">
+              <div className="panel group rounded-2xl p-5 transition-all hover:bg-card/85 sm:rounded-[32px] sm:p-7">
+                <div className="flex items-center justify-between gap-3 mb-4 sm:mb-6">
                   <div>
-                    <p className="text-[0.62rem] font-bold uppercase tracking-[0.24em] text-muted-foreground/70">Actions</p>
-                    <h2 className="mt-2 text-2xl font-serif tracking-tight text-foreground">Recommended</h2>
+                    <p className="text-[0.6rem] font-bold uppercase tracking-[0.22em] text-muted-foreground/60">Actions</p>
+                    <h2 className="mt-1.5 text-xl font-serif tracking-tight text-foreground sm:mt-2 sm:text-2xl">Recommended</h2>
                   </div>
-                  <div className="rounded-2xl bg-accent/10 p-2 text-accent">
-                    <AlertTriangle className="h-5 w-5" />
+                  <div className="rounded-xl bg-accent/8 p-2 text-accent sm:rounded-2xl">
+                    <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5" />
                   </div>
                 </div>
-                <div className="space-y-4">
+                <div className="space-y-3 sm:space-y-4">
                   {actionItems.map((item, idx) => (
-                    <div key={idx} className="flex gap-4 p-1">
-                      <div className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-border" />
+                    <div key={idx} className="flex gap-3 p-1 sm:gap-4">
+                      <div className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-border" />
                       <p className="text-sm leading-relaxed text-muted-foreground">{item}</p>
                     </div>
                   ))}
@@ -365,7 +370,8 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
               <OverviewStats data={visibleMeetings} />
             </motion.div>
 
-            <div className="grid grid-cols-1 gap-8 xl:grid-cols-[1.1fr_0.9fr]">
+            {/* Recent + Times: stacked on mobile, side-by-side on xl */}
+            <div className="grid grid-cols-1 gap-6 xl:grid-cols-[1.1fr_0.9fr] xl:gap-8">
               <motion.div
                 variants={fadeInFromLeft}
                 initial="initial"
@@ -386,49 +392,50 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
           </div>
         </div>
 
-        <div className="mb-8 grid gap-6 xl:grid-cols-[0.82fr_1.18fr]">
+        {/* Triage + Action workspace: stacked on mobile */}
+        <div className="mt-6 mb-6 grid gap-4 sm:mt-8 sm:mb-8 sm:gap-6 xl:grid-cols-[0.82fr_1.18fr]">
           <motion.aside
             variants={fadeInFromLeft}
             initial="initial"
             animate="animate"
             transition={createTransition(0.23)}
-            className="panel rounded-[32px] p-6"
+            className="panel rounded-2xl p-5 sm:rounded-[32px] sm:p-6"
           >
             <div className="flex items-center justify-between gap-3">
               <div>
-                <p className="text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                <p className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                   Triage rail
                 </p>
-                <h2 className="mt-2 text-2xl font-semibold text-foreground">
+                <h2 className="mt-1.5 text-xl font-semibold text-foreground sm:mt-2 sm:text-2xl">
                   What needs attention first
                 </h2>
               </div>
               <AlertTriangle className="h-5 w-5 text-accent" />
             </div>
 
-            <div className="mt-5 space-y-5">
+            <div className="mt-4 space-y-4 sm:mt-5 sm:space-y-5">
               <div>
                 <p className="text-sm font-medium text-foreground">At-risk bookings</p>
-                <div className="mt-3 space-y-3">
+                <div className="mt-2 space-y-2 sm:mt-3 sm:space-y-3">
                   {atRiskMeetings.length > 0 ? (
                     atRiskMeetings.map((meeting) => (
                       <div
                         key={meeting.id}
-                        className="rounded-[24px] border border-border/70 bg-background/70 p-4"
+                        className="rounded-xl border border-border/50 bg-background/60 p-3 sm:rounded-[24px] sm:p-4"
                       >
                         <p className="line-clamp-1 text-sm font-medium text-foreground">
                           {meeting.title}
                         </p>
-                        <p className="mt-1 text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                        <p className="mt-1 text-xs uppercase tracking-[0.16em] text-muted-foreground">
                           {meeting.reschedulingReason ? "Rescheduled" : meeting.status}
                         </p>
-                        <p className="mt-2 text-sm text-muted-foreground">
+                        <p className="mt-1.5 text-sm text-muted-foreground sm:mt-2">
                           {dayjs(meeting.start).format("MMM D, h:mm A")}
                         </p>
                       </div>
                     ))
                   ) : (
-                    <div className="rounded-[24px] border border-dashed border-border/70 bg-background/60 p-4 text-sm text-muted-foreground">
+                    <div className="rounded-xl border border-dashed border-border/50 bg-background/50 p-3 text-sm text-muted-foreground sm:rounded-[24px] sm:p-4">
                       No unstable bookings in this view.
                     </div>
                   )}
@@ -437,11 +444,11 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
 
               <div>
                 <p className="text-sm font-medium text-foreground">Recommended actions</p>
-                <div className="mt-3 space-y-3">
+                <div className="mt-2 space-y-2 sm:mt-3 sm:space-y-3">
                   {actionItems.map((item) => (
                     <div
                       key={item}
-                      className="flex gap-3 rounded-[24px] border border-border/70 bg-background/70 p-4"
+                      className="flex gap-3 rounded-xl border border-border/50 bg-background/60 p-3 sm:rounded-[24px] sm:p-4"
                     >
                       <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
                       <p className="text-sm leading-6 text-muted-foreground">{item}</p>
@@ -457,26 +464,26 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
             initial="initial"
             animate="animate"
             transition={createTransition(0.26)}
-            className="panel rounded-[32px] p-6"
+            className="panel rounded-2xl p-5 sm:rounded-[32px] sm:p-6"
           >
-            <div className="grid gap-5 lg:grid-cols-[1.1fr_0.9fr]">
+            <div className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr] lg:gap-5">
               <div>
-                <p className="text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                <p className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                   Action workspace
                 </p>
-                <h2 className="mt-2 text-2xl font-semibold text-foreground">
+                <h2 className="mt-1.5 text-xl font-semibold text-foreground sm:mt-2 sm:text-2xl">
                   Guided review for the current slice
                 </h2>
-                <p className="mt-3 text-sm leading-7 text-muted-foreground">
+                <p className="mt-2 text-sm leading-7 text-muted-foreground sm:mt-3">
                   Use this workspace to move through the current period in the
                   right order: immediate risk, upcoming work, then broader
                   patterns.
                 </p>
               </div>
 
-              <div className="rounded-[24px] border border-border/70 bg-background/70 p-4">
+              <div className="rounded-xl border border-border/50 bg-background/60 p-3 sm:rounded-[24px] sm:p-4">
                 <p className="text-sm font-medium text-foreground">Current briefing</p>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                <p className="mt-1.5 text-sm leading-6 text-muted-foreground sm:mt-2">
                   {pulse.atRiskCount > 0
                     ? `Start with the ${pulse.atRiskCount} unstable bookings, then confirm whether ${pulse.busiestHost?.[0] ?? "the lead host"} needs capacity relief.`
                     : `Current booking flow looks stable. Use the upcoming queue to check concentration around ${pulse.hottestSlot?.[0] ?? "peak demand windows"}.`}
@@ -484,18 +491,18 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
               </div>
             </div>
 
-            <div className="mt-5 grid gap-4 lg:grid-cols-2">
-              <div className="rounded-[28px] border border-border/70 bg-background/70 p-5">
+            <div className="mt-4 grid gap-3 sm:mt-5 sm:gap-4 lg:grid-cols-2">
+              <div className="rounded-xl border border-border/50 bg-background/60 p-4 sm:rounded-[28px] sm:p-5">
                 <div className="flex items-center justify-between gap-3">
                   <p className="text-sm font-medium text-foreground">Next meetings</p>
                   <CalendarDays className="h-4 w-4 text-muted-foreground" />
                 </div>
-                <div className="mt-4 space-y-3">
+                <div className="mt-3 space-y-2 sm:mt-4 sm:space-y-3">
                   {upcomingMeetings.length > 0 ? (
                     upcomingMeetings.map((meeting) => (
                       <div
                         key={meeting.id}
-                        className="rounded-[20px] border border-border/70 bg-card/70 p-4"
+                        className="rounded-xl border border-border/50 bg-card/60 p-3 sm:rounded-[20px] sm:p-4"
                       >
                         <p className="line-clamp-1 text-sm font-medium text-foreground">
                           {meeting.title}
@@ -503,46 +510,46 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
                         <p className="mt-1 text-sm text-muted-foreground">
                           {dayjs(meeting.start).format("MMM D, h:mm A")}
                         </p>
-                        <p className="mt-2 text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                        <p className="mt-1.5 text-xs uppercase tracking-[0.16em] text-muted-foreground sm:mt-2">
                           {meeting.hosts[0]?.name ?? "Unknown host"}
                         </p>
                       </div>
                     ))
                   ) : (
-                    <div className="rounded-[20px] border border-dashed border-border/70 bg-card/60 p-4 text-sm text-muted-foreground">
+                    <div className="rounded-xl border border-dashed border-border/50 bg-card/50 p-3 text-sm text-muted-foreground sm:rounded-[20px] sm:p-4">
                       No upcoming meetings in the current slice.
                     </div>
                   )}
                 </div>
               </div>
 
-              <div className="rounded-[28px] border border-border/70 bg-background/70 p-5">
+              <div className="rounded-xl border border-border/50 bg-background/60 p-4 sm:rounded-[28px] sm:p-5">
                 <div className="flex items-center justify-between gap-3">
                   <p className="text-sm font-medium text-foreground">Focus metrics</p>
                   <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
                 </div>
-                <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                  <div className="rounded-[20px] border border-border/70 bg-card/70 p-4">
-                    <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                <div className="mt-3 grid gap-2 sm:mt-4 sm:grid-cols-2 sm:gap-3">
+                  <div className="rounded-xl border border-border/50 bg-card/60 p-3 sm:rounded-[20px] sm:p-4">
+                    <p className="text-[0.6rem] uppercase tracking-[0.16em] text-muted-foreground sm:text-xs">
                       Acceptance
                     </p>
-                    <p className="mt-2 text-2xl font-semibold text-foreground">
+                    <p className="mt-1.5 text-xl font-semibold text-foreground sm:mt-2 sm:text-2xl">
                       {pulse.acceptanceRate}%
                     </p>
                   </div>
-                  <div className="rounded-[20px] border border-border/70 bg-card/70 p-4">
-                    <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                  <div className="rounded-xl border border-border/50 bg-card/60 p-3 sm:rounded-[20px] sm:p-4">
+                    <p className="text-[0.6rem] uppercase tracking-[0.16em] text-muted-foreground sm:text-xs">
                       Cancellation
                     </p>
-                    <p className="mt-2 text-2xl font-semibold text-foreground">
+                    <p className="mt-1.5 text-xl font-semibold text-foreground sm:mt-2 sm:text-2xl">
                       {pulse.cancellationRate}%
                     </p>
                   </div>
-                  <div className="rounded-[20px] border border-border/70 bg-card/70 p-4 sm:col-span-2">
-                    <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                  <div className="rounded-xl border border-border/50 bg-card/60 p-3 sm:col-span-2 sm:rounded-[20px] sm:p-4">
+                    <p className="text-[0.6rem] uppercase tracking-[0.16em] text-muted-foreground sm:text-xs">
                       Dominant event type
                     </p>
-                    <p className="mt-2 text-lg font-semibold text-foreground">
+                    <p className="mt-1.5 text-base font-semibold text-foreground sm:mt-2 sm:text-lg">
                       {pulse.topEventType?.[0] ?? "General"}
                     </p>
                   </div>
@@ -552,30 +559,7 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
           </motion.section>
         </div>
 
-        <motion.div
-          variants={fadeInFromBottom}
-          initial="initial"
-          animate="animate"
-          transition={createTransition(0.25)}
-          className="mb-8"
-        >
-          <OverviewStats data={visibleMeetings} />
-        </motion.div>
-
-        <motion.div
-          variants={fadeInFromBottom}
-          initial="initial"
-          animate="animate"
-          transition={createTransition(0.3)}
-          className="mb-8"
-        >
-          <div className="grid grid-cols-1 gap-6 xl:grid-cols-[1.2fr_0.8fr]">
-            <RecentMeetings data={visibleMeetings} />
-            <MeetingTimes data={visibleMeetings} />
-          </div>
-        </motion.div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-2 mb-6 sm:mb-8">
           <motion.div
             variants={fadeInFromLeft}
             initial="initial"
@@ -600,12 +584,12 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
           initial="initial"
           animate="animate"
           transition={createTransition(0.45)}
-          className="mb-8"
+          className="mb-6 sm:mb-8"
         >
           <MeetingTimeline data={visibleMeetings} />
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-2">
           <motion.div
             variants={fadeInFromLeft}
             initial="initial"

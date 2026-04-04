@@ -11,9 +11,9 @@ export function Footer() {
   const { resolvedTheme } = useTheme()
 
   return (
-    <footer className="pb-12 pt-8">
+    <footer className="pb-8 pt-6 sm:pb-12 sm:pt-8">
       <div className="shell-container">
-        <div className="flex flex-col gap-8 rounded-[32px] border border-border/70 bg-card/72 px-6 py-8 backdrop-blur-xl md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-col gap-6 rounded-2xl border border-border/50 bg-card/65 px-5 py-6 backdrop-blur-xl sm:rounded-[32px] sm:px-6 sm:py-8 md:flex-row md:items-center md:justify-between md:gap-8">
           <div className="flex items-center gap-3">
             <Image
               src={
@@ -22,15 +22,15 @@ export function Footer() {
                   : "/logo/callytics-logo-light.png"
               }
               alt="Callytics logo"
-              width={34}
-              height={34}
-              className="rounded-xl"
+              width={32}
+              height={32}
+              className="h-8 w-8 rounded-lg sm:rounded-xl"
             />
             <div>
-              <p className="font-serif text-2xl tracking-[-0.05em] text-foreground">
+              <p className="font-serif text-xl tracking-[-0.04em] text-foreground sm:text-2xl">
                 {SITE_CONFIG.name}
               </p>
-              <p className="text-sm text-muted-foreground">{SITE_CONFIG.description}</p>
+              <p className="text-xs text-muted-foreground sm:text-sm">{SITE_CONFIG.description}</p>
             </div>
           </div>
 
@@ -39,7 +39,7 @@ export function Footer() {
             patterns, explain changes, and prepare better reviews.
           </p>
 
-          <div className="flex flex-wrap items-center gap-5 text-sm text-muted-foreground">
+          <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground sm:gap-5">
             <a
               href={SITE_CONFIG.githubUrl}
               target="_blank"

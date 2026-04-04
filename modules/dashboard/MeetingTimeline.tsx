@@ -154,7 +154,7 @@ export function MeetingTimeline({ data }: MeetingTimelineProps) {
           initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4 }}
-          className="h-[320px] w-full rounded-[28px] border border-border/70 bg-background/75 p-4"
+          className="h-[240px] w-full rounded-xl border border-border/50 bg-background/70 p-3 sm:h-[280px] sm:rounded-2xl sm:p-4 lg:h-[320px]"
         >
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={timelineData} margin={{ top: 10, right: 12, left: -16, bottom: 0 }}>
@@ -175,7 +175,7 @@ export function MeetingTimeline({ data }: MeetingTimelineProps) {
               <CartesianGrid strokeDasharray="3 3" opacity={0.18} vertical={false} />
               <XAxis
                 dataKey="week"
-                tick={{ fontSize: 12 }}
+                tick={{ fontSize: 10 }}
                 axisLine={false}
                 tickLine={false}
               />

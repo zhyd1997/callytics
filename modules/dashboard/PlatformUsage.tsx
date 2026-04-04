@@ -50,8 +50,8 @@ const CustomTooltip = (props: CustomTooltipPropsType) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload as CustomTooltipPayload;
     return (
-      <div className="rounded-lg border border-primary/20 bg-card/90 p-3 shadow-[0_8px_30px_rgba(249,115,22,0.15)] backdrop-blur">
-        <p className="font-medium text-sm">{label}</p>
+      <div className="rounded-xl border border-primary/15 bg-card/92 p-3 shadow-lg backdrop-blur">
+        <p className="text-sm font-medium">{label}</p>
         <p className="text-sm text-muted-foreground">
           {data.count} meetings ({data.percentage}%)
         </p>
@@ -81,7 +81,6 @@ export function PlatformUsage({ data }: PlatformUsageProps) {
     );
   }
 
-  // Extract platform from meeting URL
   const getPlatform = (url: string) => {
     if (url.includes('meet.google.com')) return 'Google Meet';
     if (url.includes('zoom.us')) return 'Zoom';
@@ -136,25 +135,25 @@ export function PlatformUsage({ data }: PlatformUsageProps) {
       </CardHeader>
       <CardContent>
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
+          initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
-          className="h-[300px] w-full mb-4"
+          transition={{ duration: 0.4 }}
+          className="h-[220px] w-full mb-3 sm:h-[260px] sm:mb-4 lg:h-[300px]"
         >
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-              <XAxis 
-                dataKey="platform" 
-                tick={{ fontSize: 12 }}
-                angle={-45}
+            <BarChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
+              <XAxis
+                dataKey="platform"
+                tick={{ fontSize: 10 }}
+                angle={-35}
                 textAnchor="end"
-                height={80}
+                height={60}
               />
-              <YAxis tick={{ fontSize: 12 }} />
+              <YAxis tick={{ fontSize: 10 }} />
               <Tooltip content={<CustomTooltip />} />
-              <Bar 
-                dataKey="count" 
+              <Bar
+                dataKey="count"
                 radius={[4, 4, 0, 0]}
                 fill="var(--color-chart-1)"
               />
@@ -162,42 +161,42 @@ export function PlatformUsage({ data }: PlatformUsageProps) {
           </ResponsiveContainer>
         </motion.div>
 
-        <div className="space-y-3">
+        <div className="space-y-2 sm:space-y-3">
           {chartData.map((item, index) => {
             const icon = getPlatformIcon(item.platform);
             return (
               <motion.div
                 key={item.platform}
-                initial={{ opacity: 0, x: -20 }}
+                initial={{ opacity: 0, x: -16 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.3, delay: index * 0.1 }}
-                className="flex items-center justify-between rounded-lg border border-primary/20 bg-primary/5 p-3 backdrop-blur"
+                transition={{ duration: 0.3, delay: index * 0.08 }}
+                className="flex items-center justify-between gap-3 rounded-xl border border-primary/12 bg-primary/4 p-2.5 backdrop-blur sm:rounded-2xl sm:p-3"
               >
-                <div className="flex items-center gap-3">
-                  <div 
-                    className="flex h-10 w-10 items-center justify-center rounded-lg border border-border/40 bg-muted/40 shadow-[0_0_20px_rgba(249,115,22,0.15)]"
+                <div className="flex items-center gap-2.5 sm:gap-3">
+                  <div
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-border/30 bg-muted/30 sm:h-10 sm:w-10"
                   >
                     <Image
                       src={icon.src}
                       alt={icon.alt}
-                      width={28}
-                      height={28}
-                      className="h-7 w-7 object-contain rounded-[6px]"
+                      width={24}
+                      height={24}
+                      className="h-6 w-6 object-contain rounded sm:h-7 sm:w-7"
                     />
                   </div>
-                  <div>
-                    <p className="font-medium">{item.platform}</p>
-                    <p className="text-sm text-muted-foreground">
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium truncate">{item.platform}</p>
+                    <p className="text-xs text-muted-foreground sm:text-sm">
                       {item.count} meetings
                     </p>
                   </div>
                 </div>
-                <div className="text-right">
-                  <p className="font-semibold">{item.percentage}%</p>
-                  <div className="w-16 h-2 bg-muted rounded-full mt-1">
+                <div className="text-right shrink-0">
+                  <p className="text-sm font-semibold">{item.percentage}%</p>
+                  <div className="w-12 h-1.5 bg-muted rounded-full mt-1 sm:w-16 sm:h-2">
                     <div
-                      className="h-full rounded-full"
-                      style={{ 
+                      className="h-full rounded-full transition-all"
+                      style={{
                         width: `${item.percentage}%`,
                         backgroundColor: getPlatformColor(item.platform)
                       }}
@@ -210,13 +209,13 @@ export function PlatformUsage({ data }: PlatformUsageProps) {
         </div>
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.5 }}
-          className="mt-4 rounded-lg border border-primary/20 bg-primary/5 p-3 backdrop-blur"
+          transition={{ duration: 0.3, delay: 0.4 }}
+          className="mt-3 rounded-xl border border-primary/12 bg-primary/4 p-2.5 backdrop-blur sm:mt-4 sm:rounded-2xl sm:p-3"
         >
-          <p className="text-sm text-muted-foreground mb-1">Most Used Platform</p>
-          <p className="font-semibold">
+          <p className="text-xs text-muted-foreground sm:text-sm">Most Used Platform</p>
+          <p className="text-sm font-semibold sm:text-base">
             {mostUsedPlatform?.platform} ({mostUsedPlatform?.count} meetings)
           </p>
         </motion.div>

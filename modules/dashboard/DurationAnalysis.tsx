@@ -118,19 +118,19 @@ export function DurationAnalysis({ data }: DurationAnalysisProps) {
           initial="initial"
           animate="animate"
           transition={createTransition()}
-          className="h-[300px] w-full mb-4"
+          className="h-[220px] w-full mb-4 sm:h-[260px] lg:h-[300px]"
         >
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-              <XAxis 
-                dataKey="duration" 
-                tick={{ fontSize: 12 }}
-                angle={-45}
+            <BarChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
+              <XAxis
+                dataKey="duration"
+                tick={{ fontSize: 10 }}
+                angle={-35}
                 textAnchor="end"
-                height={60}
+                height={50}
               />
-              <YAxis tick={{ fontSize: 12 }} />
+              <YAxis tick={{ fontSize: 10 }} />
               <Tooltip content={<CustomTooltip />} />
               <Bar dataKey="accepted" stackId="a" fill="var(--color-chart-1)" radius={[0, 0, 0, 0]} />
               <Bar dataKey="cancelled" stackId="a" fill="#f87171" radius={[2, 2, 0, 0]} />
