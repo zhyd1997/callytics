@@ -559,29 +559,6 @@ export const App: FC<DashboardAppProps> = ({ initialMeetings }) => {
           </motion.section>
         </div>
 
-        <motion.div
-          variants={fadeInFromBottom}
-          initial="initial"
-          animate="animate"
-          transition={createTransition(0.25)}
-          className="mb-6 sm:mb-8"
-        >
-          <OverviewStats data={visibleMeetings} />
-        </motion.div>
-
-        <motion.div
-          variants={fadeInFromBottom}
-          initial="initial"
-          animate="animate"
-          transition={createTransition(0.3)}
-          className="mb-6 sm:mb-8"
-        >
-          <div className="grid grid-cols-1 gap-4 sm:gap-6 xl:grid-cols-[1.2fr_0.8fr]">
-            <RecentMeetings data={visibleMeetings} />
-            <MeetingTimes data={visibleMeetings} />
-          </div>
-        </motion.div>
-
         <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-2 mb-6 sm:mb-8">
           <motion.div
             variants={fadeInFromLeft}
