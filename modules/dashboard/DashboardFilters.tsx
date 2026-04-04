@@ -89,7 +89,7 @@ export const DashboardFilters = ({
       </div>
 
       {/* Saved views – 2-col grid on mobile, 4-col on lg */}
-      <div className="grid grid-cols-2 gap-2 sm:gap-3 lg:grid-cols-4 xl:grid-cols-2">
+      <div className="grid grid-cols-2 gap-2 sm:gap-3 lg:grid-cols-4">
         {savedViews.map((view) => {
           const isActive =
             JSON.stringify(filters) === JSON.stringify(view.filters)

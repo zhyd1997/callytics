@@ -157,6 +157,8 @@ export function AppHeader() {
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-border/50 bg-card/50 text-foreground backdrop-blur-sm transition-colors active:bg-card/80"
             aria-label="Toggle menu"
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-menu-panel"
           >
             {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
@@ -165,7 +167,7 @@ export function AppHeader() {
 
       {/* Mobile dropdown */}
       {mobileMenuOpen && (
-        <div className="border-t border-border/30 bg-background/95 backdrop-blur-2xl md:hidden">
+        <div id="mobile-menu-panel" className="border-t border-border/30 bg-background/95 backdrop-blur-2xl md:hidden">
           <div className="shell-container space-y-2 py-4">
             {!isDashboardRoute &&
               MARKETING_LINKS.map((link) => (

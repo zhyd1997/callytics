@@ -81,7 +81,7 @@ export const ReferralSection = () => {
                 className="rounded-xl border border-white/8 bg-white/5 p-4 sm:rounded-[28px] sm:p-5"
               >
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/8 text-white sm:h-11 sm:w-11 sm:rounded-2xl">
-                  <Icon className="h-4.5 w-4.5 sm:h-5 sm:w-5" />
+                  <Icon className="h-[18px] w-[18px] sm:h-5 sm:w-5" />
                 </div>
                 <h3 className="mt-3 text-base font-semibold text-white sm:mt-4 sm:text-lg">{title}</h3>
                 <p className="mt-1.5 text-sm leading-6 text-white/60 sm:mt-2">{description}</p>

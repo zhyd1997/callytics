@@ -73,7 +73,7 @@ export function Features() {
                   className="panel group rounded-2xl p-5 transition-transform hover:-translate-y-0.5 sm:rounded-[28px] sm:p-6"
                 >
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-primary/12 bg-primary/6 text-primary transition-colors group-hover:border-accent/25 group-hover:bg-accent/8 group-hover:text-accent sm:h-12 sm:w-12 sm:rounded-2xl">
-                    <Icon className="h-4.5 w-4.5 sm:h-5 sm:w-5" />
+                    <Icon className="h-[18px] w-[18px] sm:h-5 sm:w-5" />
                   </div>
                   <h3 className="mt-4 text-lg font-semibold text-foreground sm:mt-5 sm:text-xl">
                     {feature.title}

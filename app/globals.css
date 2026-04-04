@@ -217,6 +217,7 @@
 
   .panel {
     @apply border border-border/60 bg-card/75 backdrop-blur-xl;
+
     box-shadow:
       0 1px 2px rgba(30, 60, 40, 0.04),
       0 16px 60px rgba(30, 60, 40, 0.05);
@@ -224,6 +225,7 @@
 
   .panel-muted {
     @apply border border-border/45 bg-card/50 backdrop-blur-lg;
+
     box-shadow: 0 10px 40px rgba(30, 60, 40, 0.03);
   }
 
@@ -245,11 +247,13 @@
   /* Deep tea surface – steeped Longjing in a dark vessel */
   .surface-primary {
     @apply border text-white backdrop-blur-2xl;
+
     background:
       radial-gradient(ellipse at 0% 0%, rgba(120, 180, 130, 0.18), transparent 50%),
       radial-gradient(ellipse at 100% 100%, rgba(80, 140, 110, 0.12), transparent 55%),
       linear-gradient(165deg, #1a2a20 0%, #0d1a14 100%);
     border-color: rgba(140, 200, 150, 0.10);
+
     box-shadow:
       0 1px 2px rgba(10, 30, 20, 0.2),
       0 32px 80px rgba(10, 30, 20, 0.35);
@@ -257,11 +261,13 @@
 
   .surface-secondary {
     @apply border border-border/55 bg-card/80 backdrop-blur-xl;
+
     box-shadow: 0 18px 70px rgba(30, 60, 40, 0.05);
   }
 
   .surface-tertiary {
     @apply border border-border/45 bg-card/60 backdrop-blur-lg;
+
     box-shadow: 0 12px 44px rgba(30, 60, 40, 0.04);
   }
 }
